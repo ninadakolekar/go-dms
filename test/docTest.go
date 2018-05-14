@@ -1,4 +1,4 @@
-package main
+package test
 
 import (
 	"fmt"
@@ -52,6 +52,27 @@ func main() {
 
 	// send off the update (2nd parameter indicates we also want to commit the operation)
 	resp, err := s.Update(f, true)
+
+	if err != nil {
+		fmt.Println("error =>", err)
+	} else {
+		fmt.Println("resp =>", resp)
+	}
+
+	// build an update document, in this case adding two documents
+	g := map[string]interface{}{
+		"delete": []interface{}{
+			map[string]interface{}{
+				"id": 22,
+			},
+			map[string]interface{}{
+				"id": 12,
+			},
+		},
+	}
+
+	// send off the update (2nd parameter indicates we also want to commit the operation)
+	resp, err = s.Update(g, true)
 
 	if err != nil {
 		fmt.Println("error =>", err)
