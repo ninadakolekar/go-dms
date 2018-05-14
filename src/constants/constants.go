@@ -6,14 +6,17 @@ const (
 	SolrPort = 8983
 
 	// ApplicationPort ... The port on which application will run.
-	ApplicationPort = ":8080"
+	ApplicationPort = ":8080/"
 
-	// Localhost ... Loopback Server
-	Localhost = "127.0.0.1"
+	// ApplicationHost ... Application Host
+	ApplicationHost = "127.0.0.1"
 
 	// DocsCore ... Docs Core name in solr
 	DocsCore = "docs"
 
 	// UserCore ... Users Core name in solr
 	UserCore = "user"
+
+	// SolrHost .... Solr Host
+	SolrHost = "127.0.0.1"
 )
