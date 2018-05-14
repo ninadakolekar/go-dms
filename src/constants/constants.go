@@ -11,6 +11,9 @@ const (
 	// Localhost ... Loopback Server
 	Localhost = "127.0.0.1"
 
-	// DocsCore ... Core name in solr
+	// DocsCore ... Docs Core name in solr
 	DocsCore = "docs"
+
+	// UserCore ... Users Core name in solr
+	UserCore = "user"
 )

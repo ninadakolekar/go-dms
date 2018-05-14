@@ -12,5 +12,6 @@ func GetRouter() *mux.Router {
 
 	// Define routes here
 	r.HandleFunc("/hello", controller.Index).Methods("GET")
+	r.HandleFunc("/users", controller.Users).Methods("GET")
 	return r
 }
