@@ -1,4 +1,4 @@
-package main
+package test
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	model "github.com/ninadakolekar/aizant-dms/src/models"
 )
 
-func main() {
+func TestAddDelDoc() {
 	x := model.InactiveDoc{"A-23", "Pharma Pract", "SOP", false, "Ramki", "Ramki", []string{"Ramki"}, []string{"Ramki"}, []string{"Ramki"}, "HR", 0, 0, "Body of the Pharma Doc"}
 	resp, err := doc.AddInactiveDoc(x)
 	if err != nil {

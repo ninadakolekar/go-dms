@@ -19,4 +19,7 @@ const (
 
 	// SolrHost .... Solr Host
 	SolrHost = "127.0.0.1"
+
+	//MinDocNumLen ... Min document number length
+	MinDocNumLen = 3
 )

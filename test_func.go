@@ -1,15 +1,14 @@
-package routes
+package main
 
 import (
 	"net/http"
 
 	"github.com/gorilla/mux"
 	controller "github.com/ninadakolekar/aizant-dms/src/controllers"
+	test "github.com/ninadakolekar/aizant-dms/test"
 )
 
-// GetRouter ... Returns a new router
-func GetRouter() *mux.Router {
-
+func main() {
 	r := mux.NewRouter() // New mux router instance
 
 	// Serve Static Files
@@ -20,7 +19,9 @@ func GetRouter() *mux.Router {
 	// Define routes here
 	r.HandleFunc("/hello", controller.Index).Methods("GET")
 	r.HandleFunc("/users", controller.Users).Methods("GET")
-	r.HandleFunc("/doc/add", controller.DocAdd).Methods("POST")
+	r.HandleFunc("/doc/add", controller.DocAdd).Methods("GET")
 	r.HandleFunc("/doc/avail", controller.DocAvailable).Methods("POST")
-	return r
+
+	http.ListenAndServe(":8080", r)
+	test.TestAddDelDoc()
 }
