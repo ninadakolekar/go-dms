@@ -43,6 +43,7 @@ func AddInactiveDoc(doc model.InactiveDoc) (*solr.UpdateResponse, error) {
 	resp, err := s.Update(f, true)
 
 	if err != nil {
+		fmt.Println("ERROR addInactiveDoc Line 46: ", err) // Debug
 		return resp, err
 	}
 
