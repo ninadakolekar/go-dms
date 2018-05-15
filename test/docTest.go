@@ -17,7 +17,8 @@ func main() {
 	// build an update document, in this case adding two documents
 	f := map[string]interface{}{
 		"add": []interface{}{
-			map[string]interface{}{"id": 22,
+			map[string]interface{}{
+				"id":            "402",
 				"DocNo":         "402",
 				"title":         "abc",
 				"docStatus":     false,
@@ -32,7 +33,8 @@ func main() {
 				"flowStatus":    5,
 				"reviewer":      "kishan",
 			},
-			map[string]interface{}{"id": 12,
+			map[string]interface{}{
+				"id":            "42",
 				"DocNo":         "42",
 				"title":         "ab dc",
 				"docStatus":     false,
@@ -63,13 +65,16 @@ func main() {
 	g := map[string]interface{}{
 		"delete": []interface{}{
 			map[string]interface{}{
-				"id": 22,
+				"id": "402",
 			},
 			map[string]interface{}{
-				"id": 12,
+				"id": "42",
 			},
 		},
 	}
+
+	var i int
+	_, err = fmt.Scanf("%d", &i)
 
 	// send off the update (2nd parameter indicates we also want to commit the operation)
 	resp, err = s.Update(g, true)
