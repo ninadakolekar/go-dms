@@ -1,7 +1,7 @@
 package docs
 
 import (
-	"fmt"
+	"fmt" // Debug
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
@@ -15,14 +15,14 @@ func AddInactiveDoc(doc model.InactiveDoc) (*solr.UpdateResponse, error) {
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 
 	if err != nil { // If connection fails
-		fmt.Println("ERROR addInactiveDoc Line 14: ", err) // Debug
+		fmt.Println("ERROR AddInactiveDoc Line 14: ", err) // Debug
 		return nil, err
 	}
 
 	f := map[string]interface{}{
 		"add": []interface{}{
 			map[string]interface{}{
-				"DocNo":         doc.DocNo,
+				"id":            doc.DocNo,
 				"title":         doc.Title,
 				"docStatus":     doc.DocStatus,
 				"approver":      doc.Approver,

@@ -1,4 +1,4 @@
-package test
+package main
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/rtt/Go-Solr"
 )
 
-func main() {
+func mainn() {
 	s, err := solr.Init("localhost", 8983, "docs")
 
 	if err != nil {
