@@ -29,7 +29,7 @@
       <form id="search-form" class="col s12" action="/doc/search" method="post">
         <div class="row">
           <div class="input-field col s12 m4">
-                <select name="criteria" id="search_by">
+                <select name="criteria1" id="search_by">
                         <option class="dropdown_default_option" value="" disabled selected></option>
                         <option value="docNumber">Document Number</option>
                         <option value="docName">Document Name</option>
@@ -39,13 +39,13 @@
             <span id="status"></span>
           </div>
           <div class="input-field col s12 m8">
-            <input id="search_key"  type="text" class="validate" name="searchKeyword">
+            <input id="search_key"  type="text" class="validate" name="searchKeyword1">
             <label for="search_key">Search Key word</label>
           </div>
         </div>
 
     <div id="add-field-container" class="left">
-            <a class="btn-floating btn-small waves-effect waves-light red" id="add-field-btn"><i class="material-icons">add</i></a>
+            <a class="btn-floating btn-small waves-effect waves-light green" id="add-field-btn"><i class="material-icons">add</i>Add filter</a>
 
     </div>
     <div class="center">
@@ -79,18 +79,51 @@
     <!-- Form Validation -->
     <script src="../static/js/jquery.validate.min.js"></script>
     <script>
+         var remClick = function(){
+            if(counter == 1) {
+                $("#rem-field-btn").remove();
+            }
+            else if(counter == 2){
+              $("#field2").remove();
+              counter--;
+            }
+            else if(counter == 3){
+              $("#field3").remove();
+              counter--;
+            }
+            else if(counter == 4){
+              $("#field4").remove();
+              counter--;
+            }
+            else if(counter == 5){
+              $("#field5").remove();
+              counter--;
+            }
+            else if(counter == 6){
+              $("#field6").remove();
+              $("#add-field-btn").removeClass("disabled");
+              counter--;
+            }
+            if(counter == 1) {
+                $("#rem-field-btn").remove();
+                remVisible = false;
+            }
+        }
         var validate = function() {
             $("#search-form").validate({
             rules: {
-              criteria: {
-                required: true,
-                
-              },
-              searchKeyword: {
-                required: true,
-               
-              },
-              
+              criteria1: "required",
+              searchKeyword1: "required",
+              criteria2: "required",
+              searchKeyword2: "required",
+              criteria3: "required",
+              searchKeyword3: "required",
+              criteria4: "required",
+              searchKeyword4: "required",
+              criteria5: "required",
+              searchKeyword5: "required",
+              criteria6: "required",
+              searchKeyword6: "required"
             },
             messages: {
               criteria: {
@@ -120,10 +153,14 @@
         jQuery(document).ready(function($){
           validate();
         });
+        var counter = 1;
+        var remVisible = false;
         $("#add-field-btn").click(function(){
-                newForm = '<div class="row"> \
+         
+            counter++;
+                newForm = '<div id=field'+counter+' class="row"> \
           <div class="input-field col s12 m4">\
-                <select name="criteria">\
+                <select name="criteria'+counter+'">\
                         <option class="dropdown_default_option" value="" disabled selected></option>\
                         <option value="docNumber">Document Number</option>\
                         <option value="docName">Document Name</option>\
@@ -133,14 +170,39 @@
             <span id="status"></span>\
           </div>\
           <div class="input-field col s12 m8">\
-            <input id="search_key"  type="text" class="validate" name="searchKeyword">\
+            <input id="search_key"  type="text" class="validate" name="searchKeyword'+counter+'">\
             <label for="search_key">Search Key word</label>\
           </div>\
         </div>';
-        $("#add-field-container").before(newForm);
-        $('select').formSelect();
-        validate();
-            });
+        if (counter<=5){
+          $("#add-field-btn").removeClass("disabled");
+            $("#add-field-container").before(newForm);
+            $('select').formSelect();
+            validate();
+        }
+
+        else if(counter==6) {
+            $("#add-field-container").before(newForm);
+            $('select').formSelect();
+            validate();
+            $("#add-field-btn").addClass("disabled");
+        }
+        
+        if(counter >= 2 && !remVisible){
+            var remHtml = '&nbsp;<a class="btn-floating btn-small waves-effect waves-light red" id="rem-field-btn" onclick="remClick()"><i class="material-icons">remove</i>Remove filter</a>';
+            $("#add-field-btn").after(remHtml);
+            remVisible = true;
+        }
+        else if(counter >= 3) {
+
+        }
+        if(counter == 1) {
+            $("#rem-field-btn").remove();
+            remVisible = false;;
+        }
+
+    });
+        
     </script>
 
     <script>
