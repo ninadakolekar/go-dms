@@ -43,9 +43,9 @@
           <div class="input-field col s12 m4">
            <select name="docProcess" id="select_process">
              <option class="dropdown_default_option" value="" disabled selected></option>
-             <option value="1">Everyone</option>
-             <option value="2">One by One</option>
-             <option value="3">Anyone</option>
+             <option value="Everyone">Everyone</option>
+             <option value="OneByOne">One by One</option>
+             <option value="Anyone">Anyone</option>
            </select>
            <label for="select_process">Process</label>
          </div>
@@ -64,9 +64,9 @@
       <div class="input-field col s12 m4">
        <select name="docDept" id = "doc_dept">
          <option class="dropdown_default_option" value="" disabled selected></option>
-         <option value="1">D1</option>
-         <option value="2">D2</option>
-         <option value="3">D3</option>
+         <option value="D1">D1</option>
+         <option value="D2">D2</option>
+         <option value="D3">D3</option>
        </select>
        <label for="doc_dept">Document Department</label>
      </div>
@@ -84,18 +84,18 @@
       <div class="input-field col s12 m6">
        <select name="docCreator" id = "create_doc">
          <option class="dropdown_default_option" value="0" disabled selected></option>
-         <option value="1">C1</option>
-         <option value="2">C2</option>
-         <option value="3">C3</option>
+         <option value="Cr1">Cr1</option>
+         <option value="Cr2">Cr2</option>
+         <option value="Cr3">Cr3</option>
        </select>
        <label for="create_doc">Creator</label>
      </div>
      <div class="input-field col s12 m6">
       <select name="docAuth" id = "auth_doc">
         <option class="dropdown_default_option" value="0" disabled selected></option>
-        <option value="1">Au1</option>
-        <option value="2">Au2</option>
-        <option value="3">Au3</option>
+        <option value="Au1">Au1</option>
+        <option value="Au2">Au2</option>
+        <option value="Au3">Au3</option>
       </select>
       <label for="auth_doc">Authorizer</label>
     </div>
@@ -104,18 +104,18 @@
     <div class="input-field col s12 m6">
     <select multiple name="docReviewers">
       <option value="" disabled></option>
-      <option value="1">R1</option>
-      <option value="2">R2</option>
-      <option value="3">R3</option>
+      <option value="Rw1">Rw1</option>
+      <option value="Rw2">Rw2</option>
+      <option value="Rw3">Rw3</option>
     </select>
     <label>Reviewers</label>
     </div>
     <div class="input-field col s12 m6">
     <select multiple name="docApprovers">
       <option value="" disabled></option>
-      <option value="1">A1</option>
-      <option value="2">A2</option>
-      <option value="3">A3</option>
+      <option value="Ap1">Ap1</option>
+      <option value="Ap2">Ap2</option>
+      <option value="Ap3">Ap3</option>
     </select>
     <label>Approvers</label>
     </div>
@@ -185,7 +185,10 @@
                 required: true,
                 minlength: 3
               },
-              docName: "required",
+              docName: {
+                required: true,
+                minlength: 3
+              },
               docProcess: "required",
               docType: "required",
               docDept: "required",
@@ -200,7 +203,10 @@
                 required: "Please specify a document number",
                 minlength: "Document number must be atleast 3 characters long."
               },
-              docName: "Please specify a document name",
+              docName: {
+                required: "Please specify a document name",
+                minlength: "Document name must be atleast 3 characters long."
+              },
               docProcess: "Please specify document process",
               docType: "Please specify document type",
               docDept: "Please specify a document department",
