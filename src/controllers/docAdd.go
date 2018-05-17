@@ -10,6 +10,6 @@ import (
 //DocAdd ... not competed
 func DocAdd(w http.ResponseWriter, r *http.Request) {
 
-	tmpl := template.Must(template.ParseFiles("templates/addDoc.html"))
+	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
 	tmpl.Execute(w, struct{ s uint }{constant.MinDocNumLen})
 }

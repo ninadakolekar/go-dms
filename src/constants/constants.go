@@ -6,7 +6,7 @@ const (
 	SolrPort = 8983
 
 	// ApplicationPort ... The port on which application will run.
-	ApplicationPort = ":8080/"
+	ApplicationPort = ":8080"
 
 	// ApplicationHost ... Application Host
 	ApplicationHost = "127.0.0.1"
