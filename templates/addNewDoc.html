@@ -51,7 +51,7 @@
          </div>
          <div class="input-field col s12 m8">
           <select name="docType" id="select_document_type">
-            <option class="dropdown_default_option" value="0" disabled selected></option>
+            <option class="dropdown_default_option" value="" disabled selected></option>
             <option value="SOP">SOP</option>
             <option value="HR">HR</option>
             <option value="STP">STP</option>
@@ -63,7 +63,7 @@
     <div class="row">
       <div class="input-field col s12 m4">
        <select name="docDept" id = "doc_dept">
-         <option class="dropdown_default_option" value="0" disabled selected></option>
+         <option class="dropdown_default_option" value="" disabled selected></option>
          <option value="1">D1</option>
          <option value="2">D2</option>
          <option value="3">D3</option>
@@ -144,6 +144,20 @@
        window.$('li.disabled').click(function(){
           $(this).parent('ul').sibling('input').val("");
        });
+       $('.datepicker').pickadate({
+        labelMonthNext: 'Next month',
+        labelMonthPrev: 'Previous month',
+        labelMonthSelect: 'Select a month',
+        labelYearSelect: 'Select a year',
+        monthsFull: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
+        monthsShort: [ 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec' ],
+        weekdaysFull: [ 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' ],
+        weekdaysShort: [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ],
+        weekdaysLetter: [ 'S', 'M', 'T', 'W', 'T', 'F', 'S' ],
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Close'
+      });
     });
   </script>
 
@@ -182,7 +196,7 @@
         jQuery(document).ready(function($){
           $("#add-doc-form").validate({
             rules: {
-              "docNumber": {
+              docNumber: {
                 required: true,
                 minlength: 3
               },
