@@ -180,9 +180,6 @@
                  $("#status").html(data);    
             });
           }
-          else if(docno.length>0) {
-            $("#status").html("Minimum Length 3.");
-          }
           else if(docno.length == 0){
             $("#status").html("");
           }    
@@ -213,7 +210,7 @@
             messages: {
               docNumber: {
                 required: "Please specify a document number",
-                minlength: "Document number must be atleast 3 characters long"
+                minlength: "Document number must be atleast 3 characters long."
               },
               docName: "Please specify a document name",
               docProcess: "Please specify document process",
