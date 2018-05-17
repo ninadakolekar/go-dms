@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
+
 	solr "github.com/rtt/Go-Solr"
 )
 
@@ -61,11 +61,11 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 	// Render a new form
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
-	tmpl.Execute(w, struct{ s uint }{constant.MinDocNumLen})
+
+	tmpl.Execute(w, templateData{Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators()})
 }
 
 // Validate Document Number
-
 func validateDocNo(str string) bool {
 	if len(str) <= 2 || strings.Contains(str, " ") { // If length < 3 or if contains whitespace
 		return false
@@ -105,4 +105,4 @@ func validateDocName(s string) bool { // If length < 3
 	return true
 }
 
-// validating initialtor
+// storing

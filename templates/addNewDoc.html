@@ -84,18 +84,18 @@
       <div class="input-field col s12 m6">
        <select name="docCreator" id = "create_doc">
          <option class="dropdown_default_option" value="0" disabled selected></option>
-         <option value="Cr1">Cr1</option>
-         <option value="Cr2">Cr2</option>
-         <option value="Cr3">Cr3</option>
+         {{range $idx, $e := .Creators}}
+         <option value="{{$e}}">{{$e}}</option>
+         {{end}}
        </select>
        <label for="create_doc">Creator</label>
      </div>
      <div class="input-field col s12 m6">
       <select name="docAuth" id = "auth_doc">
         <option class="dropdown_default_option" value="0" disabled selected></option>
-        <option value="Au1">Au1</option>
-        <option value="Au2">Au2</option>
-        <option value="Au3">Au3</option>
+        {{range $idx, $e := .Reviewers}}
+        <option value="{{$e}}">{{$e}}</option>
+        {{end}}
       </select>
       <label for="auth_doc">Authorizer</label>
     </div>
@@ -104,18 +104,18 @@
     <div class="input-field col s12 m6">
     <select multiple name="docReviewers">
       <option value="" disabled></option>
-      <option value="Rw1">Rw1</option>
-      <option value="Rw2">Rw2</option>
-      <option value="Rw3">Rw3</option>
+      {{range $idx, $e := .Reviewers}}
+      <option value="{{$e}}">{{$e}}</option>
+      {{end}}
     </select>
     <label>Reviewers</label>
     </div>
     <div class="input-field col s12 m6">
     <select multiple name="docApprovers">
       <option value="" disabled></option>
-      <option value="Ap1">Ap1</option>
-      <option value="Ap2">Ap2</option>
-      <option value="Ap3">Ap3</option>
+      {{range $idx, $e := .Approvers}}
+           <option value="{{$e}}">{{$e}}</option>
+      {{end}}
     </select>
     <label>Approvers</label>
     </div>

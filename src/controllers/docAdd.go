@@ -3,13 +3,18 @@ package controllers
 import (
 	"html/template"
 	"net/http"
-
-	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 )
 
 //DocAdd ... not competed
 func DocAdd(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
-	tmpl.Execute(w, struct{ s uint }{constant.MinDocNumLen})
+	tmpl.Execute(w, templateData{Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators()})
+}
+
+type templateData struct {
+	Approvers   []string
+	Reviewers   []string
+	Authorisers []string
+	Creators    []string
 }
