@@ -11,10 +11,10 @@ import (
 // DocAvailable ... Checks if a document name is available
 func DocAvailable(w http.ResponseWriter, r *http.Request) {
 
-	DocNo := r.FormValue("DocNo")
+	DocNo := r.FormValue("docNumber")
 
 	if !validateDocNo(DocNo) {
-		fmt.Fprintf(w, "<h1> INVALID </h1>")
+		fmt.Fprintf(w, "<span> INVALID </span>")
 		fmt.Println("ERROR DocAvailable Line 17 : Invalid Document number. ") // Debug
 		return
 	}

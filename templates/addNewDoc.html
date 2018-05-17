@@ -26,7 +26,7 @@
 
 
     <div class="row">
-      <form id="add-doc-form" class="col s12" action="">
+      <form id="add-doc-form" class="col s12" action="/doc/add" method="post">
         <div class="row">
           <div class="input-field col s12 m4">
             <input id ="doc_number"  type="text" class="validate" name="docNumber">
@@ -164,7 +164,7 @@
           {
             $("#status").html('Checking availability...');
     
-            $.post("/doc/avail", {DocNo:docno}, function(data, status){
+            $.post("/doc/avail", {docNumber:docno}, function(data, status){
                  $("#status").html(data);    
             });
           }
