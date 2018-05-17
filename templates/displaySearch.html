@@ -1,0 +1,18 @@
+<html>
+
+<body>
+    {{if .Valid}}
+        <h3>results found</h3>
+        <ui>
+            {{range $idx, $e := .Sarray}}
+                <li><a href="/docs/view/{{$e}}">file name :: {{$e}}</a></li>
+            {{end}}
+        </ui>
+    {{end}}
+    {{if .Ivalid}}
+        <h3>no results found</h3>
+    {{end}}
+</body>
+
+
+</html>
