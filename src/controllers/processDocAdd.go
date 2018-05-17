@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
 
@@ -70,7 +71,7 @@ func validateDocNo(str string) bool {
 	if len(str) <= 2 || strings.Contains(str, " ") { // If length < 3 or if contains whitespace
 		return false
 	}
-	s, err := solr.Init("localhost", 8983, "docs")
+	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 
 	if err != nil {
 		fmt.Println(err)

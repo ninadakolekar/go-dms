@@ -432,12 +432,14 @@
   <field name="_version_" type="plong" indexed="false" stored="false"/>
   <field name="approver" type="strings" indexed="true" required="true" stored="true"/>
   <field name="authorizer" type="strings" indexed="true" required="false" stored="true"/>
-  <field name="body" type="text_en" indexed="true" required="true" stored="true"/>
+  <field name="body" type="text_en" multiValued="true" indexed="true" required="true" stored="true"/>
   <field name="creator" type="string" indexed="true" required="true" stored="true"/>
   <field name="docDepartment" type="string" indexed="true" required="true" stored="true"/>
   <field name="docStatus" type="boolean" indexed="false" required="true" stored="true"/>
   <field name="docTemplateID" type="pint" indexed="true" required="true" stored="true"/>
   <field name="docType" type="string" indexed="true" required="true" stored="true"/>
+  <field name="effectiveDate" type="pdate" indexed="true" required="true" stored="true"/>
+  <field name="expiryDate" type="pdate" indexed="true" required="true" stored="true"/>
   <field name="flowStatus" type="pint" indexed="true" required="true" stored="true"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="initiator" type="string" indexed="true" required="true" stored="true"/>
