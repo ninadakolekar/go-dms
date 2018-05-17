@@ -16,6 +16,8 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
+		//TODO : Sanitize the form data
+
 		r.ParseForm()
 
 		docNumber := r.Form["docNumber"][0]
