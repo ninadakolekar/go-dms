@@ -23,6 +23,6 @@ func TestAddDelDoc() {
 	if err != nil {
 		fmt.Println("ERROR main() Line 21: " + err.Error()) // Debug
 	} else {
-		fmt.Println(resp)
+		fmt.Println(resp) // Debug
 	}
 }
