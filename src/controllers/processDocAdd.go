@@ -9,6 +9,7 @@ import (
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
+	solr "github.com/rtt/Go-Solr"
 )
 
 // ProcessDocAdd ... Process the form-values and add the document
@@ -65,8 +66,31 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 // Validate Document Number
 
-func validateDocNo(s string) bool {
-	if len(s) <= 2 || strings.Contains(s, " ") { // If length < 3 or if contains whitespace
+func validateDocNo(str string) bool {
+	if len(str) <= 2 || strings.Contains(str, " ") { // If length < 3 or if contains whitespace
+		return false
+	}
+	s, err := solr.Init("localhost", 8983, "docs")
+
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	quer := "id:" + str
+	q := solr.Query{ //checking in backend whether any other documnet with same id is present
+
+		Params: solr.URLParamMap{
+			"q": []string{quer},
+		},
+		Rows: 1,
+	}
+	res, err := s.Select(&q)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	results := res.Results
+	if results.Len() != 0 {
 		return false
 	}
 	return true
@@ -80,3 +104,5 @@ func validateDocName(s string) bool { // If length < 3
 	}
 	return true
 }
+
+// validating initialtor

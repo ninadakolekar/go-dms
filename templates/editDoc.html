@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <!--Import Google Icon Font-->
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <!--Import materialize.css-->
+      <link type="text/css" rel="stylesheet" href="../static/css/materialize.min.css"  media="screen,projection"/>
+
+      <!--Let browser know website is optimized for mobile-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body>
+
+
+        <div class="row">
+
+
+        </div>
+        <div class="row">
+
+            <div class=" col s2 ">
+                 <div class="card-panel teal lighten-2" id = root ><b>document</b><br><i>{{.Template}}</i></div>
+            </div>
+
+            <div class="col s5">
+
+                    <div class="row">
+                        <div class="col s4">
+                            <a onclick="document.getElementById('addtext').innerHTML= 'added text'" class="btn-floating btn-small waves-effect waves-light #2196f3  blue"><i class="material-icons">add</i></a>
+                            <label id = "addtext">add text</label>
+                        </div>
+                        <div class="col s4">
+                                <a class="btn-floating btn-small waves-effect waves-light #2196f3  red"><i class="material-icons">add</i></a>
+                                <label>add image</label>
+                        </div>
+                        <div class="col s4">
+                                <a class="btn-floating btn-small waves-effect waves-light #2196f3  black"><i class="material-icons">add</i></a>
+                                <label>add table</label>
+                        </div>
+                    </div>
+                    <div class="row" id = "text-area">
+
+                    </div>
+                    <div class="row" id = "image-area">
+
+                    </div>
+                    <div class="row" id = "table-area">
+
+                    </div>
+                   
+                    <div class="row">
+                            <a class="btn disabled " id= save >save</a>
+                            <a class="btn disabled " id= delete >delete</a>
+                            <a class="btn disabled"id = submit>submit</a>
+                    </div>
+                    
+                   
+            </div>
+            
+            <div class="col s5">
+                    <iframe width="500" height="580" src="../../view/1" frameborder="10" allowfullscreen></iframe>
+            </div>
+
+        </div>
+                       
+        
+        <!--JavaScript at end of body for optimized loading-->
+        <script src="../static/js/jQuery.js" ></script>
+        <!-- <script src="../static/js/materialize.min.js"><script> -->
+        <script type="text/javascript" >
+            function ReloadTemplate(){
+                var r = document.getElementById('root').innerHTML
+                var start = r.indexOf("<i>")+3
+                var end = r.indexOf("</i>")
+                s = r.slice(start,end)
+                console.log(r)
+                var app = ""
+                if(r != "nil"){
+                    var i
+                    var len = s.length
+                    for(i = 0 ; i < len ; i++){
+                        if(s[i] == 'b'){
+                            var temp , appp ="0"
+                                
+                            app.concat("...")
+                        }
+                        else if(s[i] == 'i'){
+
+                        }else if(s[i] == 't'){
+
+                        }
+                    }
+                }
+            }
+            jQuery(document).ready(function($){
+              ReloadTemplate()
+            });
+        </script>
+    </body>
+</html>
+        
