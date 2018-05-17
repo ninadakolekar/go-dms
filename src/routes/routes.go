@@ -23,5 +23,7 @@ func GetRouter() *mux.Router {
 	r.HandleFunc("/doc/add", controller.DocAdd).Methods("GET")
 	r.HandleFunc("/doc/add", controller.ProcessDocAdd).Methods("POST")
 	r.HandleFunc("/doc/avail", controller.DocAvailable).Methods("POST")
+	r.HandleFunc("/edit/1", controller.EditDoc)
+	r.HandleFunc("/view/1", controller.ViewDoc)
 	return r
 }

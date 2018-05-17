@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-//DocAdd ... not competed
+//DocAdd ...
 func DocAdd(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))

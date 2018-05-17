@@ -15,19 +15,19 @@
 
         <div class="row">
 
-
+            
         </div>
         <div class="row">
 
             <div class=" col s2 ">
-                 <div class="card-panel teal lighten-2" id = root ><b>document</b><br><i>{{.Template}}</i></div>
+                 <div class="card-panel orange" id = root ><b>document</b><br><i>{{.Template}}</i></div>
             </div>
 
             <div class="col s5">
 
                     <div class="row">
                         <div class="col s4">
-                            <a onclick="document.getElementById('addtext').innerHTML= 'added text'" class="btn-floating btn-small waves-effect waves-light #2196f3  blue"><i class="material-icons">add</i></a>
+                            <a onclick="AddTextBody()" class="btn-floating btn-small waves-effect waves-light #2196f3  blue"><i class="material-icons">add</i></a>
                             <label id = "addtext">add text</label>
                         </div>
                         <div class="col s4">
@@ -39,8 +39,10 @@
                                 <label>add table</label>
                         </div>
                     </div>
-                    <div class="row" id = "text-area">
-
+                    <div class="row">
+                        <textarea id = "paragraph" disabled  style="resize:none;width: 500px;height:400px;background-color: gainsboro" >
+                           
+                        </textarea> 
                     </div>
                     <div class="row" id = "image-area">
 
@@ -50,9 +52,9 @@
                     </div>
                    
                     <div class="row">
-                            <a class="btn disabled " id= save >save</a>
-                            <a class="btn disabled " id= delete >delete</a>
-                            <a class="btn disabled"id = submit>submit</a>
+                        <button id='save' disabled>save</button>
+                        <button id='delete' disabled>delete</button>
+                        <button id='submit' disabled>submit</button>
                     </div>
                     
                    
@@ -66,36 +68,64 @@
                        
         
         <!--JavaScript at end of body for optimized loading-->
-        <script src="../static/js/jQuery.js" ></script>
+        <script src="../static/js/jQuery.min.js" ></script>
         <!-- <script src="../static/js/materialize.min.js"><script> -->
         <script type="text/javascript" >
+
+            jQuery(document).ready(function($){
+              ReloadTemplate()
+            });
+            function AddTextBody(){
+                document.getElementById('save').disabled = false
+            }
             function ReloadTemplate(){
                 var r = document.getElementById('root').innerHTML
                 var start = r.indexOf("<i>")+3
                 var end = r.indexOf("</i>")
                 s = r.slice(start,end)
-                console.log(r)
-                var app = ""
-                if(r != "nil"){
+               
+                var app = "<ul style='list-style-type:disc'>"
+                      
+                if(s != "nil"){
                     var i
                     var len = s.length
-                    for(i = 0 ; i < len ; i++){
-                        if(s[i] == 'b'){
-                            var temp , appp ="0"
-                                
-                            app.concat("...")
+                    for(i = 0 ; i < len ;i++){
+                        
+                        if(s[i]=='b'){
+                            var temp = 0
+                            i++;
+                            for(i;"0123456789".indexOf(s[i]) != -1;i++){
+                                temp = temp*10 + (s[i]-'0') 
+                            }
+                            i--
+                           
+                            app += "<li><a class='waves-effect waves-light btn-small' id='body"+temp.toString()+"'>body"+temp.toString()+"</a></li>"
                         }
-                        else if(s[i] == 'i'){
-
-                        }else if(s[i] == 't'){
-
+                        if(s[i]=='i'){
+                            var temp = 0
+                            i++;
+                            for(i;"0123456789".indexOf(s[i]) != -1;i++){
+                                temp = temp*10 + (s[i]-'0') 
+                            }
+                            i--
+                            
+                            app += "<li><a class='waves-effect waves-light btn-small' id='image"+temp.toString()+"'>image"+temp.toString()+"</a></li>"
+                        }
+                        if(s[i]=='t'){
+                            var temp = 0
+                            i++;
+                            for(i;"0123456789".indexOf(s[i]) != -1;i++){
+                                temp = temp*10 + (s[i]-'0') 
+                            }
+                            i--
+                            
+                            app += "<li><a class='waves-effect waves-light btn-small' id='table"+temp.toString()+"'>table"+temp.toString()+"</a></li>"
                         }
                     }
                 }
+               
+                document.getElementById('root').innerHTML = r + app +"</ul>"
             }
-            jQuery(document).ready(function($){
-              ReloadTemplate()
-            });
         </script>
     </body>
 </html>
