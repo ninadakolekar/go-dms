@@ -27,6 +27,10 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 		docReviewers := r.Form["docReviewers"]
 		docApprovers := r.Form["docApprovers"]
 		fmt.Println("Form Received\n ", docNumber, docName, docProcess, docType, docDept, docEffDate, docExpDate, docCreator, docReviewers, docApprovers, docAuth) // Debug
+
+		// Make a new inactiveDoc struct using received form data
+		// Insert the new document
+		// Respond affirmitive
 	}
 
 	// Render a new form
