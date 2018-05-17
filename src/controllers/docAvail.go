@@ -13,11 +13,11 @@ func DocAvailable(w http.ResponseWriter, r *http.Request) {
 
 	DocNo := r.FormValue("docNumber")
 
-	if !validateDocNo(DocNo) {
-		fmt.Fprintf(w, "<span> INVALID </span>")
-		fmt.Println("ERROR DocAvailable Line 17 : Invalid Document number. ") // Debug
-		return
-	}
+	// if !validateDocNo(DocNo) {
+	// 	fmt.Fprintf(w, "<span> INVALID </span>")
+	// 	fmt.Println("ERROR DocAvailable Line 17 : Invalid Document number. ") // Debug
+	// 	return
+	// }
 
 	// Initialize a solr connection
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
@@ -53,11 +53,4 @@ func DocAvailable(w http.ResponseWriter, r *http.Request) {
 
 	// Return True
 	fmt.Fprintf(w, "<span> Document number valid. </span>")
-}
-
-func validateDocNo(s string) bool {
-	if len(s) <= 0 {
-		return false
-	}
-	return true
 }

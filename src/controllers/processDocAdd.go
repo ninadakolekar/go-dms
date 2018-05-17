@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
@@ -30,25 +31,50 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 		docApprovers := r.Form["docApprovers"]
 		fmt.Println("Form Received\n ", docNumber, docName, docProcess, docType, docDept, docEffDate, docExpDate, docCreator, docReviewers, docApprovers, docAuth) // Debug
 
-		// Make a new inactiveDoc struct using received form data
-		// Initiator is "self" currently
+		// Server-side validation
 
-		newDoc := model.InactiveDoc{docNumber, docName, docType, false, "self", docCreator, docReviewers, docApprovers, docAuth, docDept, 0, 0, "Empty Body"}
+		if validateDocNo(docNumber) && validateDocName(docName) {
+			// Make a new inactiveDoc struct using received form data
+			// Initiator is "self" currently
 
-		// Insert the new document
-		resp, err := doc.AddInactiveDoc(newDoc)
+			newDoc := model.InactiveDoc{docNumber, docName, docType, false, "self", docCreator, docReviewers, docApprovers, docAuth, docDept, 0, 0, "Empty Body"}
 
-		// Respond
-		if err != nil {
-			fmt.Println("ERROR main() Line 13: " + err.Error()) // Debug
-			fmt.Fprintf(w, "<script>alert('Failed to create new document.');</script>")
+			// Insert the new document
+			resp, err := doc.AddInactiveDoc(newDoc)
+
+			// Respond
+			if err != nil {
+				fmt.Println("ERROR ProcessDocAdd() Line 47: " + err.Error()) // Debug
+				fmt.Fprintf(w, "<script>alert('Failed to create new document.');</script>")
+			} else {
+				fmt.Println(resp) // Debug
+				fmt.Fprintf(w, "<script>alert('New document successfully created.');</script>")
+			}
+
 		} else {
-			fmt.Println(resp) // Debug
-			fmt.Fprintf(w, "<script>alert('New document successfully created.');</script>")
+			fmt.Fprintf(w, "<script>alert('Failed to create new document (ERROR: Invalid Document Number or Name).');</script>")
 		}
 	}
 
 	// Render a new form
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
 	tmpl.Execute(w, struct{ s uint }{constant.MinDocNumLen})
+}
+
+// Validate Document Number
+
+func validateDocNo(s string) bool {
+	if len(s) <= 2 || strings.Contains(s, " ") { // If length < 3 or if contains whitespace
+		return false
+	}
+	return true
+}
+
+// Validate Document Name
+
+func validateDocName(s string) bool { // If length < 3
+	if len(s) <= 2 {
+		return false
+	}
+	return true
 }
