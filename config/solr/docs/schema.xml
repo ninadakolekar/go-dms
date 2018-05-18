@@ -430,18 +430,24 @@
   <field name="_root_" type="string" docValues="false" indexed="true" stored="false"/>
   <field name="_text_" type="text_general" multiValued="true" indexed="true" stored="false"/>
   <field name="_version_" type="plong" indexed="false" stored="false"/>
+  <field name="approveTime" type="pdate" indexed="true" stored="true"/>
   <field name="approver" type="strings" indexed="true" required="true" stored="true"/>
+  <field name="authTime" type="pdate" indexed="true" stored="true"/>
   <field name="authorizer" type="strings" indexed="true" required="false" stored="true"/>
   <field name="body" type="text_en" indexed="true" required="true" stored="true"/>
-  <field name="creationTime" type="pdates" indexed="true" required="true" stored="true"/>
+  <field name="createTime" type="pdate" indexed="true" required="false" stored="true"/>
   <field name="creator" type="string" indexed="true" required="true" stored="true"/>
   <field name="docDepartment" type="string" indexed="true" required="true" stored="true"/>
   <field name="docStatus" type="boolean" indexed="false" required="true" stored="true"/>
   <field name="docTemplateID" type="pint" indexed="true" required="true" stored="true"/>
   <field name="docType" type="string" indexed="true" required="true" stored="true"/>
+  <field name="effDate" type="pdate" indexed="true" required="true" stored="true"/>
+  <field name="expDate" type="pdates" indexed="true" required="true" stored="true"/>
   <field name="flowStatus" type="pint" indexed="true" required="true" stored="true"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  <field name="initTime" type="pdate" indexed="true" required="true" stored="true"/>
   <field name="initiator" type="string" indexed="true" required="true" stored="true"/>
+  <field name="reviewTime" type="pdate" indexed="true" stored="true"/>
   <field name="reviewer" type="strings" indexed="true" required="true" stored="true"/>
   <field name="title" type="string" indexed="true" required="true" stored="true"/>
   <dynamicField name="*_txt_en_split_tight" type="text_en_splitting_tight" indexed="true" stored="true"/>

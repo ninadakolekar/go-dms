@@ -6,7 +6,7 @@ import (
 	"github.com/rtt/Go-Solr"
 )
 
-func maiiin() {
+func AddUser() {
 	// init a connection
 	s, err := solr.Init("localhost", 8983, "user")
 
