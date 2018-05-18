@@ -24,6 +24,7 @@ func AddInactiveDoc(doc model.InactiveDoc) (*solr.UpdateResponse, error) {
 			map[string]interface{}{
 				"id":            doc.DocNo,
 				"title":         doc.Title,
+				"docProcess":    doc.DocProcess,
 				"docStatus":     doc.DocStatus,
 				"approver":      doc.Approver,
 				"authorizer":    doc.Authorizer,
@@ -35,6 +36,9 @@ func AddInactiveDoc(doc model.InactiveDoc) (*solr.UpdateResponse, error) {
 				"docType":       doc.DocType,
 				"flowStatus":    doc.FlowStatus,
 				"reviewer":      doc.Reviewer,
+				"initTime":      doc.InitTS,
+				"effDate":       doc.DocEffDate,
+				"expDate":       doc.DocExpDate,
 			},
 		},
 	}

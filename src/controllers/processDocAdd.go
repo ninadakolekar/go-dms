@@ -5,11 +5,11 @@ import (
 	"html/template"
 	"net/http"
 	"strings"
+	"time"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
-
 	solr "github.com/rtt/Go-Solr"
 )
 
@@ -17,6 +17,8 @@ import (
 func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
+
+		initTime := xmlTimeNow()
 
 		//TODO : Sanitize the form data
 
@@ -33,16 +35,33 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 		docAuth := r.Form["docAuth"]
 		docReviewers := r.Form["docReviewers"]
 		docApprovers := r.Form["docApprovers"]
-		fmt.Println("Form Received\n ", docNumber, docName, docProcess, docType, docDept, docEffDate, docExpDate, docCreator, docReviewers, docApprovers, docAuth) // Debug
+
+		fmt.Println("Form Received\n ", docNumber, docName, docProcess, docType, docDept, xmlDate(docEffDate), xmlDate(docExpDate), docCreator, docReviewers, docApprovers, docAuth, initTime) // Debug
 
 		// Server-side validation
 
 		if validateDocNo(docNumber) && validateDocName(docName) {
 			// Make a new inactiveDoc struct using received form data
-			// Initiator is "self" currently
 
-			newDoc := model.InactiveDoc{docNumber, docName, docType, false, "self", docCreator, docReviewers, docApprovers, docAuth, docDept, 0, 0, "Empty Body"}
-
+			newDoc := model.InactiveDoc{
+				DocNo:        docNumber,
+				Title:        docName,
+				DocType:      docType,
+				DocProcess:   docProcess,
+				DocEffDate:   xmlDate(docEffDate),
+				DocExpDate:   xmlDate(docExpDate),
+				DocStatus:    false,
+				Initiator:    "self", // Initiator is "self" currently
+				Creator:      docCreator,
+				Reviewer:     docReviewers,
+				Approver:     docApprovers,
+				Authorizer:   docAuth,
+				DocDept:      docDept,
+				FlowStatus:   0,
+				DocTemplate:  0,
+				InitTS:       initTime,
+				DocumentBody: "Empty Body",
+			}
 			// Insert the new document
 			resp, err := doc.AddInactiveDoc(newDoc)
 
@@ -106,4 +125,15 @@ func validateDocName(s string) bool { // If length < 3
 	return true
 }
 
-// storing
+// Get current time in XML format
+func xmlTimeNow() string {
+	t := time.Now().UTC().String()
+	x := strings.Fields(t)
+	xmlTime := x[0] + "T" + x[1] + "Z"
+	return xmlTime
+}
+
+// Get Date in XML format
+func xmlDate(date string) string {
+	return date + "T23:59:59"
+}

@@ -5,6 +5,9 @@ type InactiveDoc struct {
 	DocNo        string
 	Title        string
 	DocType      string
+	DocProcess   string
+	DocEffDate   string
+	DocExpDate   string
 	DocStatus    bool
 	Initiator    string
 	Creator      string
@@ -14,5 +17,6 @@ type InactiveDoc struct {
 	DocDept      string
 	FlowStatus   uint32
 	DocTemplate  uint32
+	InitTS       string
 	DocumentBody string
 }
