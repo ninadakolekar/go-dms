@@ -20,10 +20,9 @@
   </head>
   <body>
 
-    <div class="container">
+  <div class="container">
 
       <h4 class="center" id="title">Search Form</h4> <br>
-
 
     <div class="row">
       <form id="search-form" class="col s12" action="/doc/search" method="post">
@@ -34,6 +33,18 @@
                         <option value="docNumber">Document Number</option>
                         <option value="docName">Document Name</option>
                         <option value="docKeyword">Keyword</option>
+                        <option value="initiator">Initiator</option>
+                        <option value="creator">Creator</option>
+                        <option value="reviewer">Reviewer</option>
+                        <option value="approver">Approver</option>
+                        <option value="auth">Authorizer</option>
+                        <option value="dept">Department</option>
+                        <option value="from Init Date" data-tooltip="yyyy-mm-dd">From Intiated Date</option>
+                        <option value="from Eff Date" data-tooltip="yyyy-mm-dd">From Effective Date</option>
+                        <option value="from Exp Date" data-tooltip="yyyy-mm-dd">From Expired Date</option>
+                        <option value="till Init Date" data-tooltip="yyyy-mm-dd">Till Intiated Date</option>
+                        <option value="till Eff Date" data-tooltip="yyyy-mm-dd">Till Effective Date</option>
+                        <option value="till Exp Date" data-tooltip="yyyy-mm-dd">Till Expired Date</option>
                 </select>
                 <label for="search_by">Search Type</label>
             <span id="status"></span>
@@ -47,8 +58,16 @@
     <div id="add-field-container" class="left">
             <a class="btn-floating btn-small waves-effect waves-light green" id="add-field-btn"><i class="material-icons">add</i>Add filter</a>
 
-    </div>
+    </div><br><br>
     <div class="center">
+      <br><label for="sort_select">Sort Order</label>
+          <select name="sort" id="sort_select">
+            <option class="dropdown_default_option" value="" disabled selected></option>
+              <option value="alexical">ascending lexical order</option>
+              <option value="dlexical">Desending lecical order</option>
+          </select>
+          
+          <br>
           <button type="submit" class="btn tooltipped" data-position="left" data-delay="50" data-tooltip="Click here to submit your form">Submit</button>
           <button id="reset-btn" class="btn tooltipped" data-position="right" data-delay="50" data-tooltip="Click here to reset your form">Reset</button>
     </div>
@@ -56,6 +75,22 @@
     </form>
     </div>
   </div>
+  <!-- <div>
+      {{if .Datab}}
+      <h3>results found</h3>
+      <ui>
+          {{range $idx, $e := .Links}}
+              <li><a href="/docs/view/{{$e}}">file name :: {{$e}}</a></li>
+          {{end}}
+      </ui>
+     {{end}}
+     {{if .Alertb}}
+         alert("{{.Alert}}");
+     {{end}}
+     {{if .Getb}}
+        <h1>results are shown here</h1>
+     {{end}}
+  </div> -->
 </body>
 
   <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
@@ -161,10 +196,22 @@
                 newForm = '<div id=field'+counter+' class="row"> \
           <div class="input-field col s12 m4">\
                 <select name="criteria'+counter+'">\
-                        <option class="dropdown_default_option" value="" disabled selected></option>\
+                  <option class="dropdown_default_option" value="" disabled selected></option>\
                         <option value="docNumber">Document Number</option>\
                         <option value="docName">Document Name</option>\
                         <option value="docKeyword">Keyword</option>\
+                        <option value="initiator">Initiator</option>\
+                        <option value="creator">Creator</option>\
+                        <option value="reviewer">Reviewer</option>\
+                        <option value="approver">Approver</option>\
+                        <option value="auth">Authorizer</option>\
+                        <option value="dept">Department</option>\
+                        <option value="from Init Date" title="yyyy-mm-dd">From Intiated Date</option>\
+                        <option value="from Eff Date" title="yyyy-mm-dd">From Effective Date</option>\
+                        <option value="from Exp Date" title="yyyy-mm-dd">From Expired Date</option>\
+                        <option value="till Init Date" title="yyyy-mm-dd">Till Intiated Date</option>\
+                        <option value="till Eff Date" title="yyyy-mm-dd">Till Effective Date</option>\
+                        <option value="till Exp Date" title="yyyy-mm-dd">Till Expired Date</option>\
                 </select>\
                 <label>Search Type</label>\
             <span id="status"></span>\
@@ -207,7 +254,10 @@
 
     <script>
         jQuery(document).ready(function($){
-            
+            var searchDate = function() {
+              var newDateFields = ""
+              $('#date-search-link').after();
+            }
             
         });
     </script>

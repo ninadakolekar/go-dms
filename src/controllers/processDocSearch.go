@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"regexp"
+	"strconv"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
@@ -13,17 +15,28 @@ import (
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		r.ParseForm()
-		sCriteria := r.Form["criteria"][0]
-		sKeyword := r.Form["searchKeyword"][0]
-		fmt.Println("Form recieved : ", sCriteria, sKeyword, "\n ") //Debug
-		if validateSearchForm(sCriteria) == true {
-			query := makeSearchQuery([]string{sCriteria}, []string{sKeyword})
+		sCriteria := []string{"*", "*", "*", "*", "*", "*", "*"}
+		sKeyword := []string{"*", "*", "*", "*", "*", "*", "*"}
+		sortOrder := r.Form["sort"][0]
+		fmt.Println(sortOrder) //Debug
+		for i := 0; i < 6; i++ {
+			if len(r.Form["criteria"+strconv.Itoa(i+1)]) > 0 {
+				sCriteria[i] = r.Form["criteria"+strconv.Itoa(i+1)][0]
+				sKeyword[i] = r.Form["searchKeyword"+strconv.Itoa(i+1)][0]
+			}
+		}
+		for i := 0; i < 6; i++ {
+			sKeyword[i] = removeIntialEndingspaces(sKeyword[i])
+		}
+
+		if validateSearchForm(sCriteria, sKeyword) == true {
+
+			query := makeSearchQuery(sCriteria, sKeyword)
 			fmt.Println("QUERY :: ", query)
 
 			s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 			if err != nil {
-				fmt.Println("line number 25\n\n", err) //Debug
-
+				fmt.Println(err)
 			}
 
 			q := solr.Query{
@@ -32,40 +45,59 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 				},
 				Rows: 100,
 			}
+
 			res, err := s.Select(&q)
 			if err != nil {
 				fmt.Println(err)
+
 			}
 
 			results := res.Results
 			for i := 0; i < results.Len(); i++ {
-				fmt.Println(results.Get(i), "\n\n") //Debug
+				fmt.Println(results.Get(i)) //Debug
 			}
 			if results.Len() == 0 {
-				fmt.Println("notfound\n\n") //Debug
+				fmt.Println("notfound") //Debug
 			}
 
 		} else {
-			fmt.Println("not found\n\n") //Debug
+			fmt.Println("invalid") //Debug
 		}
 	}
-	tmpl := template.Must(template.ParseFiles("templates/searchDoc1.html"))
+	tmpl := template.Must(template.ParseFiles("templates/searchDocMultiple.html"))
 	tmpl.Execute(w, struct{ s bool }{true})
 }
 
+func makeSortOrder(sO string) string {
+	s := []string{"alexical", "dlexical"}
+	S := []string{"title ASC", "title DSC"}
+	for i, v := range s {
+		if sO == v {
+			return S[i]
+		}
+	}
+	return "title ASC"
+}
 func makeSearchQuery(sC []string, sK []string) string {
-	validCriterion := []string{"docNumber", "docName", "docKeyword"}
-	validQueryPrifex := []string{"id:", "title:", "body:"}
+	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
+	validQueryPrifex := []string{"id:", "title:", "body:", "initiator:", "creator:", "reviewer:", "approver:", "authorizer:", "docDepartment:", "initTime:", "effDate:", "expDate:", "initTime:", "effDate:", "expDate:"}
 
 	querys := []string{}
 	counter := 0
-	for j, sc := range sC {
-		fmt.Println(j, "\n\n its j") //Debug
-		for i, v := range validCriterion {
-			fmt.Println(i, "\n\n its i") //Debug
+	for i, sc := range sC {
+		for j, v := range validCriterion {
 			if v == sc {
-				fmt.Println("this came to if cond..") //Debug
-				querys = append(querys, validQueryPrifex[i]+sK[j])
+
+				if j == 10 || j == 9 || j == 11 {
+					querys = append(querys, validQueryPrifex[j]+"["+sK[i]+"T23:59:59Z TO *]")
+				} else if j == 12 || j == 13 || j == 14 {
+					querys = append(querys, validQueryPrifex[j]+"[ 0001-01-01T00:00:58Z TO "+sK[i]+"T23:59:59Z ]")
+				} else if j == 0 || j == 1 {
+					querys = append(querys, validQueryPrifex[j]+sK[i]+"*")
+				} else {
+					querys = append(querys, validQueryPrifex[j]+sK[i])
+				}
+
 				fmt.Println(querys[counter])
 				counter++
 			}
@@ -76,19 +108,98 @@ func makeSearchQuery(sC []string, sK []string) string {
 		if i == 0 {
 			query = q
 		} else {
-			query += ("AND" + q)
+			query += (" AND " + q)
 		}
 	}
-	fmt.Println("\n\n line number 59") //Debug
+
 	return query
 }
+func isDatevalid(s string) bool {
+	y, err := strconv.Atoi(s[0:4])
+	if err != nil {
+		return false
+	}
 
-func validateSearchForm(sC string) bool {
-	validCriterion := []string{"docNumber", "docName", "docKeyword"}
-	for _, v := range validCriterion {
-		if v == sC {
-			return true
+	m, err := strconv.Atoi(s[5:7])
+	if err != nil {
+		return false
+	}
+	d, err := strconv.Atoi(s[8:10])
+	if err != nil {
+		return false
+	}
+
+	if (y%4 == 0 && y%100 == 0) || (y%4 != 0) {
+		if m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12 {
+			if d < 0 || d > 31 {
+				return false
+			}
+		} else if m == 4 || m == 6 || m == 9 || m == 11 {
+			if d < 0 || d > 30 {
+				return false
+			}
+		} else if m == 2 {
+			if d < 0 || d > 29 {
+				return false
+			}
+		} else {
+			return false
+		}
+	} else {
+		if m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12 {
+			if d < 0 || d > 31 {
+				return false
+			}
+		} else if m == 4 || m == 6 || m == 9 || m == 11 {
+			if d < 0 || d > 30 {
+				return false
+			}
+		} else if m == 2 {
+			if d < 0 || d > 28 {
+				return false
+			}
+		} else {
+			return false
 		}
 	}
-	return false
+	return true
+}
+func validateSearchForm(sC []string, sK []string) bool {
+	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
+
+	for j, sc := range sC {
+
+		for i, v := range validCriterion {
+
+			if sc == v {
+
+				if i == 9 || i == 10 || i == 11 || i == 12 || i == 13 || i == 14 {
+					if isDatevalid(sK[j]) == false || !isDate(sK[j]) {
+						return false
+					}
+				} else {
+					if !isAlphaNumeric(sK[j]) {
+						return false
+					}
+				}
+
+			}
+		}
+	}
+	return true
+}
+func removeIntialEndingspaces(str string) string {
+	s := 0
+	e := len(str) - 1
+
+	for ; str[s] == ' '; s++ {
+
+	}
+	for e = len(str) - 1; str[e] == ' '; e-- {
+
+	}
+
+	return str[s : e+1]
 }
