@@ -434,7 +434,7 @@
   <field name="approver" type="strings" indexed="true" required="true" stored="true"/>
   <field name="authTime" type="pdate" indexed="true" stored="true"/>
   <field name="authorizer" type="strings" indexed="true" required="false" stored="true"/>
-  <field name="body" type="text_en" indexed="true" required="true" stored="true"/>
+  <field name="body" type="strings" indexed="true" stored="true"/>
   <field name="createTime" type="pdate" indexed="true" required="false" stored="true"/>
   <field name="creator" type="string" indexed="true" required="true" stored="true"/>
   <field name="docDepartment" type="string" indexed="true" required="true" stored="true"/>
