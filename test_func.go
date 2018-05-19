@@ -8,8 +8,7 @@ import (
 )
 
 func main() {
-	//doc.DeleteInactiveDoc("A-125")
-	//doc.AddInactiveDoc()
+
 	r := router.GetRouter()
 	http.ListenAndServe(constant.ApplicationPort, r)
 }
