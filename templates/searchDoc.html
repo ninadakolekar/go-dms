@@ -129,13 +129,12 @@
             var dates = ["From Intiated Date","From Effective Date","From Expired Date","Till Intiated Date","Till Effective Date","Till Expired Date"]
             var selected = $(this).find(":selected").text();
             if($.inArray(selected,dates)!=-1){
-              console.log("hey");
-              $(this).siblings("input#search_key").first().attr("type","date");
-              $(this).siblings("input#search_key").first().addClass("datepicker");
+              $(this).parent().parent().siblings(".input-field").first().children("input").first().attr("type","date");
+              $(this).parent().parent().siblings(".input-field").first().children("input").first().addClass("datepicker");
             }
             else {
-              $(this).siblings("input#search_key").first().attr("type","text");
-              $(this).siblings("input#search_key").first().removeClass("datepicker");
+              $(this).parent().parent().siblings(".input-field").first().children("input").first().attr("type","text");
+              $(this).parent().parent().siblings(".input-field").first().children("input").first().removeClass("datepicker");
             }
           }
             jQuery(document).ready(function($){
@@ -167,7 +166,6 @@
               </div>\
               <div class="input-field col s12 m8">\
                 <input id="search_key"  type="text" class="validate" name="searchKeyword'+counter+'">\
-                <label for="search_key">Search Key word</label>\
               </div>\
             </div>';
             if (counter<=5){
@@ -258,12 +256,12 @@
                         <option value="till Eff Date" data-tooltip="yyyy-mm-dd">Till Effective Date</option>
                         <option value="till Exp Date" data-tooltip="yyyy-mm-dd">Till Expired Date</option>
                 </select>
-                <label for="search_by">Search Type</label>
+                <label for="search_by">Search Criterion</label>
             <span id="status"></span>
           </div>
           <div class="input-field col s12 m8">
+              
             <input id="search_key"  type="text" class="validate" name="searchKeyword1">
-            <label for="search_key">Search Key word</label>
           </div>
         </div>
 
