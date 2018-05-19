@@ -18,7 +18,7 @@ type InactiveDoc struct {
 	FlowStatus   uint32
 	DocTemplate  uint32
 	InitTS       string
-	DocumentBody string
+	DocumentBody []string
 }
 
 /*

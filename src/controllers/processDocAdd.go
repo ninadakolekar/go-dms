@@ -63,7 +63,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 				FlowStatus:   0,
 				DocTemplate:  0,
 				InitTS:       initTime,
-				DocumentBody: "Empty Body",
+				DocumentBody: []string{"this is a dummy ", "document ", "not created by me"},
 			}
 			// Insert the new document
 			resp, err := doc.AddInactiveDoc(newDoc)

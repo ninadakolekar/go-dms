@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
@@ -59,7 +60,8 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-
+			// query = "body:\"Empty Body\""
+			fmt.Println(query) //Debug
 			q := solr.Query{
 				Params: solr.URLParamMap{
 					"q": []string{query},
@@ -130,6 +132,13 @@ func makeSearchQuery(sC []string, sK []string) string {
 					querys = append(querys, validQueryPrifex[j]+"[ 2000-01-01T00:00:58Z TO "+sK[i]+"T23:59:59Z ]")
 				} else if j == 0 || j == 1 {
 					querys = append(querys, validQueryPrifex[j]+sK[i]+"*")
+				} else if j == 2 {
+					strs := strings.Split(sK[i], " ")
+					str := "*"
+					for _, e := range strs {
+						str = str + e + "*"
+					}
+					querys = append(querys, validQueryPrifex[j]+str)
 				} else {
 					querys = append(querys, validQueryPrifex[j]+sK[i])
 				}
@@ -202,8 +211,9 @@ func isDatevalid(s string) bool {
 }
 func validateSearchForm(sC []string, sK []string) bool {
 	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
-	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
 	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 
 	for j, sc := range sC {
 
@@ -215,8 +225,12 @@ func validateSearchForm(sC []string, sK []string) bool {
 					if isDatevalid(sK[j]) == false || !isDate(sK[j]) {
 						return false
 					}
+				} else if i == 2 {
+					if isKeyword(sK[j]) == false {
+						return false
+					}
 				} else {
-					if !isAlphaNumeric(sK[j]) {
+					if isAlphaNumeric(sK[j]) == false {
 						return false
 					}
 				}
