@@ -19,10 +19,17 @@ func GetRouter() *mux.Router {
 
 	// Define routes here
 	r.HandleFunc("/hello", controller.Index).Methods("GET")
+
+	r.HandleFunc("/doc/avail", controller.DocAvailable).Methods("POST")
+
 	r.HandleFunc("/doc/add", controller.DocAdd).Methods("GET")
+	r.HandleFunc("/doc/add", controller.ProcessDocAdd).Methods("POST")
+
 	r.HandleFunc("/doc/search", controller.DocSearch).Methods("GET")
 	r.HandleFunc("/doc/search", controller.ProcessDocSearch).Methods("POST")
-	r.HandleFunc("/doc/add", controller.ProcessDocAdd).Methods("POST")
-	r.HandleFunc("/doc/avail", controller.DocAvailable).Methods("POST")
+
+	r.HandleFunc("/doc/create/{id}", controller.DocCreate).Methods("GET")
+	r.HandleFunc("/doc/create", controller.ProcessDocCreate).Methods("POST")
+
 	return r
 }
