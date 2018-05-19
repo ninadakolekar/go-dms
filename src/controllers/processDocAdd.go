@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -15,7 +16,9 @@ import (
 
 // ProcessDocAdd ... Process the form-values and add the document
 func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
-
+	datab := false
+	datamsg := "hi"
+	errb := false
 	if r.Method == "POST" {
 
 		initTime := xmlTimeNow()
@@ -67,22 +70,26 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 			// Respond
 			if err != nil {
-				fmt.Println("ERROR ProcessDocAdd() Line 47: " + err.Error()) // Debug
-				fmt.Fprintf(w, "<script>alert('Failed to create new document.');</script>")
+				// fmt.Println("ERROR ProcessDocAdd() Line 47: " + err.Error()) // Debug
+				errb = true
+				datamsg = "Failed to create new document"
+
 			} else {
-				fmt.Println(resp) // Debug
-				fmt.Fprintf(w, "<script>alert('New document successfully created.');</script>")
+				log.Println(resp) // Debug
+				datab = true
+				datamsg = "Successfully Intiated New Document"
 			}
 
 		} else {
-			fmt.Fprintf(w, "<script>alert('Failed to create new document (ERROR: Invalid Document Number or Name).');</script>")
+			errb = true
+			datamsg = "Failed to create new document (Invalid Document Number or Name)."
 		}
 	}
 
 	// Render a new form
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
 
-	tmpl.Execute(w, templateData{Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators()})
+	tmpl.Execute(w, templateData{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators()})
 }
 
 // Validate Document Number

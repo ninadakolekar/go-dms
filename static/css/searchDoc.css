@@ -21,10 +21,19 @@ h1,h2,h3,h4,h5,h6,p,span,input,option{
   .error{
     color: red;
   }
+
+  .toast{
+    color: white;
+    background: red;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
   
   select {
     visibility: hidden;
     display: block;
     position: absolute;
   }
-  
+  .result-iniDate{
+    color: grey;
+  }

@@ -17,6 +17,9 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="../static/css/addNewDoc.css">
 
+  <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
+  <script type="text/javascript" src="../static/js/materialize.min.js"> </script>
+
   </head>
   <body>
 
@@ -104,7 +107,7 @@
     <div class="input-field col s12 m6">
     <select multiple name="docReviewers">
       <option value="" disabled></option>
-      {{range $idx, $e := .Reviewers}}
+      {{range $idx, $e := .Authorisers}}
       <option value="{{$e}}">{{$e}}</option>
       {{end}}
     </select>
@@ -129,10 +132,24 @@
     </form>
     </div>
   </div>
+  {{if .Errb}}
+  <a class="btn wrong" id="error" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
+  <script>
+     $("#error").trigger('click')
+     $(".toast").css('background-color','red')
+     $(".toast").css('font-weight','bold')
+  </script>
+  {{end}}
+  {{if .Datab}}
+  <a class="btn right" id="success" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
+  <script>
+     $("#success").trigger('click')
+     $(".toast").css('background-color','green')
+     $(".toast").css('font-weight','bold')
+  </script>
+  {{end}}
 </body>
 
-  <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
-  <script type="text/javascript" src="../static/js/materialize.min.js"> </script>
   
   <!-- Form Functionality -->
   <script>
