@@ -65,7 +65,6 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 					"q": []string{query},
 				},
 				Rows: 100,
-				// Sort: "flowStatus ASC",
 			}
 
 			res, err := s.Select(&q)
@@ -76,28 +75,25 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 			results := res.Results
 			if results.Len() == 0 {
-				fmt.Println("notfound") //Debug
 				alert = true
 				alertmsg = "No Results Found!"
 			} else {
 				for i := 0; i < results.Len(); i++ {
-					fmt.Println(results.Get(i)) //Debug
 					links = append(links, lINK{results.Get(i).Field("title").(string), results.Get(i).Field("initTime").(string), results.Get(i).Field("id").(string)})
 				}
 				data = true
-				//	fmt.Println("before sorting\n", links)
+				//	fmt.Println("before sorting\n", links) //Debug
 				links = sortby(links, sortOrder)
-				//	fmt.Println("after sorting \n", links)
+				//	fmt.Println("after sorting \n", links) //Debug
 			}
 
 		} else {
-			fmt.Println("invalid") //Debug
 			alert = true
 			alertmsg = "Invalid Search Query!"
 		}
 	}
 
-	tmpl := template.Must(template.ParseFiles("templates/searchDocMultiple.html"))
+	tmpl := template.Must(template.ParseFiles("templates/searchDoc.html"))
 	tmpl.Execute(w, struct {
 		Alertb   bool
 		Alertmsg string
@@ -138,7 +134,7 @@ func makeSearchQuery(sC []string, sK []string) string {
 					querys = append(querys, validQueryPrifex[j]+sK[i])
 				}
 
-				fmt.Println(querys[counter])
+				// fmt.Println(querys[counter])
 				counter++
 			}
 		}

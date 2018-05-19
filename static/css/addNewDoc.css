@@ -27,3 +27,15 @@ select {
   display: block;
   position: absolute;
 }
+
+.success{
+  color: white;
+  background: green;
+  font-weight: bold;
+}
+
+.failure{
+  color: white;
+  background: red;
+  font-weight: bold;
+}
