@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+
+    <title>Search Form</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+  
+    <!-- Materialize Stylesheet -->
+    <link rel="stylesheet" href="../static/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/searchDoc.css">
+    <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
+
+
+  </head>
+  <body>
+
+  <div class="container">
+
+      <h4 class="center" id="title">Search Form</h4> <br>
+
+    <div class="row">
+      <form id="search-form" class="col s12" action="/doc/search" method="post">
+        <div class="row">
+          <div class="input-field col s12 m4">
+                <select name="criteria1" id="search_by">
+                        <option class="dropdown_default_option" value="" disabled selected></option>
+                        <option value="docNumber">Document Number</option>
+                        <option value="docName">Document Name</option>
+                        <option value="docKeyword">Keyword</option>
+                        <option value="initiator">Initiator</option>
+                        <option value="creator">Creator</option>
+                        <option value="reviewer">Reviewer</option>
+                        <option value="approver">Approver</option>
+                        <option value="auth">Authorizer</option>
+                        <option value="dept">Department</option>
+                        <option value="from Init Date" data-tooltip="yyyy-mm-dd">From Intiated Date</option>
+                        <option value="from Eff Date" data-tooltip="yyyy-mm-dd">From Effective Date</option>
+                        <option value="from Exp Date" data-tooltip="yyyy-mm-dd">From Expired Date</option>
+                        <option value="till Init Date" data-tooltip="yyyy-mm-dd">Till Intiated Date</option>
+                        <option value="till Eff Date" data-tooltip="yyyy-mm-dd">Till Effective Date</option>
+                        <option value="till Exp Date" data-tooltip="yyyy-mm-dd">Till Expired Date</option>
+                </select>
+                <label for="search_by">Search Type</label>
+            <span id="status"></span>
+          </div>
+          <div class="input-field col s12 m8">
+            <input id="search_key"  type="text" class="validate" name="searchKeyword1">
+            <label for="search_key">Search Key word</label>
+          </div>
+        </div>
+
+    <div id="add-field-container" class="left">
+            <a class="btn-floating btn-small waves-effect waves-light green" id="add-field-btn"><i class="material-icons">add</i>Add filter</a>
+
+    </div>
+    <div class="right">
+        <label for="sort_select">Sort Order</label>
+        <select name="sort" id="sort_select">
+          <option class="dropdown_default_option" value="last updated time" disabled selected></option>
+            <option value="alexical">Ascending lexical order</option>
+            <option value="dlexical">Desending lecical order</option>
+            <option value="aTime">Ascending time</option>
+            <option value="dTime">Desending time</option>
+        </select>
+    </div>
+    
+    <br><br>
+    <div class="center">
+          <button type="submit" class="btn tooltipped" data-position="left" data-delay="50" data-tooltip="Click here to submit your form">Submit</button>
+          <button id="reset-btn" class="btn tooltipped" data-position="right" data-delay="50" data-tooltip="Click here to reset your form">Reset</button>
+    </div>
+
+    </form>
+    </div>
+  </div>
+
+  
+
+{{if .Alertb}}
+  <script>
+    alert("{{.Alertmsg}}");
+  </script>
+{{end}}
+{{if .Datab}}
+{{.Data}}
+<div class="result-container container">
+    <div class="results center">
+        <h4>Search Results</h4>
+        <div class="row">
+            {{range $idx, $e := .Data}}
+                <div class="col s12"><a href="/docs/{{$e}}">{{$e.Docname}} - <span class="result-doc-dt"> {{$e.Idate}}</span></a></div>
+            {{end}}
+            <script>
+              var formatDate = function() {
+                  $('.result-doc-dt').each(function(){
+                    var date = $(this).html();
+                    var formattedDate = date.split("T")[0];
+                    var fDate = formattedDate.split("-");
+                    $(this).html("Initiatied on "+fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+              })
+              }
+              formatDate();
+            </script>
+        </div>
+      </div>
+</div>
+{{end}}
+    
+
+</body>
+
+  
+  <script type="text/javascript" src="../static/js/materialize.min.js"> </script>
+  
+  <!-- Form Functionality -->
+  <script>
+  jQuery(function($){
+      $('select').formSelect();
+       window.$('#reset-btn').click(function(){
+         window.$('#search-form').find("input").val("");
+//         window.$('.error').remove();
+       });
+       window.$('li.disabled').click(function(){
+          $(this).parent('ul').sibling('input').val("");
+       });
+      //  $('.datepicker').datepicker();
+    });
+  </script>
+
+    <!-- Form Validation -->
+    <script src="../static/js/jquery.validate.min.js"></script>
+    <script>
+         var remClick = function(){
+            if(counter == 1) {
+                $("#rem-field-btn").remove();
+            }
+            else if(counter == 2){
+              $("#field2").remove();
+              counter--;
+            }
+            else if(counter == 3){
+              $("#field3").remove();
+              counter--;
+            }
+            else if(counter == 4){
+              $("#field4").remove();
+              counter--;
+            }
+            else if(counter == 5){
+              $("#field5").remove();
+              counter--;
+            }
+            else if(counter == 6){
+              $("#field6").remove();
+              $("#add-field-btn").removeClass("disabled");
+              counter--;
+            }
+            if(counter == 1) {
+                $("#rem-field-btn").remove();
+                remVisible = false;
+            }
+        }
+        var validate = function() {
+            $("#search-form").validate({
+            rules: {
+              criteria1: "required",
+              searchKeyword1: "required",
+              criteria2: "required",
+              searchKeyword2: "required",
+              criteria3: "required",
+              searchKeyword3: "required",
+              criteria4: "required",
+              searchKeyword4: "required",
+              criteria5: "required",
+              searchKeyword5: "required",
+              criteria6: "required",
+              searchKeyword6: "required",
+              sort: "required"
+            },
+            messages: {
+              criteria: {
+                required: "Please select a type",
+                
+              },
+              searchKeyword: {
+                required: "Please specify a key word",
+                
+              },
+              sort: {
+                required: "Please specify a sorting order",
+              },
+              
+            },
+            errorElement : 'div',
+            errorPlacement: function(error, element) {
+              var placement = $(element).data('error');
+              if (placement) {
+                $(placement).append(error)
+              } else {
+                error.insertAfter(element);
+              }
+            },
+            submitHandler: function(form) {
+              form.submit();
+            }
+          });
+        }
+        jQuery(document).ready(function($){
+          validate();
+        });
+        var counter = 1;
+        var remVisible = false;
+        $("#add-field-btn").click(function(){
+         
+            counter++;
+                newForm = '<div id=field'+counter+' class="row"> \
+          <div class="input-field col s12 m4">\
+                <select name="criteria'+counter+'">\
+                  <option class="dropdown_default_option" value="" disabled selected></option>\
+                        <option value="docNumber">Document Number</option>\
+                        <option value="docName">Document Name</option>\
+                        <option value="docKeyword">Keyword</option>\
+                        <option value="initiator">Initiator</option>\
+                        <option value="creator">Creator</option>\
+                        <option value="reviewer">Reviewer</option>\
+                        <option value="approver">Approver</option>\
+                        <option value="auth">Authorizer</option>\
+                        <option value="dept">Department</option>\
+                        <option value="from Init Date" title="yyyy-mm-dd">From Intiated Date</option>\
+                        <option value="from Eff Date" title="yyyy-mm-dd">From Effective Date</option>\
+                        <option value="from Exp Date" title="yyyy-mm-dd">From Expired Date</option>\
+                        <option value="till Init Date" title="yyyy-mm-dd">Till Intiated Date</option>\
+                        <option value="till Eff Date" title="yyyy-mm-dd">Till Effective Date</option>\
+                        <option value="till Exp Date" title="yyyy-mm-dd">Till Expired Date</option>\
+                </select>\
+                <label>Search Type</label>\
+            <span id="status"></span>\
+          </div>\
+          <div class="input-field col s12 m8">\
+            <input id="search_key"  type="text" class="validate" name="searchKeyword'+counter+'">\
+            <label for="search_key">Search Key word</label>\
+          </div>\
+        </div>';
+        if (counter<=5){
+          $("#add-field-btn").removeClass("disabled");
+            $("#add-field-container").before(newForm);
+            $('select').formSelect();
+            validate();
+        }
+
+        else if(counter==6) {
+            $("#add-field-container").before(newForm);
+            $('select').formSelect();
+            validate();
+            $("#add-field-btn").addClass("disabled");
+        }
+        
+        if(counter >= 2 && !remVisible){
+            var remHtml = '&nbsp;<a class="btn-floating btn-small waves-effect waves-light red" id="rem-field-btn" onclick="remClick()"><i class="material-icons">remove</i>Remove filter</a>';
+            $("#add-field-btn").after(remHtml);
+            remVisible = true;
+        }
+        else if(counter >= 3) {
+
+        }
+        if(counter == 1) {
+            $("#rem-field-btn").remove();
+            remVisible = false;;
+        }
+
+    });
+        
+    </script>
+
+    <script>
+        jQuery(document).ready(function($){
+            var searchDate = function() {
+              var newDateFields = ""
+              $('#date-search-link').after();
+            }
+            
+        });
+    </script>
+
+    <script>
+      var formatDate = function() {
+        $('.result-doc-dt').each(function(){
+          var date = $(this).attr("data");
+          $(this).html() = date;
+        })
+      }
+    </script>
+
+</html>

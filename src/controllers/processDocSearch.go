@@ -5,20 +5,42 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+	"sort"
 	"strconv"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
 )
 
+type lINK struct {
+	DocName string
+	Idate   string
+	DocId   string
+}
+type docNameSorter []lINK
+type idateSorter []lINK
+
+func (a docNameSorter) Len() int           { return len(a) }
+func (a docNameSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a docNameSorter) Less(i, j int) bool { return a[i].DocName < a[j].DocName }
+
+func (a idateSorter) Len() int           { return len(a) }
+func (a idateSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a idateSorter) Less(i, j int) bool { return a[i].Idate < a[j].Idate }
+
 //ProcessDocSearch ... process doc search
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
+
+	alert := false
+	data := false
+	alertmsg := "no msg"
+	links := []lINK{}
 	if r.Method == "POST" {
 		r.ParseForm()
 		sCriteria := []string{"*", "*", "*", "*", "*", "*", "*"}
 		sKeyword := []string{"*", "*", "*", "*", "*", "*", "*"}
 		sortOrder := r.Form["sort"][0]
-		fmt.Println(sortOrder) //Debug
+
 		for i := 0; i < 6; i++ {
 			if len(r.Form["criteria"+strconv.Itoa(i+1)]) > 0 {
 				sCriteria[i] = r.Form["criteria"+strconv.Itoa(i+1)][0]
@@ -32,7 +54,6 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 		if validateSearchForm(sCriteria, sKeyword) == true {
 
 			query := makeSearchQuery(sCriteria, sKeyword)
-			fmt.Println("QUERY :: ", query)
 
 			s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 			if err != nil {
@@ -44,6 +65,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 					"q": []string{query},
 				},
 				Rows: 100,
+				// Sort: "flowStatus ASC",
 			}
 
 			res, err := s.Select(&q)
@@ -53,31 +75,49 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			}
 
 			results := res.Results
-			for i := 0; i < results.Len(); i++ {
-				fmt.Println(results.Get(i)) //Debug
-			}
 			if results.Len() == 0 {
 				fmt.Println("notfound") //Debug
+				alert = true
+				alertmsg = "No Results Found!"
+			} else {
+				for i := 0; i < results.Len(); i++ {
+					fmt.Println(results.Get(i)) //Debug
+					links = append(links, lINK{results.Get(i).Field("title").(string), results.Get(i).Field("initTime").(string), results.Get(i).Field("id").(string)})
+				}
+				data = true
+				//	fmt.Println("before sorting\n", links)
+				links = sortby(links, sortOrder)
+				//	fmt.Println("after sorting \n", links)
 			}
 
 		} else {
 			fmt.Println("invalid") //Debug
+			alert = true
+			alertmsg = "Invalid Search Query!"
 		}
 	}
+
 	tmpl := template.Must(template.ParseFiles("templates/searchDocMultiple.html"))
-	tmpl.Execute(w, struct{ s bool }{true})
+	tmpl.Execute(w, struct {
+		Alertb   bool
+		Alertmsg string
+		Datab    bool
+		Data     []lINK
+	}{alert, alertmsg, data, links})
 }
 
-func makeSortOrder(sO string) string {
-	s := []string{"alexical", "dlexical"}
-	S := []string{"title ASC", "title DSC"}
-	for i, v := range s {
-		if sO == v {
-			return S[i]
-		}
+func sortby(l []lINK, so string) []lINK {
+
+	if so == "alexical" {
+		sort.Sort(docNameSorter(l))
+
+	} else if so == "aTime" {
+		sort.Sort(idateSorter(l))
+
 	}
-	return "title ASC"
+	return l
 }
+
 func makeSearchQuery(sC []string, sK []string) string {
 	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
 	validQueryPrifex := []string{"id:", "title:", "body:", "initiator:", "creator:", "reviewer:", "approver:", "authorizer:", "docDepartment:", "initTime:", "effDate:", "expDate:", "initTime:", "effDate:", "expDate:"}
@@ -91,7 +131,7 @@ func makeSearchQuery(sC []string, sK []string) string {
 				if j == 10 || j == 9 || j == 11 {
 					querys = append(querys, validQueryPrifex[j]+"["+sK[i]+"T23:59:59Z TO *]")
 				} else if j == 12 || j == 13 || j == 14 {
-					querys = append(querys, validQueryPrifex[j]+"[ 0001-01-01T00:00:58Z TO "+sK[i]+"T23:59:59Z ]")
+					querys = append(querys, validQueryPrifex[j]+"[ 2000-01-01T00:00:58Z TO "+sK[i]+"T23:59:59Z ]")
 				} else if j == 0 || j == 1 {
 					querys = append(querys, validQueryPrifex[j]+sK[i]+"*")
 				} else {
