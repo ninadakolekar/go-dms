@@ -65,6 +65,24 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 		doc.CreateTS = s1.Field("createTime").(string)
 	}
 
+	documentBody := s1.Field("body")
+	if documentBody == nil {
+		doc.DocumentBody = nil
+	} else {
+		temp, ok := s1.Field("body").([]interface{})
+		if ok {
+			for _, v := range temp {
+				item, okk := v.(string)
+				if okk {
+					doc.DocumentBody = append(doc.DocumentBody, item)
+				} else {
+					break
+				}
+			}
+			fmt.Println("Body R: ", doc.DocumentBody)
+		}
+	}
+
 	reviewTime := s1.Field("reviewTime")
 	if reviewTime == nil {
 		doc.ReviewTS = ""
