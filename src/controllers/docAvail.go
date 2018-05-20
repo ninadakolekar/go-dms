@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt" // Debug
+	"html"
 	"net/http"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
@@ -11,7 +12,7 @@ import (
 // DocAvailable ... Checks if a document name is available
 func DocAvailable(w http.ResponseWriter, r *http.Request) {
 
-	DocNo := r.FormValue("docNumber")
+	DocNo := html.EscapeString(r.FormValue("docNumber"))
 
 	// if !validateDocNo(DocNo) {
 	// 	fmt.Fprintf(w, "<span> INVALID </span>")

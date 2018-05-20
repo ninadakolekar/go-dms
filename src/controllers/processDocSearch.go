@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"html"
 	"html/template"
 	"net/http"
 	"regexp"
@@ -40,12 +41,12 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		sCriteria := []string{"*", "*", "*", "*", "*", "*", "*"}
 		sKeyword := []string{"*", "*", "*", "*", "*", "*", "*"}
-		sortOrder := r.Form["sort"][0]
+		sortOrder := html.EscapeString(r.Form["sort"][0])
 
 		for i := 0; i < 6; i++ {
 			if len(r.Form["criteria"+strconv.Itoa(i+1)]) > 0 {
-				sCriteria[i] = r.Form["criteria"+strconv.Itoa(i+1)][0]
-				sKeyword[i] = r.Form["searchKeyword"+strconv.Itoa(i+1)][0]
+				sCriteria[i] = html.EscapeString(r.Form["criteria"+strconv.Itoa(i+1)][0])
+				sKeyword[i] = html.EscapeString(r.Form["searchKeyword"+strconv.Itoa(i+1)][0])
 			}
 		}
 		for i := 0; i < 6; i++ {
@@ -60,7 +61,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			}
-			// query = "body:\"Empty Body\""
+
 			fmt.Println(query) //Debug
 			q := solr.Query{
 				Params: solr.URLParamMap{
@@ -84,7 +85,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 					links = append(links, lINK{results.Get(i).Field("title").(string), results.Get(i).Field("initTime").(string), results.Get(i).Field("id").(string)})
 				}
 				data = true
-				//	fmt.Println("before sorting\n", links) //Debug
+
 				links = sortby(links, sortOrder)
 				//	fmt.Println("after sorting \n", links) //Debug
 			}
@@ -213,7 +214,7 @@ func validateSearchForm(sC []string, sK []string) bool {
 	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
 	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
 	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
-	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9_ ]+$`).MatchString
 
 	for j, sc := range sC {
 
