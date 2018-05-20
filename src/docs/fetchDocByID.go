@@ -79,7 +79,6 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 					break
 				}
 			}
-			fmt.Println("Body R: ", doc.DocumentBody)
 		}
 	}
 

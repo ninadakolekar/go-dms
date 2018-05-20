@@ -1,0 +1,17 @@
+h1,h2,h3,h4,h5,h6,p,span,input,option{
+    font-family: 'Roboto';
+}
+  
+.container {
+    border:2px solid #42a5f5;
+    padding: 15px;
+    margin-top:2.3rem;
+}
+
+#initDate{
+    font-size: 1.8em;
+}
+
+#docNumber{
+    font-size: 1.8em;
+}
