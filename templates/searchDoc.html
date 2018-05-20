@@ -310,7 +310,7 @@
                     <li class="collection-header"><h4>Results</h4></li>    
                     {{range $idx, $e := .Data}}
                          <li class="collection-item" style="list-style: none">
-                            <b>{{$e.DocName}}</b> <i class="result-iniDate right"> Initiated <span class="result-doc-dt">{{$e.Idate}}</span><a href="/docs/view/{{$e.DocId}}" class="secondary-content"> &nbsp;&nbsp;&nbsp;<i class="material-icons">send</i></a></i>
+                            <b>{{$e.DocName}}</b> <i class="result-iniDate right"> Initiated <span class="result-doc-dt">{{$e.Idate}}</span><a href="/doc/view/{{$e.DocId}}" class="secondary-content"> &nbsp;&nbsp;&nbsp;<i class="material-icons">send</i></a></i>
                          </li>
 
                     {{end}}
