@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -25,8 +24,8 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 			paraCount, err := strconv.Atoi(r.FormValue("paraCount"))
 			if err != nil {
-				log.Fatal("Invalid Paragraph Count!", err)
-				log.Fatal("Invalid Paragraph Count! (paracount) ProcessDocCreate Line 25", err) // Debug
+				fmt.Println("Invalid Paragraph Count!", err)
+				fmt.Println("Invalid Paragraph Count! (paracount) ProcessDocCreate Line 25", err) // Debug
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			}
 
@@ -41,8 +40,8 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 			document, err := docs.FetchDocByID(docNumber)
 			if err != nil {
-				log.Fatal("ERROR Fetching document ProcessDocCreate Line 40") // Debug
-				log.Fatal(err)
+				fmt.Println("ERROR Fetching document ProcessDocCreate Line 40") // Debug
+				fmt.Println(err)
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			}
 

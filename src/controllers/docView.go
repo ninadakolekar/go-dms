@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	docs "github.com/ninadakolekar/aizant-dms/src/docs"
+	"github.com/ninadakolekar/aizant-dms/src/docs"
 )
 
-// DocCreate ... Handles request to create document
-func DocCreate(w http.ResponseWriter, r *http.Request) {
+// DocView ... View mode handler
+func DocView(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
 
 		vars := mux.Vars(r)
@@ -19,18 +19,24 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 
 		if docs.ValidateDocNo(id) {
 
-			documentTitle, _, _, err := fetchCreateDocDetails(id)
+			documentTitle, documentBody, documentInitDate, err := fetchViewDocDetails(id)
 
 			if err != nil {
 				fmt.Println("Failed to fetch document: ", err)
 				return
 			}
 
-			tmpl := template.Must(template.ParseFiles("templates/createDoc.html"))
-			tmpl.Execute(w, struct {
-				DocNumber string
-				DocTitle  string
-			}{id, documentTitle})
+			if documentBody == nil {
+				fmt.Fprintf(w, "<script>alert('Document not created!');</script>")
+			} else {
+				tmpl := template.Must(template.ParseFiles("templates/viewDoc.html"))
+				tmpl.Execute(w, struct {
+					DocNumber   string
+					DocTitle    string
+					DocBody     []string
+					DocInitDate string
+				}{id, documentTitle, documentBody, documentInitDate})
+			}
 
 		} else {
 
@@ -41,7 +47,7 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fetchCreateDocDetails(id string) (string, []string, string, error) {
+func fetchViewDocDetails(id string) (string, []string, string, error) {
 
 	document, err := docs.FetchDocByID(id)
 
