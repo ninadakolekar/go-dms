@@ -42,8 +42,13 @@
             {{ range $index, $body := .DocBody}}
                 <div class="row">
                     <div class="col s12">
-                            <p class="bodyText flow-text">
-                                {{ $body}}
+                            <p class="bodyText flow-text" id="bodyText{{$index}}">
+                                <script>
+                                    var str = {{$body}}
+                                    var id = "bodyText" + {{ $index }}
+                                    str = str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+                                    document.getElementById(id).innerHTML = str
+                                </script>
                             </p>
                     </div>
                 </div>
