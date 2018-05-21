@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
@@ -14,6 +15,10 @@ import (
 
 // ProcessDocAddEdit ... Process the form-values and add the document
 func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id := vars["id"]
+
 	datab := false
 	datamsg := "hi"
 	errb := false
@@ -50,7 +55,7 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 
 		// Server-side validation
 
-		if doc.ValidateDocNo(docNumber) && doc.ValidateDocName(docName) {
+		if doc.ValidateDocNo(docNumber) && doc.ValidateDocName(docName) && docNumber == id {
 			// Make a new inactiveDoc struct using received form data
 
 			newDoc := model.InactiveDoc{
