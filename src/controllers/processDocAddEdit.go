@@ -12,8 +12,8 @@ import (
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
 )
 
-// ProcessDocAdd ... Process the form-values and add the document
-func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
+// ProcessDocAddEdit ... Process the form-values and add the document
+func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 	datab := false
 	datamsg := "hi"
 	errb := false
@@ -50,7 +50,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 		// Server-side validation
 
-		if !doc.ValidateDocNo(docNumber) && doc.ValidateDocName(docName) {
+		if doc.ValidateDocNo(docNumber) && doc.ValidateDocName(docName) {
 			// Make a new inactiveDoc struct using received form data
 
 			newDoc := model.InactiveDoc{
@@ -88,7 +88,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 			} else {
 				log.Println(resp) // Debug
 				datab = true
-				datamsg = "Successfully Intiated New Document"
+				datamsg = "Successfully edited document details"
 			}
 
 		} else {
@@ -98,10 +98,6 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render a new form
-	http.Redirect(w, r, "/doc/add", http.StatusSeeOther)
-
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
-
-	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: model.InactiveDoc{}})
-
+	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: true, Document: model.InactiveDoc{}})
 }

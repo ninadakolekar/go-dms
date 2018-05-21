@@ -17,15 +17,49 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="../static/css/addNewDoc.css">
 
-  <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
-  <script type="text/javascript" src="../static/js/materialize.min.js"> </script>
+    <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../static/js/materialize.min.js"> </script>
+
+    {{ if .DocumentExist}}
+
+    <title>Edit Document Details</title>
+  
+    <!-- Materialize Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/materialize.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/addNewDoc.css">
+
+    <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+
+    {{ end }}
+
+    {{ if .Redirect}}
+
+    <title>New Document</title>
+  
+    <!-- Materialize Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/materialize.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/addNewDoc.css">
+
+    <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+
+    {{ end }}
 
   </head>
   <body>
 
     <div class="container">
 
-      <h4 class="center" id="title">New Document</h4> <br>
+      
+      {{ if .DocumentExist }}
+        <h4 class="center" id="title">Edit Document Details </h4>
+      {{ else }}
+        <h4 class="center" id="title">New Document</h4>
+      {{ end }}
+      <br>
 
 
     <div class="row">
@@ -105,7 +139,7 @@
     </div>
     <div class="row">
     <div class="input-field col s12 m6">
-    <select multiple name="docReviewers">
+    <select multiple id="docReviewers" name="docReviewers">
       <option value="" disabled></option>
       {{range $idx, $e := .Authorisers}}
       <option value="{{$e}}">{{$e}}</option>
@@ -114,7 +148,7 @@
     <label>Reviewers</label>
     </div>
     <div class="input-field col s12 m6">
-    <select multiple name="docApprovers">
+    <select multiple name="docApprovers" id="docApprovers">
       <option value="" disabled></option>
       {{range $idx, $e := .Approvers}}
            <option value="{{$e}}">{{$e}}</option>
@@ -149,6 +183,13 @@
   </script>
   {{end}}
 </body>
+
+{{ if .DocumentExist}}
+  <script src="../../static/js/jquery.validate.min.js"></script>
+{{ end }}
+{{ if .Redirect}}
+  <script src="../../static/js/jquery.validate.min.js"></script>
+{{ end }}
 
   
   <!-- Form Functionality -->
@@ -248,5 +289,46 @@
           });
         });
     </script>
+
+    <!-- If existing document -->
+    {{ if .DocumentExist }}
+
+      <script>
+
+          $("label[for='doc_number']").addClass('active')
+          $("#doc_number").attr( "value", {{ .Document.DocNo }} );
+
+          $("label[for='doc_name']").addClass('active')
+          $("#doc_name").attr( "value", {{ .Document.Title }} );
+
+          $("#select_process").val( {{ .Document.DocProcess }} );
+
+          $("#select_document_type").val( {{ .Document.DocType }} );
+
+          $("#doc_dept").val( {{ .Document.DocDept }} );
+
+          var effDate = {{ .Document.DocEffDate }};
+          var res = effDate.split("T")[0].split("-");
+          document.getElementById('effDate').valueAsDate = new Date(res[0],res[1],res[2]);
+
+          var effDate = {{ .Document.DocExpDate }};
+          var res = effDate.split("T")[0].split("-");
+          document.getElementById('exprDate').valueAsDate = new Date(res[0],res[1],res[2]);
+
+          $("#create_doc").val( {{ .Document.Creator }} );
+
+          $("#auth_doc").val( {{ .Document.Authorizer }} );
+
+          $("#docReviewers").val(  {{ .Document.Reviewer }} );
+          $("#docReviewers").trigger("change");
+
+          $("#docApprovers").val(  {{ .Document.Approver }} );
+          $("#docApprovers").trigger("change");
+        
+          $("#add-doc-form").attr("action",window.location.pathname);
+
+      </script>
+
+    {{ end }}
 
 </html>
