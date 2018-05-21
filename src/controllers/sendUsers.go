@@ -3,14 +3,15 @@ package controllers
 import (
 	"fmt"
 
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
 )
 
-//SendApprovers ... sends present approvers in users
+//SendApprovers ... Returns the list of available Approvers
 func SendApprovers() []string {
 	str := []string{}
 
-	s, err := solr.Init("localhost", 8983, "user")
+	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
 		fmt.Println(err)
 		return str
@@ -41,17 +42,17 @@ func SendApprovers() []string {
 	return str
 }
 
-//SendReviewers ... sends reviewers
+// SendReviewers ... Returns the list of available Reviewers
 func SendReviewers() []string {
 	str := []string{}
 
-	s, err := solr.Init("localhost", 8983, "user")
+	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
 		fmt.Println(err)
 		return str
 	}
 
-	q := solr.Query{ //checking in backend whether any other documnet with same id is present
+	q := solr.Query{
 
 		Params: solr.URLParamMap{
 			"q": []string{"avRw:true"},
@@ -75,10 +76,12 @@ func SendReviewers() []string {
 
 	return str
 }
+
+// SendCreators ... Returns the list of available Creators
 func SendCreators() []string {
 	str := []string{}
 
-	s, err := solr.Init("localhost", 8983, "user")
+	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
 		fmt.Println(err)
 		return str
@@ -108,10 +111,12 @@ func SendCreators() []string {
 
 	return str
 }
+
+// SendAuthoriser ... Returns the list of available authorizers
 func SendAuthoriser() []string {
 	str := []string{}
 
-	s, err := solr.Init("localhost", 8983, "user")
+	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
 		fmt.Println(err)
 		return str
