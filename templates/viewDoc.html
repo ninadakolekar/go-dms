@@ -24,9 +24,21 @@
                 <h4 class="col s12 center" id="docTitle">{{ .DocTitle }}</h4>
             </div>
             <div class="row">
-                <div class="col s12 m6 left" id="docNumber">Document Number: {{ .DocNumber }}</div>
-                <div class="col s12 m3 right" id="initDate">Initiated {{ .DocInitDate }}</div>
-            </div>           
+                <div class="col s12 m6 left flow-text" id="docNumber">Document Number: {{ .DocNumber }}</div>
+                <div class="col s12 m3 right flow-text" id="initDate">Initiated <span class="date">{{ .DocInitDate }}</span></div>
+            </div>
+            <div class="row more">
+                <div class="col s12 m6 left flow-text" id="docType">Document Type: {{ .DocType }}</div>
+                <div class="col s12 m3 right flow-text" id="docDept">Department: {{ .DocDept }}</div>
+            </div>
+            <div class="row more">
+                <div class="col s12 m6 left flow-text" id="docEffDate">Effective Date:  <span class="date">{{ .DocEffDate }}</span></div>
+                <div class="col s12 m3 right flow-text" id="docExpDate">Expires <span class="date">{{ .DocExpDate }}</span></div>
+            </div>
+            <div class="row">
+                <a class="col s12 m4" id="more-details">Show more details</a>
+            </div>
+            <hr>       
             {{ range $index, $body := .DocBody}}
                 <div class="row">
                     <div class="col s12">
@@ -40,4 +52,29 @@
     </body>
     <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
     <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+    <script>
+         var formatDate = function() {
+            $('.date').each(function(){
+            var date = $(this).html();
+            var formattedDate = date.split("T")[0];
+            var fDate = formattedDate.split("-");
+            $(this).html(fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+            })
+        }
+        formatDate();
+    </script>
+    <script>
+        $("body").on('click','#more-details',function(){
+            $(".more").css("display","block")
+            var lessDetails = '<a class="col s12 m4" id="hide-details">Hide details</a>'
+            $("#more-details").before(lessDetails);
+            $("#more-details").remove();
+        });
+        $("body").on('click','#hide-details',function(){
+            $(".more").css("display","none")
+            var moreDetails = '<a class="col s12 m4" id="more-details">Show more details</a>'
+            $("#hide-details").before(moreDetails);
+            $("#hide-details").remove();
+        });
+    </script>
 </html>

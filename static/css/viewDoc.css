@@ -8,10 +8,10 @@ h1,h2,h3,h4,h5,h6,p,span,input,option{
     margin-top:2.3rem;
 }
 
-#initDate{
-    font-size: 1.8em;
+.more{
+    display: none;
 }
 
-#docNumber{
-    font-size: 1.8em;
+#more-details, #hide-details{
+    cursor: pointer;
 }

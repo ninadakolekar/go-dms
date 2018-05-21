@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/ninadakolekar/aizant-dms/src/docs"
@@ -19,14 +18,14 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 
 		if docs.ValidateDocNo(id) {
 
-			documentTitle, documentBody, documentInitDate, err := fetchViewDocDetails(id)
+			document, err := docs.FetchDocByID(id)
 
 			if err != nil {
 				fmt.Println("Failed to fetch document: ", err)
 				return
 			}
 
-			if documentBody == nil {
+			if document.DocumentBody == nil {
 				fmt.Fprintf(w, "<script>alert('Document not created!');</script>")
 			} else {
 				tmpl := template.Must(template.ParseFiles("templates/viewDoc.html"))
@@ -35,7 +34,13 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 					DocTitle    string
 					DocBody     []string
 					DocInitDate string
-				}{id, documentTitle, documentBody, documentInitDate})
+
+					// Extra Details
+					DocDept    string
+					DocType    string
+					DocEffDate string
+					DocExpDate string
+				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate})
 			}
 
 		} else {
@@ -45,18 +50,4 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-}
-
-func fetchViewDocDetails(id string) (string, []string, string, error) {
-
-	document, err := docs.FetchDocByID(id)
-
-	if err != nil {
-		return "", nil, "", err
-	}
-
-	date := strings.Split(strings.Split(document.InitTS, "T")[0], "-")
-	initDate := date[2] + "/" + date[1] + "/" + date[0]
-
-	return document.Title, document.DocumentBody, initDate, nil
 }
