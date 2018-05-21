@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"html"
 	"net/http"
 	"strconv"
 
@@ -16,13 +17,13 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 		createTime := utility.XMLTimeNow()
 
-		docNumber := r.FormValue("docNumber")
+		docNumber := html.EscapeString(r.FormValue("docNumber"))
 
 		// Server-side validation of doc number
 
 		if docs.ValidateDocNo(docNumber) {
 
-			paraCount, err := strconv.Atoi(r.FormValue("paraCount"))
+			paraCount, err := strconv.Atoi(html.EscapeString(r.FormValue("paraCount")))
 			if err != nil {
 				fmt.Println("Invalid Paragraph Count!", err)
 				fmt.Println("Invalid Paragraph Count! (paracount) ProcessDocCreate Line 25", err) // Debug
@@ -33,7 +34,7 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 			for i := 1; i <= paraCount; i++ {
 				currentName := "para" + strconv.Itoa(i)
-				documentBody[i-1] = r.FormValue(currentName)
+				documentBody[i-1] = html.EscapeString(r.FormValue(currentName))
 			}
 
 			fmt.Println(docNumber, documentBody) // Debug
