@@ -19,7 +19,7 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 
 		if docs.ValidateDocNo(id) {
 
-			documentTitle, _, _, err := fetchCreateDocDetails(id)
+			documentTitle, documentBody, _, err := fetchCreateDocDetails(id)
 
 			if err != nil {
 				fmt.Println("Failed to fetch document: ", err)
@@ -28,9 +28,11 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 
 			tmpl := template.Must(template.ParseFiles("templates/createDoc.html"))
 			tmpl.Execute(w, struct {
-				DocNumber string
-				DocTitle  string
-			}{id, documentTitle})
+				DocNumber  string
+				DocTitle   string
+				DocBody    []string
+				DocBodyLen int
+			}{id, documentTitle, documentBody, len(documentBody)})
 
 		} else {
 

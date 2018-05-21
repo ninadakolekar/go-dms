@@ -119,5 +119,25 @@
       });
     </script>
 
+    {{ if .DocBody }}
+      {{ range $index, $body := .DocBody }}
+        {{ if eq $index 0}}
+          <script>
+            var body = {{ $body }}
+            $("textarea1").trigger('click')
+            $("#textarea1").val(body)
+          </script>
+        {{ else }}
+          <script>
+            var body = {{ $body }}
+            var index = {{ $index }} + 1
+            $("#add-field-btn").trigger('click')
+            $("textarea"+index).trigger('click')
+            $("#textarea"+index).val(body)
+          </script>
+        {{ end }}
+      {{ end }}
+    {{ end }}
+
 </html>
         
