@@ -83,17 +83,17 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				// fmt.Println("ERROR ProcessDocAdd() Line 47: " + err.Error()) // Debug
 				errb = true
-				datamsg = "Failed to create new document"
+				datamsg = "Failed edit the document."
 
 			} else {
 				log.Println(resp) // Debug
 				datab = true
-				datamsg = "Successfully edited document details"
+				datamsg = "Successfully edited document details."
 			}
 
 		} else {
 			errb = true
-			datamsg = "Failed to create new document (Invalid Document Number or Name)."
+			datamsg = "Failed to edit document (Invalid Document Number or Name)."
 		}
 	}
 

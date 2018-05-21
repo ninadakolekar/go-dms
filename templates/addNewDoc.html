@@ -207,32 +207,6 @@
     });
   </script>
 
-  <!-- Document Number Availabiity Checker -->
-  <script>
-      jQuery(document).ready(function($){
-        $("#doc_number").keyup(function(){
-
-          var docno = $("#doc_number").val();
-
-          if(docno.indexOf(" ")!=-1){
-            $('#status').html("Invalid Document Number")
-          } 
-        
-          else if(docno.length >= 3)   
-          {
-            $("#status").html('Checking availability...');
-    
-            $.post("/doc/avail", {docNumber:docno}, function(data, status){
-                 $("#status").html(data);    
-            });
-          }
-          else if(docno.length == 0){
-            $("#status").html("");
-          }    
-      });
-    });  
-    </script>
-
     <!-- Form Validation -->
     <script src="../static/js/jquery.validate.min.js"></script>
     <script>
@@ -297,6 +271,8 @@
 
           $("label[for='doc_number']").addClass('active')
           $("#doc_number").attr( "value", {{ .Document.DocNo }} );
+
+          $("#doc_number").prop("readonly", true);
 
           $("label[for='doc_name']").addClass('active')
           $("#doc_name").attr( "value", {{ .Document.Title }} );
