@@ -15,12 +15,21 @@ import (
 )
 
 type lINK struct {
-	DocName string
-	Idate   string
-	DocId   string
+	DocName   string
+	Idate     string
+	DocId     string
+	CreateTS  string
+	ApproveTS string
 }
+type docIdSort []lINK
 type docNameSorter []lINK
 type idateSorter []lINK
+type appTSsort []lINK
+type createTSsort []lINK
+
+func (a docIdSort) Len() int           { return len(a) }
+func (a docIdSort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a docIdSort) Less(i, j int) bool { return a[i].DocId < a[j].DocId }
 
 func (a docNameSorter) Len() int           { return len(a) }
 func (a docNameSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
@@ -29,6 +38,14 @@ func (a docNameSorter) Less(i, j int) bool { return a[i].DocName < a[j].DocName 
 func (a idateSorter) Len() int           { return len(a) }
 func (a idateSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a idateSorter) Less(i, j int) bool { return a[i].Idate < a[j].Idate }
+
+func (a appTSsort) Len() int           { return len(a) }
+func (a appTSsort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a appTSsort) Less(i, j int) bool { return a[i].ApproveTS > a[j].ApproveTS }
+
+func (a createTSsort) Len() int           { return len(a) }
+func (a createTSsort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a createTSsort) Less(i, j int) bool { return a[i].CreateTS > a[j].CreateTS }
 
 //ProcessDocSearch ... process doc search
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +79,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 			}
 
-			fmt.Println(query) //Debug
+			//	fmt.Println(query) //Debug
 			q := solr.Query{
 				Params: solr.URLParamMap{
 					"q": []string{query},
@@ -82,12 +99,14 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 				alertmsg = "No Results Found!"
 			} else {
 				for i := 0; i < results.Len(); i++ {
-					links = append(links, lINK{results.Get(i).Field("title").(string), results.Get(i).Field("initTime").(string), results.Get(i).Field("id").(string)})
+					//		fmt.Println("line number 102") //Debug
+					links = append(links, convertTolINK(results.Get(i)))
+					//		fmt.Println("line Number 104") //Debug
 				}
 				data = true
 
 				links = sortby(links, sortOrder)
-				//	fmt.Println("after sorting \n", links) //Debug
+				fmt.Println("after sorting \n", links) //Debug
 			}
 
 		} else {
@@ -106,13 +125,19 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func sortby(l []lINK, so string) []lINK {
-
+	//a => acsending d => decending
 	if so == "alexical" {
 		sort.Sort(docNameSorter(l))
 
 	} else if so == "aTime" {
 		sort.Sort(idateSorter(l))
 
+	} else if so == "dApprovedTS" {
+		sort.Sort(appTSsort(l))
+	} else if so == "dCreateTS" {
+		sort.Sort(createTSsort(l))
+	} else if so == "alexicalId" {
+		sort.Sort(docIdSort(l))
 	}
 	return l
 }
@@ -253,4 +278,17 @@ func removeIntialEndingspaces(str string) string {
 	}
 
 	return str[s : e+1]
+}
+func convertTolINK(s1 *solr.Document) lINK {
+	ctime := ""
+	atime := ""
+	createTime := s1.Field("createTime")
+	if createTime != nil {
+		ctime = s1.Field("createTime").(string)
+	}
+	approvetime := s1.Field("approveTime")
+	if approvetime != nil {
+		atime = s1.Field("approvetime").(string)
+	}
+	return lINK{s1.Field("title").(string), s1.Field("initTime").(string), s1.Field("id").(string), ctime, atime}
 }
