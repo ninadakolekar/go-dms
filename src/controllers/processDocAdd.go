@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"html"
 	"html/template"
 	"log"
 	"net/http"
@@ -24,17 +25,26 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 		r.ParseForm()
 
-		docNumber := r.Form["docNumber"][0]
-		docName := r.Form["docName"][0]
-		docProcess := r.Form["docProcess"][0]
-		docType := r.Form["docType"][0]
-		docDept := r.Form["docDept"][0]
-		docEffDate := r.Form["docEffDate"][0]
-		docExpDate := r.Form["docExpDate"][0]
-		docCreator := r.Form["docCreator"][0]
+		docNumber := html.EscapeString(r.Form["docNumber"][0])
+		docName := html.EscapeString(r.Form["docName"][0])
+		docProcess := html.EscapeString(r.Form["docProcess"][0])
+		docType := html.EscapeString(r.Form["docType"][0])
+		docDept := html.EscapeString(r.Form["docDept"][0])
+		docEffDate := html.EscapeString(r.Form["docEffDate"][0])
+		docExpDate := html.EscapeString(r.Form["docExpDate"][0])
+		docCreator := html.EscapeString(r.Form["docCreator"][0])
 		docAuth := r.Form["docAuth"]
 		docReviewers := r.Form["docReviewers"]
 		docApprovers := r.Form["docApprovers"]
+		for i, e := range docAuth {
+			docAuth[i] = html.EscapeString(e)
+		}
+		for i, e := range docReviewers {
+			docReviewers[i] = html.EscapeString(e)
+		}
+		for i, e := range docApprovers {
+			docApprovers[i] = html.EscapeString(e)
+		}
 
 		fmt.Println("Form Received\n ", docNumber, docName, docProcess, docType, docDept, utility.XMLDate(docEffDate), utility.XMLDate(docExpDate), docCreator, docReviewers, docApprovers, docAuth, initTime) // Debug
 
