@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="description" content="Materialize is a Material Design Admin Template,It's modern, responsive and based on Material Design by Google. ">
+  <meta name="keywords" content="materialize, admin template, dashboard template, flat admin template, responsive admin template,">
+  <title>Login Page | Materialize - Material Design Admin Template</title>
+
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+      
+  <!--Import Google Icon Font-->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- CORE CSS-->
+
+  <!-- Import materialize.css -->
+  <link type="text/css" rel="stylesheet" href="../static/css/materialize.min.css"  media="screen,projection"/>
+  
+  <!-- Custom CSS-->
+  <link href="../static/css/login-master.css" type="text/css" rel="stylesheet" media="screen,projection">
+  <link href="../static/css/login-page-center.css" type="text/css" rel="stylesheet" media="screen,projection">
+
+</head>
+
+<body class="cyan">
+
+    <div id="login-page" class="row">
+    <div class="col s12 z-depth-4 card-panel">
+      <form class="login-form" action="/login" method="POST">
+        <div class="row">
+          <div class="input-field col s12 center" id="login-text">
+            
+            <!-- OPTIONAL IMAGE/LOGO -->
+            <!-- <img src="" alt="" class="circle responsive-img valign profile-image-login"> -->
+
+            <p class="center login-form-text">DMS USER LOGIN</p>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">perm_identity</i>
+            <input id="username" type="text" name="username">
+            <label for="username" class="center-align">Username</label>
+          </div>
+        </div>
+        <div class="row margin">
+          <div class="input-field col s12">
+            <i class="material-icons prefix">lock</i>
+            <input id="password" type="password" name="password">
+            <label for="password">Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <a type="submit" class="btn waves-effect waves-light col s12">Login</a>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+
+
+  <!-- ================================================
+    Scripts
+    ================================================ -->
+
+  <!-- jQuery Library -->
+  <script type="text/javascript" src="../static/js/jQuery.min.js"></script>
+  <!--materialize js-->
+  <script type="text/javascript" src="../static/js/materialize.min.js"></script>
+  
+    <div class="hiddendiv common"></div>
+  </body>
+</html>
