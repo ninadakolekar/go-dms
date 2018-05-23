@@ -24,7 +24,7 @@ func ProcessLogin(w http.ResponseWriter, r *http.Request) {
 	if user.ValidateLoginCredentials(username, password) {
 
 		// Check Credentials are correct or not
-		// user.MatchCredentials(username,password)
+		// user.AuthCredentials(username,password)
 
 		setSession(username, w)
 		redirectTarget = "/dashboard"
