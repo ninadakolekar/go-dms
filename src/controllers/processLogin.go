@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/securecookie"
@@ -18,17 +19,17 @@ func ProcessLogin(w http.ResponseWriter, r *http.Request) {
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
-
 	redirectTarget := "/"
 
 	if user.ValidateLoginCredentials(username, password) {
 
-		// Check Credentials are correct or not
-		// user.AuthCredentials(username,password)
-
-		setSession(username, w)
-		redirectTarget = "/dashboard"
-
+		_, err := user.AuthCredentials(username, password)
+		if err == nil {
+			setSession(username, w)
+			redirectTarget = "/dashboard"
+		} else {
+			log.Println("incorrect username or password")
+		}
 	}
 
 	http.Redirect(w, r, redirectTarget, 302)
