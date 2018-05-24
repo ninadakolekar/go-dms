@@ -263,7 +263,7 @@
           });
         });
     </script>
-
+    
     <!-- If existing document -->
     {{ if .DocumentExist }}
 
@@ -303,6 +303,32 @@
         
           $("#add-doc-form").attr("action",window.location.pathname);
 
+      </script>
+
+    {{ else }}
+
+     <!-- Document Number Availabiity Checker -->
+      <script>
+        jQuery(document).ready(function($){
+          $("#doc_number").keyup(function(){
+            var docno = $("#doc_number").val();
+            if(docno.indexOf(" ")!=-1){
+              $('#status').html("Invalid Document Number")
+            } 
+          
+            else if(docno.length >= 3)   
+            {
+              $("#status").html('Checking availability...');
+      
+              $.post("/doc/avail", {docNumber:docno}, function(data, status){
+                  $("#status").html(data);    
+              });
+            }
+            else if(docno.length == 0){
+              $("#status").html("");
+            }    
+        });
+      });  
       </script>
 
     {{ end }}
