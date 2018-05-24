@@ -26,6 +26,8 @@ func GetRouter() *mux.Router {
 
 	r.HandleFunc("/logout", controller.ProcessLogout).Methods("POST")
 
+	r.HandleFunc("/dashboard", controller.Dashboard).Methods("GET")
+
 	r.HandleFunc("/doc/avail", controller.DocAvailable).Methods("POST")
 
 	r.HandleFunc("/doc/add", controller.DocAdd).Methods("GET")
