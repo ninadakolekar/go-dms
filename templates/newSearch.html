@@ -67,19 +67,19 @@
                             <div class="row">
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="SOP" value = "true" type="checkbox"/>
+                                        <input name="SOP" type="checkbox"/>
                                         <span>SOP</span>
                                     </label>
                                 </div>
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="HR" value = "true" type="checkbox" />
+                                        <input name="HR"  type="checkbox" />
                                         <span>HR</span>
                                     </label>
                                 </div>
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="STP" value = "true" type="checkbox" />
+                                        <input name="STP"  type="checkbox" />
                                         <span>STP</span>
                                     </label>
                                 </div>
@@ -92,13 +92,13 @@
                             <div class="row">
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="Everyone" value = "true" type="checkbox" />
+                                        <input name="Everyone"  type="checkbox" />
                                         <span>Everyone</span>
                                     </label>
                                 </div>
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="OneByOne" value = "true" type="checkbox" />
+                                        <input name="OneByOne"  type="checkbox" />
                                         <span>One by one</span>
                                     </label>
                                 </div>
@@ -250,8 +250,8 @@
                                     <h5>Results</h5>
                                 </div>
                                 <div class="col s12">
-                                        <ul class="collection">
-                                                <li class="collection-item avatar">
+                                        <ul class="collection" id="resultsCollection" >
+                                                <!-- <li class="collection-item avatar">
                                                         <i class="material-icons circle">insert_drive_file</i>
                                                   <span class="title">Title</span>
                                                   <p>First Line <br>
@@ -282,7 +282,7 @@
                                                      Second Line
                                                   </p>
                                                   <a href="#!" class="secondary-content"><br><i class="material-icons">send</i></a>
-                                                </li>
+                                                </li> -->
                                               </ul>
                                 </div>
                             </div>
@@ -309,7 +309,10 @@
     function submitHandler() {
         //name value
         console.log("came to submit");
-        $.post('/doc/search', $('form').serialize());
+        $.post('/doc/search', $('form').serialize(),function(data){
+            $("#resultsCollection").html(data);
+            console.log("results printed");//Debug
+        });
     }
 
     jQuery(document).ready(function($){
