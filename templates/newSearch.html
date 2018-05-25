@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Search Document | DMS</title>
+
+        <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+        
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../static/css/materialize.min.css">
+    <link rel="stylesheet" href="../static/css/dashboard.css">
+
+
+</head>
+<body>
+    
+<!-- Navbar Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+
+    <li id="dropdown-username" disabled>Signed in as <br><b>Username</b></li>
+    <li class="divider"></li>
+
+    <li><a href="#!">Search</a></li>
+
+    <!-- PROFILE SPECIFIC -->
+    <li><a href="#!">Initiate</a></li>
+    <li><a href="#!">Create</a></li>
+
+    <li class="divider"></li>
+    <li><a href="#!">Logout</a></li>
+
+  </ul>
+
+  <!-- NAVBAR -->
+
+  <nav class="cyan">
+    <div class="nav-wrapper container">
+      <a href="#!" class="brand-logo">Search</a>
+      <ul class="right hide-on-med-and-down">
+        <!-- <li><a href="sass.html">Optional</a></li> -->
+        <!-- Dropdown Trigger -->
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons">perm_identity</i><i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+      <div class="row">
+          
+        <!-- FILTER PANEL -->
+          <form action="/doc/search" method="post" id="form">
+            <div class="col m3 s12"><br><br>
+                <h5><i class="material-icons">
+                        filter_list
+                        </i>&nbsp;Filters</h5>
+                <ul class="collapsible">
+                    <li class="active">
+                        <div class="collapsible-header"><b>Document Type</b></div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="SOP" type="checkbox"/>
+                                        <span>SOP</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="HR" type="checkbox" />
+                                        <span>HR</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="STP" type="checkbox" />
+                                        <span>STP</span>
+                                    </label>
+                                </div>
+                        </div>
+                        </div>
+                    </li>
+                    <li class="active">
+                        <div class="collapsible-header"><b>Document Process</b></div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="Everyone" type="checkbox" />
+                                        <span>Everyone</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="OneByOne" type="checkbox" />
+                                        <span>One by one</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="Anyone" type="checkbox" />
+                                        <span>Anyone</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="active">
+                        <div class="collapsible-header"><b>Department</b></div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="option1" type="checkbox" />
+                                        <span>D1</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="option2" type="checkbox" />
+                                        <span>D2</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="option3" type="checkbox" />
+                                        <span>D3</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="active">
+                        <div class="collapsible-header"><b>Search by date</b></div>
+                        <div class="collapsible-body">
+                            <b>Initiation Date</b>
+                            <div class="row">
+                                    
+                                    <div class="input-field col s6">
+                                            <label>From</label>
+                                            <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <label>To</label>
+                                        <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                        
+                                    </div>
+                            </div>
+                            <b>Effective Date</b>
+                            <div class="row">
+                                    <div class="input-field col s6">
+                                            <label>From</label>
+                                            <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <label>To</label>
+                                        <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                        
+                                    </div>
+                            </div>
+                            <b>Expiry Date</b>
+                            <div class="row">
+                                    <div class="input-field col s6">
+                                            <label>From</label>
+                                            <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                    </div>
+                                    <div class="input-field col s6">
+                                        <label>To</label>
+                                        <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                        
+                                    </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- END FILTER PANEL -->
+            <!-- KEYWORD SEARCH PANEL -->
+            <div class="col s12 m8"><br><br>
+            <br>
+            <br>    
+                <div class="row">
+                    <div class="col m12 s12">
+                        <div class="row">
+                             <div class="input-field col s4">
+                                <i class="material-icons prefix">category</i>
+                                <select>
+                                    <option value="" disabled selected></option>
+                                    <option value="docNumber">Document Number</option>
+                                    <option value="docTitle">Title</option>
+                                    <option value="docContent">Content</option>
+                                    <option value="docUser">User</option>
+                                </select>  
+                                <label>Search Criterion 1</label>
+                            </div>
+                            <div class="input-field col s4">
+                                <i class="material-icons prefix">category</i>
+                                <select>
+                                    <option value="" disabled selected></option>
+                                    <option value="docNumber">Document Number</option>
+                                    <option value="docTitle">Title</option>
+                                    <option value="docContent">Content</option>
+                                    <option value="docUser">User</option>
+                                </select>  
+                                <label>Search Criterion 2</label>
+                            </div>
+                            <div class="input-field col s4">
+                                <i class="material-icons prefix">category</i>
+                                <select>
+                                    <option value="" disabled selected></option>
+                                    <option value="docNumber">Document Number</option>
+                                    <option value="docTitle">Title</option>
+                                    <option value="docContent">Content</option>
+                                    <option value="docUser">User</option>
+                                </select>  
+                                <label>Search Criterion 3</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s4">
+                                <i class="material-icons prefix">search</i>
+                                <input id="last_name" type="text" class="validate">
+                                <label for="last_name"></label>
+                            </div>
+                            <div class="input-field col s4">
+                                <i class="material-icons prefix">search</i>
+                                <input id="last_name" type="text" class="validate">
+                                <label for="last_name"></label>
+                            </div>
+                            <div class="input-field col s4">
+                                <i class="material-icons prefix">search</i>
+                                <input id="last_name" type="text" class="validate">
+                                <label for="last_name"></label>
+                            </div>
+                        </div>
+                        <div class="row center"><br><br>
+                                <button type="submit" class="btn">Submit &nbsp; <i class="material-icons">send</i></button>
+                        </div>
+                        <!-- RESULTS PANEL -->
+                        <div class="container-fluid" id="results-container">
+                            <div class="row">
+                                <div class="col s12">
+                                    <h5>Results</h5>
+                                </div>
+                                <div class="col s12">
+                                        <ul class="collection">
+                                                <li class="collection-item avatar">
+                                                        <i class="material-icons circle">insert_drive_file</i>
+                                                  <span class="title">Title</span>
+                                                  <p>First Line <br>
+                                                     Second Line
+                                                  </p>
+                                                  <a href="#!" class="secondary-content"><br><i class="material-icons">send</i></a>
+                                                </li>
+                                                <li class="collection-item avatar">
+                                                  <i class="material-icons circle">insert_drive_file</i>
+                                                  <span class="title">Title</span>
+                                                  <p>First Line <br>
+                                                     Second Line
+                                                  </p>
+                                                  <a href="#!" class="secondary-content"><br><i class="material-icons">send</i></a>
+                                                </li>
+                                                <li class="collection-item avatar">
+                                                  <i class="material-icons circle green">insert_drive_file</i>
+                                                  <span class="title">Title</span>
+                                                  <p>First Line <br>
+                                                     Second Line
+                                                  </p>
+                                                  <a href="#!" class="secondary-content"><br><i class="material-icons">send</i></a>
+                                                </li>
+                                                <li class="collection-item avatar">
+                                                  <i class="material-icons circle red">insert_drive_file</i>
+                                                  <span class="title">Title</span>
+                                                  <p>First Line <br>
+                                                     Second Line
+                                                  </p>
+                                                  <a href="#!" class="secondary-content"><br><i class="material-icons">send</i></a>
+                                                </li>
+                                              </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END RESULTS PANEL -->
+
+                    </div>
+                    <div class="col m6 s12"></div>
+                </div>
+            </div>
+            <!-- END SEARCH PANEL -->
+        
+        </form>
+      </div>
+  </div>
+          
+</body>
+
+<script src="../static/js/jQuery.min.js"></script>
+<script src="../static/js/materialize.min.js"></script>
+
+<script>
+    jQuery(document).ready(function($){
+
+        $(".dropdown-trigger").dropdown({
+            inDuration: 300,
+            outDuration: 225,
+            hover: true, // Activate on hover
+            coverTrigger: false, // Displays dropdown below the button
+            alignment: 'right' // Displays dropdown with edge aligned to the left of button
+        });
+
+        $('.collapsible').collapsible({
+            accordion: false,
+        });
+
+        $('.datepicker').datepicker();
+
+        $('[type="checkbox"]').click(function(){
+            $('#form').submit();
+        });
+        
+    });
+</script>
+
+<!-- SEARCH FORM SCRIPT -->
+<script>
+        jQuery('form').ready(function($){
+            window.$('select').formSelect();
+        });
+</script>
+
+</html>
