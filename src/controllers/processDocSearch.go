@@ -117,12 +117,13 @@ func buildQuery(r *http.Request) string { //never returns an empty string
 	}
 
 	printFormData(information)
-	if !validate(information) {
-		return ""
-	}
 	if !isEmpty(information) {
 		return "empty"
 	}
+	if !validate(information) {
+		return ""
+	}
+
 	query := makedateQuery(information)
 	typeQuery := makeTypeQuery(information)
 	processQuery := makeProcessQuery(information)
@@ -145,15 +146,6 @@ func buildQuery(r *http.Request) string { //never returns an empty string
 
 func makeCritriaQuery(x formData) string {
 	query := ""
-	if x.val1 == "" {
-		x.val1 = "*"
-	}
-	if x.val2 == "" {
-		x.val2 = "*"
-	}
-	if x.val3 == "" {
-		x.val3 = "*"
-	}
 	if x.select1 != "" {
 		q1 := ""
 		if x.select1 == "docNumber" {
@@ -326,9 +318,10 @@ func validate(x formData) bool {
 	if !(x.anyone == "" || x.anyone == "on") {
 		return false
 	}
-	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]*$`).MatchString
+	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
 	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
-	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]*$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	isallSpaces := regexp.MustCompile(`^[ ]+$`).MatchString
 	if x.initFrom != "" {
 		if isDatevalid(x.initFrom) != true || !isDate(x.initFrom) {
 			return false
@@ -361,40 +354,53 @@ func validate(x formData) bool {
 	}
 	if x.select1 != "" {
 		if x.select1 == "docNumber" {
-			if !isAlphaNumeric(x.val1) {
+			if !isAlphaNumeric(x.val1) || isallSpaces(x.val1) {
 				return false
 			}
+
 		} else if x.select1 == "docContent" || x.select1 == "docUser" || x.select1 == "docTitle" {
-			if !isKeyword(x.val1) {
+			if !isKeyword(x.val1) || isallSpaces(x.val1) {
 				return false
 			}
 		} else {
+			return false
+		}
+	} else {
+		if x.val1 == "" {
 			return false
 		}
 	}
 	if x.select2 != "" {
 		if x.select2 == "docNumber" {
-			if !isAlphaNumeric(x.val2) {
+			if !isAlphaNumeric(x.val2) || isallSpaces(x.val2) {
 				return false
 			}
 		} else if x.select2 == "docContent" || x.select2 == "docUser" || x.select2 == "docTitle" {
-			if !isKeyword(x.val2) {
+			if !isKeyword(x.val2) || isallSpaces(x.val2) {
 				return false
 			}
 		} else {
 			return false
 		}
+	} else {
+		if x.val2 == "" {
+			return false
+		}
 	}
 	if x.select3 != "" {
 		if x.select1 == "docNumber" {
-			if !isAlphaNumeric(x.val3) {
+			if !isAlphaNumeric(x.val3) || isallSpaces(x.val3) {
 				return false
 			}
 		} else if x.select3 == "docContent" || x.select3 == "docUser" || x.select3 == "docTitle" {
-			if !isKeyword(x.val3) {
+			if !isKeyword(x.val3) || isallSpaces(x.val3) {
 				return false
 			}
 		} else {
+			return false
+		}
+	} else {
+		if x.val3 == "" {
 			return false
 		}
 	}
