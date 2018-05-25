@@ -3,292 +3,443 @@ package controllers
 import (
 	"fmt"
 	"html"
-	"html/template"
 	"net/http"
 	"regexp"
-	"sort"
-	"strconv"
 	"strings"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
 )
 
-type lINK struct {
-	DocName   string
-	Idate     string
-	DocId     string
-	CreateTS  string
-	ApproveTS string
-}
-type docIdSort []lINK
-type docNameSorter []lINK
-type idateSorter []lINK
-type appTSsort []lINK
-type createTSsort []lINK
-
-func (a docIdSort) Len() int           { return len(a) }
-func (a docIdSort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a docIdSort) Less(i, j int) bool { return a[i].DocId < a[j].DocId }
-
-func (a docNameSorter) Len() int           { return len(a) }
-func (a docNameSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a docNameSorter) Less(i, j int) bool { return a[i].DocName < a[j].DocName }
-
-func (a idateSorter) Len() int           { return len(a) }
-func (a idateSorter) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a idateSorter) Less(i, j int) bool { return a[i].Idate < a[j].Idate }
-
-func (a appTSsort) Len() int           { return len(a) }
-func (a appTSsort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a appTSsort) Less(i, j int) bool { return a[i].ApproveTS > a[j].ApproveTS }
-
-func (a createTSsort) Len() int           { return len(a) }
-func (a createTSsort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a createTSsort) Less(i, j int) bool { return a[i].CreateTS > a[j].CreateTS }
-
-//ProcessDocSearch ... process doc search
+//ProcessDocSearch ... process new search
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
-	alert := false
-	data := false
-	alertmsg := "no msg"
 	links := []lINK{}
-	if r.Method == "POST" {
-		r.ParseForm()
-		sCriteria := []string{"*", "*", "*", "*", "*", "*", "*"}
-		sKeyword := []string{"*", "*", "*", "*", "*", "*", "*"}
-		sortOrder := html.EscapeString(r.Form["sort"][0])
-
-		for i := 0; i < 6; i++ {
-			if len(r.Form["criteria"+strconv.Itoa(i+1)]) > 0 {
-				sCriteria[i] = html.EscapeString(r.Form["criteria"+strconv.Itoa(i+1)][0])
-				sKeyword[i] = html.EscapeString(r.Form["searchKeyword"+strconv.Itoa(i+1)][0])
-			}
+	sortOrder := "typeSort" //"alexical" //"default"
+	query := buildQuery(r)
+	fmt.Println("query:", query)
+	if query == "" {
+		fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h3>Invalid query.</h3></span></div>")
+	} else if query == "empty" {
+		fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h3></h3></span></div>")
+	} else {
+		s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
+		if err != nil {
+			fmt.Println(err) //core not connected
 		}
-		for i := 0; i < 6; i++ {
-			sKeyword[i] = removeIntialEndingspaces(sKeyword[i])
+		q := solr.Query{
+			Params: solr.URLParamMap{
+				"q": []string{query},
+			},
+			Rows: 100,
 		}
 
-		if validateSearchForm(sCriteria, sKeyword) == true {
+		res, err := s.Select(&q)
+		if err != nil {
+			fmt.Println(err)
 
-			query := makeSearchQuery(sCriteria, sKeyword)
+		}
 
-			s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			//	fmt.Println(query) //Debug
-			q := solr.Query{
-				Params: solr.URLParamMap{
-					"q": []string{query},
-				},
-				Rows: 100,
-			}
-
-			res, err := s.Select(&q)
-			if err != nil {
-				fmt.Println(err)
-
-			}
-
-			results := res.Results
-			if results.Len() == 0 {
-				alert = true
-				alertmsg = "No Results Found!"
-			} else {
-				for i := 0; i < results.Len(); i++ {
-					//		fmt.Println("line number 102") //Debug
-					links = append(links, convertTolINK(results.Get(i)))
-					//		fmt.Println("line Number 104") //Debug
-				}
-				data = true
-
-				links = sortby(links, sortOrder)
-				fmt.Println("after sorting \n", links) //Debug
-			}
-
+		results := res.Results
+		if results.Len() == 0 {
+			fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h5>No results found.</h5></span></div>")
 		} else {
-			alert = true
-			alertmsg = "Invalid Search Query!"
-		}
-	}
+			for i := 0; i < results.Len(); i++ {
+				links = append(links, convertTolINK(results.Get(i)))
+			}
 
-	tmpl := template.Must(template.ParseFiles("templates/searchDoc.html"))
-	tmpl.Execute(w, struct {
-		Alertb   bool
-		Alertmsg string
-		Datab    bool
-		Data     []lINK
-	}{alert, alertmsg, data, links})
-}
+			links = sortby(links, sortOrder)
+			if sortOrder == "typeSort" {
 
-func sortby(l []lINK, so string) []lINK {
-	//a => acsending d => decending
-	if so == "alexical" {
-		sort.Sort(docNameSorter(l))
-
-	} else if so == "aTime" {
-		sort.Sort(idateSorter(l))
-
-	} else if so == "dApprovedTS" {
-		sort.Sort(appTSsort(l))
-	} else if so == "dCreateTS" {
-		sort.Sort(createTSsort(l))
-	} else if so == "alexicalId" {
-		sort.Sort(docIdSort(l))
-	}
-	return l
-}
-
-func makeSearchQuery(sC []string, sK []string) string {
-	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
-	validQueryPrifex := []string{"id:", "title:", "body:", "initiator:", "creator:", "reviewer:", "approver:", "authorizer:", "docDepartment:", "initTime:", "effDate:", "expDate:", "initTime:", "effDate:", "expDate:"}
-
-	querys := []string{}
-	counter := 0
-	for i, sc := range sC {
-		for j, v := range validCriterion {
-			if v == sc {
-
-				if j == 10 || j == 9 || j == 11 {
-					querys = append(querys, validQueryPrifex[j]+"["+sK[i]+"T23:59:59Z TO *]")
-				} else if j == 12 || j == 13 || j == 14 {
-					querys = append(querys, validQueryPrifex[j]+"[ 2000-01-01T00:00:58Z TO "+sK[i]+"T23:59:59Z ]")
-				} else if j == 0 || j == 1 {
-					querys = append(querys, validQueryPrifex[j]+sK[i]+"*")
-				} else if j == 2 {
-					strs := strings.Split(sK[i], " ")
-					str := "*"
-					for _, e := range strs {
-						str = str + e + "*"
+				s1 := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons circle #76ff03 red'>insert_drive_file</i>HR</div><div class='collapsible-body'><ul>"
+				v1 := ""
+				v2 := ""
+				v3 := ""
+				for _, e := range links {
+					if e.DocType == "HR" {
+						v1 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+					} else if e.DocType == "SOP" {
+						v2 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+					} else if e.DocType == "STP" {
+						v3 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 green'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
 					}
-					querys = append(querys, validQueryPrifex[j]+str)
-				} else {
-					querys = append(querys, validQueryPrifex[j]+sK[i])
 				}
 
-				// fmt.Println(querys[counter])
-				counter++
+				s2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i>SOP</div><div class='collapsible-body'><ul>"
+				s3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 green'>insert_drive_file</i>STP</div><div class='collapsible-body'><ul>"
+				s4 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
+				fmt.Fprintf(w, s1+v1+s2+v2+s3+v3+s4)
+			} else {
+				s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
+				color := "green"
+				s11 := "'>insert_drive_file</i><span class='title'>"
+				s2 := "</span><p>"
+				s3 := "</p><a href='"
+				s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+
+				ret := ""
+				for _, e := range links {
+					if e.DocType == "SOP" {
+						color = "blue"
+					} else if e.DocType == "HR" {
+						color = "red"
+					} else {
+						color = "green"
+					}
+					ret += (s1 + color + s11 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
+				}
+
+				fmt.Fprintf(w, ret)
 			}
-		}
-	}
-	query := ""
-	for i, q := range querys {
-		if i == 0 {
-			query = q
-		} else {
-			query += (" AND " + q)
+
 		}
 	}
 
+}
+
+type formData struct {
+	sop      string
+	hr       string
+	stp      string
+	everyone string
+	onebyone string
+	anyone   string
+	d1       string
+	d2       string
+	d3       string
+	initFrom string
+	initTo   string
+	effFrom  string
+	effTo    string
+	expFrom  string
+	expTo    string
+	select1  string
+	val1     string
+	select2  string
+	val2     string
+	select3  string
+	val3     string
+}
+
+func buildQuery(r *http.Request) string { //never returns an empty string
+
+	information := formData{
+		sop:      html.EscapeString(r.FormValue("SOP")),
+		hr:       html.EscapeString(r.FormValue("HR")),
+		stp:      html.EscapeString(r.FormValue("STP")),
+		everyone: html.EscapeString(r.FormValue("Everyone")),
+		onebyone: html.EscapeString(r.FormValue("OneByOne")),
+		anyone:   html.EscapeString(r.FormValue("Anyone")),
+		d1:       html.EscapeString(r.FormValue("option1")),
+		d2:       html.EscapeString(r.FormValue("option2")),
+		d3:       html.EscapeString(r.FormValue("option3")),
+		initFrom: html.EscapeString(r.FormValue("initFrom")),
+		initTo:   html.EscapeString(r.FormValue("initTo")),
+		effFrom:  html.EscapeString(r.FormValue("effFrom")),
+		effTo:    html.EscapeString(r.FormValue("effTo")),
+		expFrom:  html.EscapeString(r.FormValue("expFrom")),
+		expTo:    html.EscapeString(r.FormValue("expTo")),
+		select1:  html.EscapeString(r.FormValue("select1")),
+		val1:     html.EscapeString(r.FormValue("val1")),
+		select2:  html.EscapeString(r.FormValue("select2")),
+		val2:     html.EscapeString(r.FormValue("val2")),
+		select3:  html.EscapeString(r.FormValue("select3")),
+		val3:     html.EscapeString(r.FormValue("val3")),
+	}
+
+	if !isEmpty(information) {
+		return "empty"
+	}
+	if !validate(information) {
+		return ""
+	}
+
+	query := makedateQuery(information)
+	typeQuery := makeTypeQuery(information)
+	processQuery := makeProcessQuery(information)
+	departmentQuery := makeDepartmentQuery(information)
+	criteraQuery := makeCritriaQuery(information)
+	if typeQuery != "" {
+		query += (" AND (" + typeQuery + ")")
+	}
+	if processQuery != "" {
+		query += (" AND (" + processQuery + ")")
+	}
+	if departmentQuery != "" {
+		query += (" AND (" + departmentQuery + ")")
+	}
+	if criteraQuery != "" {
+		query += (" AND (" + criteraQuery + ")")
+	}
 	return query
 }
-func isDatevalid(s string) bool {
-	y, err := strconv.Atoi(s[0:4])
-	if err != nil {
-		return false
-	}
 
-	m, err := strconv.Atoi(s[5:7])
-	if err != nil {
-		return false
+func makeCritriaQuery(x formData) string {
+	query := ""
+	if x.select1 != "" {
+		q1 := ""
+		if x.select1 == "docNumber" {
+			q1 += ("id:(" + x.val1 + "* )")
+		} else if x.select1 == "docTitle" {
+			q1 += ("title:(" + strings.Replace(x.val1, " ", "*", -1) + "* )")
+		} else if x.select1 == "docContent" {
+			q1 += ("body:( *" + strings.Replace(x.val1, " ", "*", -1) + "* )")
+		} else if x.select1 == "docUser" {
+			q1 += (" creator:(" + strings.Replace(x.val1, " ", "*", -1) + ") approver:(" + strings.Replace(x.val1, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val1, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val1, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val1, " ", "*", -1) + ")")
+		}
+		query += ("(" + q1 + ")")
 	}
-	d, err := strconv.Atoi(s[8:10])
-	if err != nil {
-		return false
-	}
+	if x.select2 != "" {
+		q1 := ""
+		if x.select2 == "docNumber" {
+			q1 += ("id:(" + x.val2 + "* )")
+		} else if x.select2 == "docTitle" {
+			q1 += ("title:(" + strings.Replace(x.val2, " ", "*", -1) + "* )")
+		} else if x.select2 == "docContent" {
+			q1 += ("body:( *" + strings.Replace(x.val2, " ", "*", -1) + "* )")
+		} else if x.select2 == "docUser" {
+			q1 += (" creator:(" + strings.Replace(x.val2, " ", "*", -1) + ") approver:(" + strings.Replace(x.val2, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val2, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val2, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val2, " ", "*", -1) + ")")
+		}
+		if query == "" {
+			query += ("(" + q1 + ")")
+		} else {
+			query += (" AND (" + q1 + ")")
+		}
 
-	if (y%4 == 0 && y%100 == 0) || (y%4 != 0) {
-		if m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12 {
-			if d < 0 || d > 31 {
+	}
+	if x.select3 != "" {
+		q1 := ""
+		if x.select3 == "docNumber" {
+			q1 += ("id:(" + x.val3 + "* )")
+		} else if x.select3 == "docTitle" {
+			q1 += ("title:(" + strings.Replace(x.val3, " ", "*", -1) + "* )")
+		} else if x.select3 == "docContent" {
+			q1 += ("body:( *" + strings.Replace(x.val3, " ", "*", -1) + "* )")
+		} else if x.select3 == "docUser" {
+			q1 += (" creator:(" + strings.Replace(x.val3, " ", "*", -1) + ") approver:(" + strings.Replace(x.val3, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val3, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val3, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val3, " ", "*", -1) + ")")
+		}
+		if query == "" {
+			query += ("(" + q1 + ")")
+		} else {
+			query += (" AND (" + q1 + ")")
+		}
+	}
+	return query
+}
+func makeDepartmentQuery(x formData) string {
+	query := ""
+	if x.d1 != "" {
+		query += "docDepartment:D1"
+	}
+	if x.d2 != "" {
+		query += " docDepartment:D2"
+	}
+	if x.d3 != "" {
+		query += " docDepartment:D3"
+	}
+	return query
+}
+func makeProcessQuery(x formData) string {
+	query := ""
+	if x.everyone != "" {
+		query += "docProcess:Everyone"
+	}
+	if x.onebyone != "" {
+		query += " docProcess:OneByOne"
+	}
+	if x.anyone != "" {
+		query += " docProcess:Anyone"
+	}
+	return query
+}
+func makeTypeQuery(x formData) string { //will return an empty string
+	query := ""
+	if x.sop != "" {
+		query += "docType:SOP"
+	}
+	if x.hr != "" {
+		query += " docType:HR"
+	}
+	if x.stp != "" {
+		query += " docType:STP"
+	}
+	return query
+}
+func makedateQuery(x formData) string { //never returns an empty string
+	bInit := "2000-01-01T00:00:00Z"
+	bExp := "2000-01-01T00:00:00Z"
+	bEff := "2000-01-01T00:00:00Z"
+	eInit := "*"
+	eEff := "*"
+	eExp := "*"
+	dQinit := "initTime:"
+	dQeff := "effDate:"
+	dQexp := "expDate:"
+	if x.initFrom != "" {
+		bInit = x.initFrom + "T00:00:00Z"
+	}
+	if x.initTo != "" {
+		eInit = x.initTo + "T23:59:59Z"
+	}
+	if x.effFrom != "" {
+		bEff = x.effFrom + "T00:00:00Z"
+	}
+	if x.effTo != "" {
+		eEff = x.effTo + "T23:59:59Z"
+	}
+	if x.expFrom != "" {
+		bExp = x.expFrom + "T00:00:00Z"
+	}
+	if x.expTo != "" {
+		eExp = x.expTo + "T23:59:59Z"
+	}
+	return dQinit + "[" + bInit + " TO " + eInit + "]" + " AND " + dQeff + "[" + bEff + " TO " + eEff + "]" + " AND " + dQexp + "[" + bExp + " TO " + eExp + "]"
+}
+
+func printFormData(x formData) { //func used for debuging
+	fmt.Println("sop :#" + x.sop + "#")
+	fmt.Println("hr:#" + x.hr + "#")
+	fmt.Println("stp:#" + x.stp + "#")
+	fmt.Println("everyone:#" + x.everyone + "#")
+	fmt.Println("onebyone:#" + x.onebyone + "#")
+	fmt.Println("anyone:#" + x.anyone + "#")
+	fmt.Println("d1:#" + x.d1 + "#")
+	fmt.Println("d2:#" + x.d2 + "#")
+	fmt.Println("d3:#" + x.d3 + "#")
+	fmt.Println("initFrom:#" + x.initFrom + "#")
+	fmt.Println("initTo:#" + x.initTo + "#")
+	fmt.Println("effFrom:#" + x.effFrom + "#")
+	fmt.Println("effTo:#" + x.effTo + "#")
+	fmt.Println("expFrom:#" + x.expFrom + "#")
+	fmt.Println("expTo:#" + x.expTo + "#")
+	fmt.Println("select1:#" + x.select1 + "#")
+	fmt.Println("val1:#" + x.val1 + "#")
+	fmt.Println("select2:#" + x.select2 + "#")
+	fmt.Println("val2:#" + x.val2 + "#")
+	fmt.Println("select3:#" + x.select3 + "#")
+	fmt.Println("val3:#" + x.val3 + "#")
+}
+func validate(x formData) bool {
+
+	if !(x.sop == "" || x.sop == "on") {
+		return false
+	}
+	if !(x.hr == "" || x.hr == "on") {
+		return false
+	}
+	if !(x.stp == "" || x.stp == "on") {
+		return false
+	}
+	if !(x.d1 == "" || x.d1 == "on") {
+		return false
+	}
+	if !(x.d2 == "" || x.d2 == "on") {
+		return false
+	}
+	if !(x.d3 == "" || x.d3 == "on") {
+		return false
+	}
+	if !(x.everyone == "" || x.everyone == "on") {
+		return false
+	}
+	if !(x.onebyone == "" || x.onebyone == "on") {
+		return false
+	}
+	if !(x.anyone == "" || x.anyone == "on") {
+		return false
+	}
+	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
+	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	isallSpaces := regexp.MustCompile(`^[ ]+$`).MatchString
+	if x.initFrom != "" {
+		if isDatevalid(x.initFrom) != true || !isDate(x.initFrom) {
+			return false
+		}
+	}
+	if x.initTo != "" {
+		if isDatevalid(x.initTo) != true || !isDate(x.initTo) {
+			return false
+		}
+	}
+	if x.effFrom != "" {
+		if isDatevalid(x.effFrom) != true || !isDate(x.effFrom) {
+			return false
+		}
+	}
+	if x.effTo != "" {
+		if isDatevalid(x.effTo) != true || !isDate(x.effTo) {
+			return false
+		}
+	}
+	if x.expFrom != "" {
+		if isDatevalid(x.expFrom) != true || !isDate(x.expFrom) {
+			return false
+		}
+	}
+	if x.expTo != "" {
+		if isDatevalid(x.expTo) != true || !isDate(x.expTo) {
+			return false
+		}
+	}
+	if x.select1 != "" {
+		if x.select1 == "docNumber" {
+			if !isAlphaNumeric(x.val1) || isallSpaces(x.val1) {
 				return false
 			}
-		} else if m == 4 || m == 6 || m == 9 || m == 11 {
-			if d < 0 || d > 30 {
-				return false
-			}
-		} else if m == 2 {
-			if d < 0 || d > 29 {
+
+		} else if x.select1 == "docContent" || x.select1 == "docUser" || x.select1 == "docTitle" {
+			if !isKeyword(x.val1) || isallSpaces(x.val1) {
 				return false
 			}
 		} else {
 			return false
 		}
 	} else {
-		if m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12 {
-			if d < 0 || d > 31 {
+		if x.val1 != "" {
+			return false
+		}
+	}
+	if x.select2 != "" {
+		if x.select2 == "docNumber" {
+			if !isAlphaNumeric(x.val2) || isallSpaces(x.val2) {
 				return false
 			}
-		} else if m == 4 || m == 6 || m == 9 || m == 11 {
-			if d < 0 || d > 30 {
-				return false
-			}
-		} else if m == 2 {
-			if d < 0 || d > 28 {
+		} else if x.select2 == "docContent" || x.select2 == "docUser" || x.select2 == "docTitle" {
+			if !isKeyword(x.val2) || isallSpaces(x.val2) {
 				return false
 			}
 		} else {
 			return false
 		}
+	} else {
+		if x.val2 != "" {
+			return false
+		}
 	}
-	return true
-}
-func validateSearchForm(sC []string, sK []string) bool {
-	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
-	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
-	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
-	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9_ ]+$`).MatchString
-
-	for j, sc := range sC {
-
-		for i, v := range validCriterion {
-
-			if sc == v {
-
-				if i == 9 || i == 10 || i == 11 || i == 12 || i == 13 || i == 14 {
-					if isDatevalid(sK[j]) == false || !isDate(sK[j]) {
-						return false
-					}
-				} else if i == 2 {
-					if isKeyword(sK[j]) == false {
-						return false
-					}
-				} else {
-					if isAlphaNumeric(sK[j]) == false {
-						return false
-					}
-				}
-
+	if x.select3 != "" {
+		if x.select1 == "docNumber" {
+			if !isAlphaNumeric(x.val3) || isallSpaces(x.val3) {
+				return false
 			}
+		} else if x.select3 == "docContent" || x.select3 == "docUser" || x.select3 == "docTitle" {
+			if !isKeyword(x.val3) || isallSpaces(x.val3) {
+				return false
+			}
+		} else {
+			return false
+		}
+	} else {
+		if x.val3 != "" {
+			return false
 		}
 	}
 	return true
+
 }
-func removeIntialEndingspaces(str string) string {
-	s := 0
-	e := len(str) - 1
-
-	for ; str[s] == ' '; s++ {
-
+func isEmpty(x formData) bool {
+	if (x.anyone + x.d1 + x.d2 + x.d3 + x.effFrom + x.effTo + x.everyone + x.expFrom + x.expTo + x.hr + x.initFrom + x.initTo + x.onebyone + x.select1 + x.select2 + x.select3 + x.sop + x.stp + x.val1 + x.val2 + x.val3) == "" {
+		return false
 	}
-	for e = len(str) - 1; str[e] == ' '; e-- {
-
-	}
-
-	return str[s : e+1]
-}
-func convertTolINK(s1 *solr.Document) lINK {
-	ctime := ""
-	atime := ""
-	createTime := s1.Field("createTime")
-	if createTime != nil {
-		ctime = s1.Field("createTime").(string)
-	}
-	approvetime := s1.Field("approveTime")
-	if approvetime != nil {
-		atime = s1.Field("approvetime").(string)
-	}
-	return lINK{s1.Field("title").(string), s1.Field("initTime").(string), s1.Field("id").(string), ctime, atime}
+	return true
 }
