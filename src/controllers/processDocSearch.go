@@ -15,7 +15,7 @@ import (
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 	links := []lINK{}
-	sortOrder := "default"
+	sortOrder := "alexical" //"default"
 	query := buildQuery(r)
 	fmt.Println("query:", query)
 	if query == "" {
@@ -49,14 +49,24 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			}
 
 			links = sortby(links, sortOrder)
-			s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 light-green accent-3'>insert_drive_file</i><span class='title'>"
+
+			s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
+			color := "green"
+			s11 := "'>insert_drive_file</i><span class='title'>"
 			s2 := "</span><p>"
 			s3 := "</p><a href='"
 			s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
 
 			ret := ""
 			for _, e := range links {
-				ret += (s1 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
+				if e.DocType == "SOP" {
+					color = "blue"
+				} else if e.DocType == "HR" {
+					color = "red"
+				} else {
+					color = "green"
+				}
+				ret += (s1 + color + s11 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
 			}
 
 			fmt.Fprintf(w, ret)

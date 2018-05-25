@@ -20,12 +20,30 @@ type lINK struct {
 	DocId     string
 	CreateTS  string
 	ApproveTS string
+	DocType   string
+	EffDate   string
+	ExpDate   string
 }
+type typeSort []lINK
+type expDateSort []lINK
+type effDateSort []lINK
 type docIdSort []lINK
 type docNameSorter []lINK
 type idateSorter []lINK
 type appTSsort []lINK
 type createTSsort []lINK
+
+func (a typeSort) Len() int           { return len(a) }
+func (a typeSort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a typeSort) Less(i, j int) bool { return a[i].DocType < a[j].DocType }
+
+func (a expDateSort) Len() int           { return len(a) }
+func (a expDateSort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a expDateSort) Less(i, j int) bool { return a[i].ExpDate < a[j].ExpDate }
+
+func (a effDateSort) Len() int           { return len(a) }
+func (a effDateSort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a effDateSort) Less(i, j int) bool { return a[i].EffDate < a[j].EffDate }
 
 func (a docIdSort) Len() int           { return len(a) }
 func (a docIdSort) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
@@ -128,16 +146,20 @@ func sortby(l []lINK, so string) []lINK {
 	//a => acsending d => decending
 	if so == "alexical" {
 		sort.Sort(docNameSorter(l))
-
 	} else if so == "aTime" {
 		sort.Sort(idateSorter(l))
-
 	} else if so == "dApprovedTS" {
 		sort.Sort(appTSsort(l))
 	} else if so == "dCreateTS" {
 		sort.Sort(createTSsort(l))
 	} else if so == "alexicalId" {
 		sort.Sort(docIdSort(l))
+	} else if so == "typeSort" {
+		sort.Sort(typeSort(l))
+	} else if so == "effDate" {
+		sort.Sort(effDateSort(l))
+	} else if so == "expDate" {
+		sort.Sort(expDateSort(l))
 	}
 	return l
 }
@@ -290,5 +312,5 @@ func convertTolINK(s1 *solr.Document) lINK {
 	if approvetime != nil {
 		atime = s1.Field("approvetime").(string)
 	}
-	return lINK{s1.Field("title").(string), s1.Field("initTime").(string), s1.Field("id").(string), ctime, atime}
+	return lINK{s1.Field("title").(string), s1.Field("initTime").(string), s1.Field("id").(string), ctime, atime, s1.Field("docType").(string), s1.Field("effDate").(string), s1.Field("expDate").(string)}
 }
