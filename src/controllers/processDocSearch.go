@@ -15,7 +15,7 @@ import (
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 	links := []lINK{}
-	sortOrder := "alexical" //"default"
+	sortOrder := "typeSort" //"alexical" //"default"
 	query := buildQuery(r)
 	fmt.Println("query:", query)
 	if query == "" {
@@ -49,27 +49,49 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			}
 
 			links = sortby(links, sortOrder)
+			if sortOrder == "typeSort" {
 
-			s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
-			color := "green"
-			s11 := "'>insert_drive_file</i><span class='title'>"
-			s2 := "</span><p>"
-			s3 := "</p><a href='"
-			s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
-
-			ret := ""
-			for _, e := range links {
-				if e.DocType == "SOP" {
-					color = "blue"
-				} else if e.DocType == "HR" {
-					color = "red"
-				} else {
-					color = "green"
+				s1 := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons circle #76ff03 red'>insert_drive_file</i>HR</div><div class='collapsible-body'><ul>"
+				v1 := ""
+				v2 := ""
+				v3 := ""
+				for _, e := range links {
+					if e.DocType == "HR" {
+						v1 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+					} else if e.DocType == "SOP" {
+						v2 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+					} else if e.DocType == "STP" {
+						v3 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 green'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+					}
 				}
-				ret += (s1 + color + s11 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
+
+				s2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i>SOP</div><div class='collapsible-body'><ul>"
+				s3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 green'>insert_drive_file</i>STP</div><div class='collapsible-body'><ul>"
+				s4 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
+				fmt.Fprintf(w, s1+v1+s2+v2+s3+v3+s4)
+			} else {
+				s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
+				color := "green"
+				s11 := "'>insert_drive_file</i><span class='title'>"
+				s2 := "</span><p>"
+				s3 := "</p><a href='"
+				s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+
+				ret := ""
+				for _, e := range links {
+					if e.DocType == "SOP" {
+						color = "blue"
+					} else if e.DocType == "HR" {
+						color = "red"
+					} else {
+						color = "green"
+					}
+					ret += (s1 + color + s11 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
+				}
+
+				fmt.Fprintf(w, ret)
 			}
 
-			fmt.Fprintf(w, ret)
 		}
 	}
 
