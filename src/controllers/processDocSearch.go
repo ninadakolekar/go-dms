@@ -5,6 +5,7 @@ import (
 	"html"
 	"net/http"
 	"regexp"
+	"strings"
 
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
@@ -17,45 +18,50 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 	sortOrder := "default"
 	query := buildQuery(r)
 	fmt.Println("query:", query)
-
-	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
-	if err != nil {
-		fmt.Println(err) //core not connected
-	}
-	q := solr.Query{
-		Params: solr.URLParamMap{
-			"q": []string{query},
-		},
-		Rows: 100,
-	}
-
-	res, err := s.Select(&q)
-	if err != nil {
-		fmt.Println(err)
-
-	}
-
-	results := res.Results
-	if results.Len() == 0 {
-		fmt.Fprintf(w, "<h1>no results found</h1>")
+	if query == "" {
+		fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h3>Invalid query.</h3></span></div>")
+	} else if query == "empty" {
+		fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h3></h3></span></div>")
 	} else {
-		for i := 0; i < results.Len(); i++ {
-			links = append(links, convertTolINK(results.Get(i)))
+		s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
+		if err != nil {
+			fmt.Println(err) //core not connected
+		}
+		q := solr.Query{
+			Params: solr.URLParamMap{
+				"q": []string{query},
+			},
+			Rows: 100,
 		}
 
-		links = sortby(links, sortOrder)
-		fmt.Println("after sorting \n", links) //Debug
-		s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 light-green accent-3'>insert_drive_file</i><span class='title'>"
-		s2 := "</span><p>"
-		s3 := "</p><a href='"
-		s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+		res, err := s.Select(&q)
+		if err != nil {
+			fmt.Println(err)
 
-		ret := ""
-		for _, e := range links {
-			ret += (s1 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
 		}
 
-		fmt.Fprintf(w, ret)
+		results := res.Results
+		if results.Len() == 0 {
+			fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h5>No results found.</h5></span></div>")
+		} else {
+			for i := 0; i < results.Len(); i++ {
+				links = append(links, convertTolINK(results.Get(i)))
+			}
+
+			links = sortby(links, sortOrder)
+			// fmt.Println("after sorting \n", links) //Debug
+			s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 light-green accent-3'>insert_drive_file</i><span class='title'>"
+			s2 := "</span><p>"
+			s3 := "</p><a href='"
+			s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+
+			ret := ""
+			for _, e := range links {
+				ret += (s1 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
+			}
+
+			fmt.Fprintf(w, ret)
+		}
 	}
 
 }
@@ -111,11 +117,116 @@ func buildQuery(r *http.Request) string { //never returns an empty string
 	}
 
 	printFormData(information)
-
+	if !validate(information) {
+		return ""
+	}
+	if !isEmpty(information) {
+		return "empty"
+	}
 	query := makedateQuery(information)
 	typeQuery := makeTypeQuery(information)
+	processQuery := makeProcessQuery(information)
+	departmentQuery := makeDepartmentQuery(information)
+	criteraQuery := makeCritriaQuery(information)
 	if typeQuery != "" {
-		query += ("AND (" + typeQuery + ")")
+		query += (" AND (" + typeQuery + ")")
+	}
+	if processQuery != "" {
+		query += (" AND (" + processQuery + ")")
+	}
+	if departmentQuery != "" {
+		query += (" AND (" + departmentQuery + ")")
+	}
+	if criteraQuery != "" {
+		query += (" AND (" + criteraQuery + ")")
+	}
+	return query
+}
+
+func makeCritriaQuery(x formData) string {
+	query := ""
+	if x.val1 == "" {
+		x.val1 = "*"
+	}
+	if x.val2 == "" {
+		x.val2 = "*"
+	}
+	if x.val3 == "" {
+		x.val3 = "*"
+	}
+	if x.select1 != "" {
+		q1 := ""
+		if x.select1 == "docNumber" {
+			q1 += ("id:(" + x.val1 + "* )")
+		} else if x.select1 == "docTitle" {
+			q1 += ("title:(" + strings.Replace(x.val1, " ", "*", -1) + "* )")
+		} else if x.select1 == "docContent" {
+			q1 += ("body:( *" + strings.Replace(x.val1, " ", "*", -1) + "* )")
+		} else if x.select1 == "docUser" {
+			q1 += (" creator:(" + strings.Replace(x.val1, " ", "*", -1) + ") approver:(" + strings.Replace(x.val1, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val1, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val1, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val1, " ", "*", -1) + ")")
+		}
+		query += ("(" + q1 + ")")
+	}
+	if x.select2 != "" {
+		q1 := ""
+		if x.select2 == "docNumber" {
+			q1 += ("id:(" + x.val2 + "* )")
+		} else if x.select2 == "docTitle" {
+			q1 += ("title:(" + strings.Replace(x.val2, " ", "*", -1) + "* )")
+		} else if x.select2 == "docContent" {
+			q1 += ("body:( *" + strings.Replace(x.val2, " ", "*", -1) + "* )")
+		} else if x.select2 == "docUser" {
+			q1 += (" creator:(" + strings.Replace(x.val2, " ", "*", -1) + ") approver:(" + strings.Replace(x.val2, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val2, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val2, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val2, " ", "*", -1) + ")")
+		}
+		if query == "" {
+			query += ("(" + q1 + ")")
+		} else {
+			query += (" AND (" + q1 + ")")
+		}
+
+	}
+	if x.select3 != "" {
+		q1 := ""
+		if x.select3 == "docNumber" {
+			q1 += ("id:(" + x.val3 + "* )")
+		} else if x.select3 == "docTitle" {
+			q1 += ("title:(" + strings.Replace(x.val3, " ", "*", -1) + "* )")
+		} else if x.select3 == "docContent" {
+			q1 += ("body:( *" + strings.Replace(x.val3, " ", "*", -1) + "* )")
+		} else if x.select3 == "docUser" {
+			q1 += (" creator:(" + strings.Replace(x.val3, " ", "*", -1) + ") approver:(" + strings.Replace(x.val3, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val3, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val3, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val3, " ", "*", -1) + ")")
+		}
+		if query == "" {
+			query += ("(" + q1 + ")")
+		} else {
+			query += (" AND (" + q1 + ")")
+		}
+	}
+	return query
+}
+func makeDepartmentQuery(x formData) string {
+	query := ""
+	if x.d1 != "" {
+		query += "docDepartment:D1"
+	}
+	if x.d2 != "" {
+		query += " docDepartment:D2"
+	}
+	if x.d3 != "" {
+		query += " docDepartment:D3"
+	}
+	return query
+}
+func makeProcessQuery(x formData) string {
+	query := ""
+	if x.everyone != "" {
+		query += "docProcess:Everyone"
+	}
+	if x.onebyone != "" {
+		query += " docProcess:OneByOne"
+	}
+	if x.anyone != "" {
+		query += " docProcess:Anyone"
 	}
 	return query
 }
@@ -125,19 +236,14 @@ func makeTypeQuery(x formData) string { //will return an empty string
 		query += "docType:SOP"
 	}
 	if x.hr != "" {
-
 		query += " docType:HR"
-
 	}
 	if x.stp != "" {
-
 		query += " docType:STP"
-
 	}
 	return query
 }
 func makedateQuery(x formData) string { //never returns an empty string
-	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
 	bInit := "2000-01-01T00:00:00Z"
 	bExp := "2000-01-01T00:00:00Z"
 	bEff := "2000-01-01T00:00:00Z"
@@ -148,59 +254,156 @@ func makedateQuery(x formData) string { //never returns an empty string
 	dQeff := "effDate:"
 	dQexp := "expDate:"
 	if x.initFrom != "" {
-		fmt.Println(x.initFrom, "special attention : isvalid ", isDatevalid(x.initFrom), isDate(x.initFrom))
-		if isDatevalid(x.initFrom) == true || isDate(x.initFrom) {
-			bInit = x.initFrom + "T00:00:00Z"
-		}
+		bInit = x.initFrom + "T00:00:00Z"
 	}
 	if x.initTo != "" {
-		if isDatevalid(x.initTo) == true || isDate(x.initTo) {
-			eInit = x.initTo + "T23:59:59Z"
-		}
+		eInit = x.initTo + "T23:59:59Z"
 	}
 	if x.effFrom != "" {
-		if isDatevalid(x.effFrom) == true || isDate(x.effFrom) {
-			bEff = x.effFrom + "T00:00:00Z"
-		}
+		bEff = x.effFrom + "T00:00:00Z"
 	}
 	if x.effTo != "" {
-		if isDatevalid(x.effTo) == true || isDate(x.effTo) {
-			eEff = x.effTo + "T23:59:59Z"
-		}
+		eEff = x.effTo + "T23:59:59Z"
 	}
 	if x.expFrom != "" {
-		if isDatevalid(x.expFrom) == true || isDate(x.expFrom) {
-			bExp = x.expFrom + "T00:00:00Z"
-		}
+		bExp = x.expFrom + "T00:00:00Z"
 	}
 	if x.expTo != "" {
-		if isDatevalid(x.expTo) == true || isDate(x.expTo) {
-			eExp = x.expTo + "T23:59:59Z"
-		}
+		eExp = x.expTo + "T23:59:59Z"
 	}
 	return dQinit + "[" + bInit + " TO " + eInit + "]" + " AND " + dQeff + "[" + bEff + " TO " + eEff + "]" + " AND " + dQexp + "[" + bExp + " TO " + eExp + "]"
 }
 
 func printFormData(x formData) {
-	fmt.Println("sop :", x.sop)          //Debug
-	fmt.Println("hr:", x.hr)             //Debug
-	fmt.Println("stp:", x.stp)           //Debug
-	fmt.Println("everyone:", x.everyone) //Debug
-	fmt.Println("onebyone:", x.onebyone) //Debug
-	fmt.Println("anyone:", x.anyone)     //Debug
-	fmt.Println("d1:", x.d1)             //Debug
-	fmt.Println("d2:", x.d2)             //Debug
-	fmt.Println("d3:", x.d3)             //Debug
-	fmt.Println("initFrom:", x.initFrom) //Debug
-	fmt.Println("initTo:", x.initTo)     //Debug
-	fmt.Println("effFrom:", x.effFrom)   //Debug
-	fmt.Println("effTo:", x.effTo)       //Debug
-	fmt.Println("expFrom:", x.expFrom)   //Debug
-	fmt.Println("expTo:", x.expTo)       //Debug
-	fmt.Println("select1:", x.select1)   //Debug
-	fmt.Println("val1:", x.val1)         //Debug
-	fmt.Println("select2:", x.select2)   //Debug
-	fmt.Println("val2:", x.val2)         //Debug
-	fmt.Println("select3:", x.select3)   //Debug
-	fmt.Println("val3:", x.val3)         //Debug
+	fmt.Println("sop :#" + x.sop + "#")          //Debug
+	fmt.Println("hr:#" + x.hr + "#")             //Debug
+	fmt.Println("stp:#" + x.stp + "#")           //Debug
+	fmt.Println("everyone:#" + x.everyone + "#") //Debug
+	fmt.Println("onebyone:#" + x.onebyone + "#") //Debug
+	fmt.Println("anyone:#" + x.anyone + "#")     //Debug
+	fmt.Println("d1:#" + x.d1 + "#")             //Debug
+	fmt.Println("d2:#" + x.d2 + "#")             //Debug
+	fmt.Println("d3:#" + x.d3 + "#")             //Debug
+	fmt.Println("initFrom:#" + x.initFrom + "#") //Debug
+	fmt.Println("initTo:#" + x.initTo + "#")     //Debug
+	fmt.Println("effFrom:#" + x.effFrom + "#")   //Debug
+	fmt.Println("effTo:#" + x.effTo + "#")       //Debug
+	fmt.Println("expFrom:#" + x.expFrom + "#")   //Debug
+	fmt.Println("expTo:#" + x.expTo + "#")       //Debug
+	fmt.Println("select1:#" + x.select1 + "#")   //Debug
+	fmt.Println("val1:#" + x.val1 + "#")         //Debug
+	fmt.Println("select2:#" + x.select2 + "#")   //Debug
+	fmt.Println("val2:#" + x.val2 + "#")         //Debug
+	fmt.Println("select3:#" + x.select3 + "#")   //Debug
+	fmt.Println("val3:#" + x.val3 + "#")         //Debug
+}
+func validate(x formData) bool {
+
+	if !(x.sop == "" || x.sop == "on") {
+		return false
+	}
+	if !(x.hr == "" || x.hr == "on") {
+		return false
+	}
+	if !(x.stp == "" || x.stp == "on") {
+		return false
+	}
+	if !(x.d1 == "" || x.d1 == "on") {
+		return false
+	}
+	if !(x.d2 == "" || x.d2 == "on") {
+		return false
+	}
+	if !(x.d3 == "" || x.d3 == "on") {
+		return false
+	}
+	if !(x.everyone == "" || x.everyone == "on") {
+		return false
+	}
+	if !(x.onebyone == "" || x.onebyone == "on") {
+		return false
+	}
+	if !(x.anyone == "" || x.anyone == "on") {
+		return false
+	}
+	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]*$`).MatchString
+	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]*$`).MatchString
+	if x.initFrom != "" {
+		if isDatevalid(x.initFrom) != true || !isDate(x.initFrom) {
+			return false
+		}
+	}
+	if x.initTo != "" {
+		if isDatevalid(x.initTo) != true || !isDate(x.initTo) {
+			return false
+		}
+	}
+	if x.effFrom != "" {
+		if isDatevalid(x.effFrom) != true || !isDate(x.effFrom) {
+			return false
+		}
+	}
+	if x.effTo != "" {
+		if isDatevalid(x.effTo) != true || !isDate(x.effTo) {
+			return false
+		}
+	}
+	if x.expFrom != "" {
+		if isDatevalid(x.expFrom) != true || !isDate(x.expFrom) {
+			return false
+		}
+	}
+	if x.expTo != "" {
+		if isDatevalid(x.expTo) != true || !isDate(x.expTo) {
+			return false
+		}
+	}
+	if x.select1 != "" {
+		if x.select1 == "docNumber" {
+			if !isAlphaNumeric(x.val1) {
+				return false
+			}
+		} else if x.select1 == "docContent" || x.select1 == "docUser" || x.select1 == "docTitle" {
+			if !isKeyword(x.val1) {
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+	if x.select2 != "" {
+		if x.select2 == "docNumber" {
+			if !isAlphaNumeric(x.val2) {
+				return false
+			}
+		} else if x.select2 == "docContent" || x.select2 == "docUser" || x.select2 == "docTitle" {
+			if !isKeyword(x.val2) {
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+	if x.select3 != "" {
+		if x.select1 == "docNumber" {
+			if !isAlphaNumeric(x.val3) {
+				return false
+			}
+		} else if x.select3 == "docContent" || x.select3 == "docUser" || x.select3 == "docTitle" {
+			if !isKeyword(x.val3) {
+				return false
+			}
+		} else {
+			return false
+		}
+	}
+	return true
+
+}
+func isEmpty(x formData) bool {
+	if (x.anyone + x.d1 + x.d2 + x.d3 + x.effFrom + x.effTo + x.everyone + x.expFrom + x.expTo + x.hr + x.initFrom + x.initTo + x.onebyone + x.select1 + x.select2 + x.select3 + x.sop + x.stp + x.val1 + x.val2 + x.val3) == "" {
+		return false
+	}
+	return true
 }

@@ -239,7 +239,7 @@ func validateSearchForm(sC []string, sK []string) bool {
 	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
 	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
 	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
-	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9_ ]+$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
 
 	for j, sc := range sC {
 
