@@ -55,7 +55,7 @@
       <div class="row">
           
         <!-- FILTER PANEL -->
-          <form id="form">
+          <form id="form" method="POST">
             <div class="col m3 s12"><br><br>
                 <h5><i class="material-icons">
                         filter_list
@@ -67,19 +67,19 @@
                             <div class="row">
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="SOP" type="checkbox"/>
+                                        <input name="SOP" value = "true" type="checkbox"/>
                                         <span>SOP</span>
                                     </label>
                                 </div>
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="HR" type="checkbox" />
+                                        <input name="HR" value = "true" type="checkbox" />
                                         <span>HR</span>
                                     </label>
                                 </div>
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="STP" type="checkbox" />
+                                        <input name="STP" value = "true" type="checkbox" />
                                         <span>STP</span>
                                     </label>
                                 </div>
@@ -92,13 +92,13 @@
                             <div class="row">
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="Everyone" type="checkbox" />
+                                        <input name="Everyone" value = "true" type="checkbox" />
                                         <span>Everyone</span>
                                     </label>
                                 </div>
                                 <div class="input-field col l12 m12">
                                     <label>
-                                        <input name="OneByOne" type="checkbox" />
+                                        <input name="OneByOne" value = "true" type="checkbox" />
                                         <span>One by one</span>
                                     </label>
                                 </div>
@@ -144,11 +144,11 @@
                                     
                                     <div class="input-field col s6">
                                             <label>From</label>
-                                            <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                            <input name="initFrom" class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
                                     </div>
                                     <div class="input-field col s6">
                                         <label>To</label>
-                                        <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                        <input name="initTo" class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
                                         
                                     </div>
                             </div>
@@ -156,11 +156,11 @@
                             <div class="row">
                                     <div class="input-field col s6">
                                             <label>From</label>
-                                            <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                            <input name="effFrom"  class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
                                     </div>
                                     <div class="input-field col s6">
                                         <label>To</label>
-                                        <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                        <input name="effTo" class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
                                         
                                     </div>
                             </div>
@@ -168,11 +168,11 @@
                             <div class="row">
                                     <div class="input-field col s6">
                                             <label>From</label>
-                                            <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                            <input name="expFrom" class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
                                     </div>
                                     <div class="input-field col s6">
                                         <label>To</label>
-                                        <input class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
+                                        <input name="expTo" class="validate" type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" class="datepicker">
                                         
                                     </div>
                             </div>
@@ -191,7 +191,7 @@
                         <div class="row">
                              <div class="input-field col s4">
                                 <i class="material-icons prefix">category</i>
-                                <select>
+                                <select name="select1">
                                     <option value="" disabled selected></option>
                                     <option value="docNumber">Document Number</option>
                                     <option value="docTitle">Title</option>
@@ -202,7 +202,7 @@
                             </div>
                             <div class="input-field col s4">
                                 <i class="material-icons prefix">category</i>
-                                <select>
+                                <select name="select2">
                                     <option value="" disabled selected></option>
                                     <option value="docNumber">Document Number</option>
                                     <option value="docTitle">Title</option>
@@ -213,7 +213,7 @@
                             </div>
                             <div class="input-field col s4">
                                 <i class="material-icons prefix">category</i>
-                                <select>
+                                <select name="select3">
                                     <option value="" disabled selected></option>
                                     <option value="docNumber">Document Number</option>
                                     <option value="docTitle">Title</option>
@@ -226,17 +226,17 @@
                         <div class="row">
                             <div class="input-field col s4">
                                 <i class="material-icons prefix">search</i>
-                                <input id="last_name" type="text" class="validate">
+                                <input name="val1" id="last_name" type="text" class="validate">
                                 <label for="last_name"></label>
                             </div>
                             <div class="input-field col s4">
                                 <i class="material-icons prefix">search</i>
-                                <input id="last_name" type="text" class="validate">
+                                <input name="val2" id="last_name" type="text" class="validate">
                                 <label for="last_name"></label>
                             </div>
                             <div class="input-field col s4">
                                 <i class="material-icons prefix">search</i>
-                                <input id="last_name" type="text" class="validate">
+                                <input name="val3" id="last_name" type="text" class="validate">
                                 <label for="last_name"></label>
                             </div>
                         </div>
@@ -308,7 +308,8 @@
 
     function submitHandler() {
         //name value
-        //
+        console.log("came to submit");
+        $.post('/doc/search', $('form').serialize());
     }
 
     jQuery(document).ready(function($){
@@ -331,8 +332,10 @@
             submitHandler();
         });
 
-        $('#submit-btn').click(function(){
+        $('#form').submit(function(e){
+            e.preventDefault();
             submitHandler();
+            
         });
         
     });
