@@ -45,7 +45,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 		links = sortby(links, sortOrder)
 		fmt.Println("after sorting \n", links) //Debug
-		s1 := "<li class='collection-item avatar'><i class='material-icons circle green'>insert_drive_file</i><span class='title'>"
+		s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 light-green accent-3'>insert_drive_file</i><span class='title'>"
 		s2 := "</span><p>"
 		s3 := "</p><a href='"
 		s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
@@ -84,7 +84,7 @@ type formData struct {
 	val3     string
 }
 
-func buildQuery(r *http.Request) string {
+func buildQuery(r *http.Request) string { //never returns an empty string
 
 	information := formData{
 		sop:      html.EscapeString(r.FormValue("SOP")),
@@ -113,10 +113,30 @@ func buildQuery(r *http.Request) string {
 	printFormData(information)
 
 	query := makedateQuery(information)
+	typeQuery := makeTypeQuery(information)
+	if typeQuery != "" {
+		query += ("AND (" + typeQuery + ")")
+	}
 	return query
 }
+func makeTypeQuery(x formData) string { //will return an empty string
+	query := ""
+	if x.sop != "" {
+		query += "docType:SOP"
+	}
+	if x.hr != "" {
 
-func makedateQuery(x formData) string {
+		query += " docType:HR"
+
+	}
+	if x.stp != "" {
+
+		query += " docType:STP"
+
+	}
+	return query
+}
+func makedateQuery(x formData) string { //never returns an empty string
 	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
 	bInit := "2000-01-01T00:00:00Z"
 	bExp := "2000-01-01T00:00:00Z"
