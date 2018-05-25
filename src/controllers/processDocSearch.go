@@ -49,7 +49,6 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			}
 
 			links = sortby(links, sortOrder)
-			// fmt.Println("after sorting \n", links) //Debug
 			s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 light-green accent-3'>insert_drive_file</i><span class='title'>"
 			s2 := "</span><p>"
 			s3 := "</p><a href='"
@@ -116,7 +115,6 @@ func buildQuery(r *http.Request) string { //never returns an empty string
 		val3:     html.EscapeString(r.FormValue("val3")),
 	}
 
-	printFormData(information)
 	if !isEmpty(information) {
 		return "empty"
 	}
@@ -266,28 +264,28 @@ func makedateQuery(x formData) string { //never returns an empty string
 	return dQinit + "[" + bInit + " TO " + eInit + "]" + " AND " + dQeff + "[" + bEff + " TO " + eEff + "]" + " AND " + dQexp + "[" + bExp + " TO " + eExp + "]"
 }
 
-func printFormData(x formData) {
-	fmt.Println("sop :#" + x.sop + "#")          //Debug
-	fmt.Println("hr:#" + x.hr + "#")             //Debug
-	fmt.Println("stp:#" + x.stp + "#")           //Debug
-	fmt.Println("everyone:#" + x.everyone + "#") //Debug
-	fmt.Println("onebyone:#" + x.onebyone + "#") //Debug
-	fmt.Println("anyone:#" + x.anyone + "#")     //Debug
-	fmt.Println("d1:#" + x.d1 + "#")             //Debug
-	fmt.Println("d2:#" + x.d2 + "#")             //Debug
-	fmt.Println("d3:#" + x.d3 + "#")             //Debug
-	fmt.Println("initFrom:#" + x.initFrom + "#") //Debug
-	fmt.Println("initTo:#" + x.initTo + "#")     //Debug
-	fmt.Println("effFrom:#" + x.effFrom + "#")   //Debug
-	fmt.Println("effTo:#" + x.effTo + "#")       //Debug
-	fmt.Println("expFrom:#" + x.expFrom + "#")   //Debug
-	fmt.Println("expTo:#" + x.expTo + "#")       //Debug
-	fmt.Println("select1:#" + x.select1 + "#")   //Debug
-	fmt.Println("val1:#" + x.val1 + "#")         //Debug
-	fmt.Println("select2:#" + x.select2 + "#")   //Debug
-	fmt.Println("val2:#" + x.val2 + "#")         //Debug
-	fmt.Println("select3:#" + x.select3 + "#")   //Debug
-	fmt.Println("val3:#" + x.val3 + "#")         //Debug
+func printFormData(x formData) { //func used for debuging
+	fmt.Println("sop :#" + x.sop + "#")
+	fmt.Println("hr:#" + x.hr + "#")
+	fmt.Println("stp:#" + x.stp + "#")
+	fmt.Println("everyone:#" + x.everyone + "#")
+	fmt.Println("onebyone:#" + x.onebyone + "#")
+	fmt.Println("anyone:#" + x.anyone + "#")
+	fmt.Println("d1:#" + x.d1 + "#")
+	fmt.Println("d2:#" + x.d2 + "#")
+	fmt.Println("d3:#" + x.d3 + "#")
+	fmt.Println("initFrom:#" + x.initFrom + "#")
+	fmt.Println("initTo:#" + x.initTo + "#")
+	fmt.Println("effFrom:#" + x.effFrom + "#")
+	fmt.Println("effTo:#" + x.effTo + "#")
+	fmt.Println("expFrom:#" + x.expFrom + "#")
+	fmt.Println("expTo:#" + x.expTo + "#")
+	fmt.Println("select1:#" + x.select1 + "#")
+	fmt.Println("val1:#" + x.val1 + "#")
+	fmt.Println("select2:#" + x.select2 + "#")
+	fmt.Println("val2:#" + x.val2 + "#")
+	fmt.Println("select3:#" + x.select3 + "#")
+	fmt.Println("val3:#" + x.val3 + "#")
 }
 func validate(x formData) bool {
 
@@ -366,7 +364,7 @@ func validate(x formData) bool {
 			return false
 		}
 	} else {
-		if x.val1 == "" {
+		if x.val1 != "" {
 			return false
 		}
 	}
@@ -383,7 +381,7 @@ func validate(x formData) bool {
 			return false
 		}
 	} else {
-		if x.val2 == "" {
+		if x.val2 != "" {
 			return false
 		}
 	}
@@ -400,7 +398,7 @@ func validate(x formData) bool {
 			return false
 		}
 	} else {
-		if x.val3 == "" {
+		if x.val3 != "" {
 			return false
 		}
 	}
