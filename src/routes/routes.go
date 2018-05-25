@@ -43,6 +43,7 @@ func GetRouter() *mux.Router {
 	r.HandleFunc("/doc/create", controller.ProcessDocCreate).Methods("POST")
 
 	r.HandleFunc("/doc/view/{id}", controller.DocView).Methods("GET")
+	r.HandleFunc("/doc/query", controller.ProcessNewSearch).Methods("POST")
 
 	return r
 }

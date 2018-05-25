@@ -55,7 +55,7 @@
       <div class="row">
           
         <!-- FILTER PANEL -->
-          <form action="/doc/search" method="post" id="form">
+          <form id="form">
             <div class="col m3 s12"><br><br>
                 <h5><i class="material-icons">
                         filter_list
@@ -241,7 +241,7 @@
                             </div>
                         </div>
                         <div class="row center"><br><br>
-                                <button type="submit" class="btn">Submit &nbsp; <i class="material-icons">send</i></button>
+                                <button type="submit" class="btn" id = "submit-btn" >Submit &nbsp; <i class="material-icons">send</i></button>
                         </div>
                         <!-- RESULTS PANEL -->
                         <div class="container-fluid" id="results-container">
@@ -305,6 +305,12 @@
 <script src="../static/js/materialize.min.js"></script>
 
 <script>
+
+    function submitHandler() {
+        //name value
+        //
+    }
+
     jQuery(document).ready(function($){
 
         $(".dropdown-trigger").dropdown({
@@ -322,7 +328,11 @@
         $('.datepicker').datepicker();
 
         $('[type="checkbox"]').click(function(){
-            $('#form').submit();
+            submitHandler();
+        });
+
+        $('#submit-btn').click(function(){
+            submitHandler();
         });
         
     });
@@ -332,6 +342,7 @@
 <script>
         jQuery('form').ready(function($){
             window.$('select').formSelect();
+
         });
 </script>
 
