@@ -7,7 +7,7 @@ import (
 
 // DocSearch ... Searches for a particulart document
 func DocSearch(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/searchDoc.html"))
+	tmpl := template.Must(template.ParseFiles("templates/newSearch.html"))
 	tmpl.Execute(w, struct {
 		Getb     bool
 		Alertb   bool
