@@ -1,15 +1,11 @@
-package user
+package auth
 
 import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/securecookie"
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 )
-
-var cookieHandler = securecookie.New(
-	securecookie.GenerateRandomKey(64),
-	securecookie.GenerateRandomKey(32))
 
 func GetCurrentUser(r *http.Request) (string, error) {
 
@@ -23,7 +19,7 @@ func GetCurrentUser(r *http.Request) (string, error) {
 
 	cookieValue := make(map[string]string)
 
-	err = cookieHandler.Decode("session", cookie.Value, &cookieValue)
+	err = constants.CookieHandler.Decode("session", cookie.Value, &cookieValue)
 
 	if err != nil {
 		fmt.Println("Error decoding cookie GetCurrentUser Line 29: ", err) // Debug

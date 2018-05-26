@@ -1,4 +1,4 @@
-package user
+package auth
 
 // ValidateLoginCredentials ... Validates username and password
 func ValidateLoginCredentials(username string, password string) bool {

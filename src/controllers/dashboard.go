@@ -5,13 +5,13 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/ninadakolekar/aizant-dms/src/user"
+	"github.com/ninadakolekar/aizant-dms/src/auth"
 )
 
 //Login ... login
 func Dashboard(w http.ResponseWriter, r *http.Request) {
 
-	user, err := user.GetCurrentUser(r)
+	user, err := auth.GetCurrentUser(r)
 
 	fmt.Println(user) //Debug
 

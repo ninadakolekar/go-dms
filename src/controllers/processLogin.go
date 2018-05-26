@@ -5,14 +5,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/securecookie"
-
-	user "github.com/ninadakolekar/aizant-dms/src/user"
+	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 )
-
-var cookieHandler = securecookie.New(
-	securecookie.GenerateRandomKey(64),
-	securecookie.GenerateRandomKey(32))
 
 // ProcessLogin ... Processes Login form
 func ProcessLogin(w http.ResponseWriter, r *http.Request) {
@@ -21,9 +16,9 @@ func ProcessLogin(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	redirectTarget := "/"
 
-	if user.ValidateLoginCredentials(username, password) {
+	if auth.ValidateLoginCredentials(username, password) {
 
-		_, err := user.AuthCredentials(username, password)
+		_, err := auth.AuthCredentials(username, password)
 		if err == nil {
 			setSession(username, w)
 			redirectTarget = "/dashboard"
@@ -38,10 +33,10 @@ func ProcessLogin(w http.ResponseWriter, r *http.Request) {
 func setSession(username string, response http.ResponseWriter) {
 
 	value := map[string]string{
-		"name": username,
+		"username": username,
 	}
 
-	encoded, err := cookieHandler.Encode("session", value)
+	encoded, err := constants.CookieHandler.Encode("session", value)
 
 	if err != nil {
 		fmt.Println("Error setSession Line 36: ", err) // Debug

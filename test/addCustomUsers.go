@@ -7,8 +7,8 @@ import (
 	"github.com/rtt/Go-Solr"
 )
 
-//AddUsers ... addsuser
-func AddUsers() {
+//AddCustomUsers ... Adds a set of users to solr database
+func AddCustomUsers() {
 	// init a connection
 	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 

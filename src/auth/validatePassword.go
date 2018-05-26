@@ -1,4 +1,4 @@
-package user
+package auth
 
 // validatePassword ... Validates password
 func validatePassword(password string) bool {

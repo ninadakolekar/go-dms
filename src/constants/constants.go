@@ -1,6 +1,8 @@
 // Package constants ... This package exports various constant values used by the app.
 package constants
 
+import "github.com/gorilla/securecookie"
+
 const (
 	// SolrPort ... The port on which solr runs.
 	SolrPort = 8983
@@ -23,3 +25,6 @@ const (
 	//MinDocNumLen ... Min document number length
 	MinDocNumLen = 3
 )
+
+// CookieHandler ... Random key generator for securecookie
+var CookieHandler = securecookie.New(securecookie.GenerateRandomKey(64), securecookie.GenerateRandomKey(32))
