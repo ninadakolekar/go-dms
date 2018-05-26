@@ -44,5 +44,6 @@ func GetRouter() *mux.Router {
 
 	r.HandleFunc("/doc/view/{id}", controller.DocView).Methods("GET")
 
+	r.HandleFunc("/doc/fetch", controller.FetchPendingDocuments).Methods("POST")
 	return r
 }
