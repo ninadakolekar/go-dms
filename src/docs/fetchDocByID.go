@@ -57,6 +57,7 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 	doc.FlowStatus = s1.Field("flowStatus").(float64)
 	doc.DocTemplate = s1.Field("docTemplateID").(float64)
 	doc.InitTS = s1.Field("initTime").(string)
+	doc.QA = s1.Field("qa").(string)
 
 	createTime := s1.Field("createTime")
 	if createTime == nil {
@@ -146,7 +147,7 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 
 func isDocValid(s1 *solr.Document) bool {
 
-	if s1.Field("id") != nil && s1.Field("title") != nil && s1.Field("docType") != nil && s1.Field("docProcess") != nil && s1.Field("effDate") != nil && s1.Field("expDate") != nil && s1.Field("docStatus") != nil && s1.Field("initiator") != nil && s1.Field("creator") != nil && s1.Field("docDepartment") != nil && s1.Field("flowStatus") != nil && s1.Field("docTemplateID") != nil && s1.Field("initTime") != nil && s1.Field("approver") != nil && s1.Field("reviewer") != nil {
+	if s1.Field("qa") != nil && s1.Field("id") != nil && s1.Field("title") != nil && s1.Field("docType") != nil && s1.Field("docProcess") != nil && s1.Field("effDate") != nil && s1.Field("expDate") != nil && s1.Field("docStatus") != nil && s1.Field("initiator") != nil && s1.Field("creator") != nil && s1.Field("docDepartment") != nil && s1.Field("flowStatus") != nil && s1.Field("docTemplateID") != nil && s1.Field("initTime") != nil && s1.Field("approver") != nil && s1.Field("reviewer") != nil {
 		return true
 	}
 

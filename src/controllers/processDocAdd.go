@@ -74,7 +74,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 				ReviewTS:     "",
 				AuthTS:       "",
 				ApproveTS:    "",
-				DocumentBody: []string{"Empty Body"},
+				DocumentBody: nil,
 				QA:           "firefox",
 			}
 			// Insert the new document

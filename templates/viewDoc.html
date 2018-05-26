@@ -54,6 +54,19 @@
                 </div>
             {{ end }}
         </div>
+
+        <!-- EDIT BUTTON -->
+
+        {{ if .Edit}}
+
+            <div class="fixed-action-btn edit-btn">
+            <a class="btn-floating btn-large red" href="/doc/create/{{ .DocNumber }}">
+                <i class="large material-icons">mode_edit</i>
+            </a>
+            </div>
+                
+        {{ end }}
+
     </body>
     <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
     <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
@@ -82,4 +95,13 @@
             $("#hide-details").remove();
         });
     </script>
+
+    {{ if .Edit }}
+        <script>
+            $(document).ready(function(){
+                $('.fixed-action-btn').floatingActionButton();
+            });
+        </script>
+    {{ end }}
+
 </html>

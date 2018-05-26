@@ -37,9 +37,8 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 				documentBody[i-1] = html.EscapeString(r.FormValue(currentName))
 			}
 
-			fmt.Println(docNumber, documentBody) // Debug
-
 			document, err := docs.FetchDocByID(docNumber)
+			fmt.Println("Mozilla ", document.QA)
 			if err != nil {
 				fmt.Println("ERROR Fetching document ProcessDocCreate Line 40") // Debug
 				fmt.Println(err)

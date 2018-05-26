@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 
@@ -9,12 +8,10 @@ import (
 	user "github.com/ninadakolekar/aizant-dms/src/user"
 )
 
-//Dashboard ... dashboard
+//Dashboard ... User's Dashboard
 func Dashboard(w http.ResponseWriter, r *http.Request) {
 
 	usr, err := auth.GetCurrentUser(r)
-
-	fmt.Println(usr) //Debug
 
 	if err != nil { // Login unsucessful
 		http.Redirect(w, r, "/", 302)
