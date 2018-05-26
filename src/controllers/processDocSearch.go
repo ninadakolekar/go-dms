@@ -15,9 +15,12 @@ import (
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 	links := []lINK{}
-	sortOrder := "alexical" //"typeSort" //"alexical" //"default"
 	query := buildQuery(r)
 	fmt.Println("query:", query)
+	sortOrder := html.EscapeString(r.FormValue("sort"))
+	if !(sortOrder == "typeSort" || sortOrder == "effDate" || sortOrder == "expDate") { //validation for sorting
+		query = ""
+	}
 	if query == "" {
 		fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h3>Invalid query.</h3></span></div>")
 	} else if query == "empty" {
@@ -70,13 +73,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 				s4 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible({accordion: false,});formatDate();});</script>"
 				fmt.Fprintf(w, s1+v1+s2+v2+s3+v3+s4)
 			} else {
-				// s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
 				color := "green"
-				// s11 := "'>insert_drive_file</i><span class='title'>"
-				// s2 := "</span><p>"
-				// s3 := "</p><a href='"
-				// s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li><script>$(document).ready(function(){formatDate();});</script>"
-
 				ret := ""
 				for _, e := range links {
 					if e.DocType == "SOP" {

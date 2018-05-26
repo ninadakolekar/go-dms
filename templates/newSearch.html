@@ -241,8 +241,17 @@
                                 <label for="last_name"></label>
                             </div>
                         </div>
-                        <div class="row center"><br><br>
-                                <button type="submit" class="btn" id = "submit-btn" >Submit &nbsp; <i class="material-icons">send</i></button>
+                        <div class="row "><br><br>
+                                <button type="submit" class="btn submit col s4 m2 offset-m4 center" id = "submit-btn" >Submit &nbsp; <i class="material-icons">send</i></button>
+                                <div class="input-field col s12 m4 offset-m2">
+                                        <select id="sort" name="sort">
+                                          <option value="typeSort">DocumentType</option>
+                                          <option value="effDate">Effective date</option>
+                                          <option value="expDate">Expiry date</option>
+                                        </select>
+                                        <label for="sort">sort-options</label>
+                                </div>
+                                    
                         </div>
                         <!-- RESULTS PANEL -->
                         <div class="container-fluid" id="results-container">
@@ -284,7 +293,6 @@
     }
 
     jQuery(document).ready(function($){
-
         $(".dropdown-trigger").dropdown({
             inDuration: 300,
             outDuration: 225,
@@ -307,6 +315,9 @@
             e.preventDefault();
             submitHandler();
             
+        });
+        $('#sort').change(function(){
+            submitHandler();
         });
         
     });
