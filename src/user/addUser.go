@@ -23,7 +23,7 @@ func AddUser(user models.User) (*solr.UpdateResponse, error) {
 	// build an update document, in this case adding two documents
 	f := map[string]interface{}{
 		"add": []interface{}{
-			map[string]interface{}{"id": user.Username, "uName": user.Name, "avInit": user.AvailableInit, "avCr": user.AvailableCr, "avAp": user.AvailableApp, "avAu": user.AvailableAuth, "avQA": user.AvailableQA, "avRw": user.AvailableRvw},
+			map[string]interface{}{"id": user.Username, "uName": user.Name, "avInit": user.AvailableInit, "avCr": user.AvailableCr, "avAp": user.AvailableApp, "avAu": user.AvailableAuth, "avQA": user.AvailableQA, "avRw": user.AvailableRw},
 		},
 	}
 
