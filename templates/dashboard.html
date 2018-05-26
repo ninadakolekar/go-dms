@@ -20,23 +20,24 @@
 
 </head>
 <body>
-    
+
 <!-- Navbar Dropdown Structure -->
 <ul id="dropdown1" class="dropdown-content">
 
-    <li id="dropdown-username" disabled>Signed in as <br><b>{{ .Username }}</b></li>
+    <li id="dropdown-username" disabled>Signed in as <br><b>{{.Username}}</b></li>
     <li class="divider"></li>
 
     <li><a href="#!">Search</a></li>
 
     <!-- PROFILE SPECIFIC -->
-    <li><a href="#!">Initiate</a></li>
-    <li><a href="#!">Create</a></li>
-
+    {{if eq .AvailableInit true}}
+    <li><a href="#!">New Document</a></li>
+    {{end}}
+    
     <li class="divider"></li>
     <li><a href="#!">Logout</a></li>
 
-  </ul>
+</ul>
 
   <!-- NAVBAR -->
 
@@ -44,15 +45,18 @@
     <div class="nav-wrapper container">
       <a href="#!" class="brand-logo">Dashboard</a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="sass.html">Sass</a></li>
-        <li><a href="badges.html">Components</a></li>
+      
         <!-- Dropdown Trigger -->
-        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons">perm_identity</i><i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons center">perm_identity</i><i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
     </div>
   </nav>
 
   <div class="container">
+      
+            <h4 class="col s12 m2" id = "welcome">Welcome, {{.Name}}!</h4>
+          
+      
       <div class="row">
           
         <!-- FILTER PANEL -->
@@ -139,6 +143,7 @@
             </div>
         </form>
         <!-- DOCS PANEL -->
+        <br><br><br>
       <div class="col m8">
         <ul id="issues-collection" class="collection">
             <li class="collection-item avatar">
