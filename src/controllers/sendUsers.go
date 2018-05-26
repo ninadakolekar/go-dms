@@ -7,9 +7,14 @@ import (
 	solr "github.com/rtt/Go-Solr"
 )
 
+type Strings2 struct {
+	Name string
+	Id   string
+}
+
 //SendApprovers ... Returns the list of available Approvers
-func SendApprovers() []string {
-	str := []string{}
+func SendApprovers() []Strings2 {
+	str := []Strings2{}
 
 	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
@@ -35,7 +40,7 @@ func SendApprovers() []string {
 	if results.Len() > 0 {
 		len := results.Len()
 		for i := 0; i < len; i++ {
-			str = append(str, results.Get(i).Field("uName").(string))
+			str = append(str, Strings2{Name: results.Get(i).Field("uName").(string), Id: results.Get(i).Field("id").(string)})
 		}
 	}
 
@@ -43,8 +48,8 @@ func SendApprovers() []string {
 }
 
 // SendReviewers ... Returns the list of available Reviewers
-func SendReviewers() []string {
-	str := []string{}
+func SendReviewers() []Strings2 {
+	str := []Strings2{}
 
 	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
@@ -70,7 +75,7 @@ func SendReviewers() []string {
 	if results.Len() > 0 {
 		len := results.Len()
 		for i := 0; i < len; i++ {
-			str = append(str, results.Get(i).Field("uName").(string))
+			str = append(str, Strings2{Name: results.Get(i).Field("uName").(string), Id: results.Get(i).Field("id").(string)})
 		}
 	}
 
@@ -78,8 +83,8 @@ func SendReviewers() []string {
 }
 
 // SendCreators ... Returns the list of available Creators
-func SendCreators() []string {
-	str := []string{}
+func SendCreators() []Strings2 {
+	str := []Strings2{}
 
 	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
@@ -105,7 +110,7 @@ func SendCreators() []string {
 	if results.Len() > 0 {
 		len := results.Len()
 		for i := 0; i < len; i++ {
-			str = append(str, results.Get(i).Field("uName").(string))
+			str = append(str, Strings2{Name: results.Get(i).Field("uName").(string), Id: results.Get(i).Field("id").(string)})
 		}
 	}
 
@@ -113,8 +118,8 @@ func SendCreators() []string {
 }
 
 // SendAuthoriser ... Returns the list of available authorizers
-func SendAuthoriser() []string {
-	str := []string{}
+func SendAuthoriser() []Strings2 {
+	str := []Strings2{}
 
 	s, err := solr.Init(constants.SolrHost, constants.SolrPort, constants.UserCore)
 	if err != nil {
@@ -140,7 +145,7 @@ func SendAuthoriser() []string {
 	if results.Len() > 0 {
 		len := results.Len()
 		for i := 0; i < len; i++ {
-			str = append(str, results.Get(i).Field("uName").(string))
+			str = append(str, Strings2{Name: results.Get(i).Field("uName").(string), Id: results.Get(i).Field("id").(string)})
 		}
 	}
 

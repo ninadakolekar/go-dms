@@ -23,4 +23,5 @@ type InactiveDoc struct {
 	AuthTS       string
 	ApproveTS    string
 	DocumentBody []string
+	QA           string
 }

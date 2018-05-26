@@ -41,6 +41,8 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 		docAuth := r.Form["docAuth"]
 		docReviewers := r.Form["docReviewers"]
 		docApprovers := r.Form["docApprovers"]
+		docQA := "firefox"
+
 		for i, e := range docAuth {
 			docAuth[i] = html.EscapeString(e)
 		}
@@ -80,6 +82,7 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 				AuthTS:       "",
 				ApproveTS:    "",
 				DocumentBody: []string{"Empty Body"},
+				QA:           docQA,
 			}
 			// Insert the new document
 			resp, err := doc.AddInactiveDoc(newDoc)
@@ -104,5 +107,5 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 
 	// Render a new form
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
-	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: true, Document: model.InactiveDoc{}})
+	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: model.InactiveDoc{}})
 }

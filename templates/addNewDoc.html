@@ -122,7 +122,7 @@
        <select name="docCreator" id = "create_doc">
          <option class="dropdown_default_option" value="0" disabled selected></option>
          {{range $idx, $e := .Creators}}
-         <option value="{{$e}}">{{$e}}</option>
+         <option value="{{$e.Id}}">{{$e.Name}}<span style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  color: rgb(0, 255, 179)!important;"> @{{$e.Id}}</span></option>
          {{end}}
        </select>
        <label for="create_doc">Creator</label>
@@ -130,8 +130,8 @@
      <div class="input-field col s12 m6">
       <select name="docAuth" id = "auth_doc">
         <option class="dropdown_default_option" value="0" disabled selected></option>
-        {{range $idx, $e := .Reviewers}}
-        <option value="{{$e}}">{{$e}}</option>
+        {{range $idx, $e := .Authorisers}}
+        <option value="{{$e.Id}}">{{$e.Name}}<span style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif ; color: rgb(0, 255, 179)!important;"> @{{$e.Id}}</span></option>
         {{end}}
       </select>
       <label for="auth_doc">Authorizer</label>
@@ -141,8 +141,8 @@
     <div class="input-field col s12 m6">
     <select multiple id="docReviewers" name="docReviewers">
       <option value="" disabled></option>
-      {{range $idx, $e := .Authorisers}}
-      <option value="{{$e}}">{{$e}}</option>
+      {{range $idx, $e := .Reviewers}}
+      <option value="{{$e.Id}}">{{$e.Name}} &nbsp; @{{$e.Id}}</option>
       {{end}}
     </select>
     <label>Reviewers</label>
@@ -151,7 +151,7 @@
     <select multiple name="docApprovers" id="docApprovers">
       <option value="" disabled></option>
       {{range $idx, $e := .Approvers}}
-           <option value="{{$e}}">{{$e}}</option>
+      <option value="{{$e.Id}}">{{$e.Name}}<span style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  color: rgb(0, 255, 179)!important;"> @{{$e.Id}}</span></option>
       {{end}}
     </select>
     <label>Approvers</label>
@@ -166,6 +166,7 @@
     </form>
     </div>
   </div>
+
   {{if .Errb}}
   <a class="btn wrong" id="error" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
   <script>
@@ -174,9 +175,11 @@
      $(".toast").css('font-weight','bold')
   </script>
   {{end}}
-  {{if .Datab}}
+
+  {{if eq .Datab true}}
   <a class="btn right" id="success" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
   <script>
+     console.log("Hey I was triggered!!!")// Debug
      $("#success").trigger('click')
      $(".toast").css('background-color','green')
      $(".toast").css('font-weight','bold')
@@ -316,7 +319,7 @@
               $('#status').html("Invalid Document Number")
             } 
           
-            else if(docno.length >= 3)   
+            if(docno.length >= 3)   
             {
               $("#status").html('Checking availability...');
       

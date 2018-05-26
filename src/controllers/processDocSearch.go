@@ -15,7 +15,7 @@ import (
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 	links := []lINK{}
-	sortOrder := "typeSort" //"alexical" //"default"
+	sortOrder := "alexical" //"typeSort" //"alexical" //"default"
 	query := buildQuery(r)
 	fmt.Println("query:", query)
 	if query == "" {
@@ -51,31 +51,31 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 			links = sortby(links, sortOrder)
 			if sortOrder == "typeSort" {
 
-				s1 := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons circle #76ff03 red'>insert_drive_file</i>HR</div><div class='collapsible-body'><ul>"
+				s1 := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons circle #76ff03 red'>layers</i><span class='results-dept'>HR</span></div><div class='collapsible-body'><ul>"
 				v1 := ""
 				v2 := ""
 				v3 := ""
 				for _, e := range links {
 					if e.DocType == "HR" {
-						v1 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+						v1 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
 					} else if e.DocType == "SOP" {
-						v2 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+						v2 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
 					} else if e.DocType == "STP" {
-						v3 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 green'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "intiated:" + e.Idate + "</p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+						v3 += "<li class='collection-item avatar'><i class='material-icons circle #76ff03 green'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
 					}
 				}
 
-				s2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 blue'>insert_drive_file</i>SOP</div><div class='collapsible-body'><ul>"
-				s3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 green'>insert_drive_file</i>STP</div><div class='collapsible-body'><ul>"
-				s4 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
+				s2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 blue'>layers</i><span class='results-dept'>SOP</span></div><div class='collapsible-body'><ul>"
+				s3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 green'>layers</i><span class='results-dept'>STP</span></div><div class='collapsible-body'><ul>"
+				s4 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible({accordion: false,});formatDate();});</script>"
 				fmt.Fprintf(w, s1+v1+s2+v2+s3+v3+s4)
 			} else {
-				s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
+				// s1 := "<li class='collection-item avatar'><i class='material-icons circle #76ff03 "
 				color := "green"
-				s11 := "'>insert_drive_file</i><span class='title'>"
-				s2 := "</span><p>"
-				s3 := "</p><a href='"
-				s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>"
+				// s11 := "'>insert_drive_file</i><span class='title'>"
+				// s2 := "</span><p>"
+				// s3 := "</p><a href='"
+				// s4 := "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li><script>$(document).ready(function(){formatDate();});</script>"
 
 				ret := ""
 				for _, e := range links {
@@ -86,10 +86,10 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 					} else {
 						color = "green"
 					}
-					ret += (s1 + color + s11 + e.DocName + s2 + "intiated:" + e.Idate + s3 + "/doc/view/" + e.DocId + s4)
+					ret += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 " + color + "'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>")
 				}
 
-				fmt.Fprintf(w, ret)
+				fmt.Fprintf(w, ret+"<script>$(document).ready(function(){formatDate();});</script>")
 			}
 
 		}
@@ -179,26 +179,26 @@ func makeCritriaQuery(x formData) string {
 	if x.select1 != "" {
 		q1 := ""
 		if x.select1 == "docNumber" {
-			q1 += ("id:(" + x.val1 + "* )")
+			q1 += ("id:(" + removeIntialEndingspaces(x.val1) + "* )")
 		} else if x.select1 == "docTitle" {
-			q1 += ("title:(" + strings.Replace(x.val1, " ", "*", -1) + "* )")
+			q1 += ("title:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "*", -1) + "* )")
 		} else if x.select1 == "docContent" {
-			q1 += ("body:( *" + strings.Replace(x.val1, " ", "*", -1) + "* )")
+			q1 += ("body:( *" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "*", -1) + "* )")
 		} else if x.select1 == "docUser" {
-			q1 += (" creator:(" + strings.Replace(x.val1, " ", "*", -1) + ") approver:(" + strings.Replace(x.val1, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val1, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val1, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val1, " ", "*", -1) + ")")
+			q1 += (" creator:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "", -1) + ") qa:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "", -1) + ") approver:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "", -1) + ") authorizer:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "", -1) + ") initiator:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "", -1) + ") reviewer:(" + strings.Replace(removeIntialEndingspaces(x.val1), " ", "", -1) + ")")
 		}
 		query += ("(" + q1 + ")")
 	}
 	if x.select2 != "" {
 		q1 := ""
 		if x.select2 == "docNumber" {
-			q1 += ("id:(" + x.val2 + "* )")
+			q1 += ("id:(" + removeIntialEndingspaces(x.val2) + "* )")
 		} else if x.select2 == "docTitle" {
-			q1 += ("title:(" + strings.Replace(x.val2, " ", "*", -1) + "* )")
+			q1 += ("title:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "*", -1) + "* )")
 		} else if x.select2 == "docContent" {
-			q1 += ("body:( *" + strings.Replace(x.val2, " ", "*", -1) + "* )")
+			q1 += ("body:( *" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "*", -1) + "* )")
 		} else if x.select2 == "docUser" {
-			q1 += (" creator:(" + strings.Replace(x.val2, " ", "*", -1) + ") approver:(" + strings.Replace(x.val2, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val2, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val2, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val2, " ", "*", -1) + ")")
+			q1 += (" creator:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "", -1) + ") qa:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "", -1) + ") approver:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "", -1) + ") authorizer:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "", -1) + ") initiator:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "", -1) + ") reviewer:(" + strings.Replace(removeIntialEndingspaces(x.val2), " ", "", -1) + ")")
 		}
 		if query == "" {
 			query += ("(" + q1 + ")")
@@ -210,13 +210,13 @@ func makeCritriaQuery(x formData) string {
 	if x.select3 != "" {
 		q1 := ""
 		if x.select3 == "docNumber" {
-			q1 += ("id:(" + x.val3 + "* )")
+			q1 += ("id:(" + removeIntialEndingspaces(x.val3) + "* )")
 		} else if x.select3 == "docTitle" {
-			q1 += ("title:(" + strings.Replace(x.val3, " ", "*", -1) + "* )")
+			q1 += ("title:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "*", -1) + "* )")
 		} else if x.select3 == "docContent" {
-			q1 += ("body:( *" + strings.Replace(x.val3, " ", "*", -1) + "* )")
+			q1 += ("body:( *" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "*", -1) + "* )")
 		} else if x.select3 == "docUser" {
-			q1 += (" creator:(" + strings.Replace(x.val3, " ", "*", -1) + ") approver:(" + strings.Replace(x.val3, " ", "*", -1) + ") authorizer:(" + strings.Replace(x.val3, " ", "*", -1) + ") initiator:(" + strings.Replace(x.val3, " ", "*", -1) + ") reviewer:(" + strings.Replace(x.val3, " ", "*", -1) + ")")
+			q1 += (" creator:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "", -1) + ") qa:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "", -1) + ") approver:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "", -1) + ") authorizer:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "", -1) + ") initiator:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "", -1) + ") reviewer:(" + strings.Replace(removeIntialEndingspaces(x.val3), " ", "", -1) + ")")
 		}
 		if query == "" {
 			query += ("(" + q1 + ")")
@@ -348,9 +348,9 @@ func validate(x formData) bool {
 	if !(x.anyone == "" || x.anyone == "on") {
 		return false
 	}
-	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
+	isKeyword := regexp.MustCompile(`^[A-Za-z0-9- ]+$`).MatchString
 	isDate := regexp.MustCompile(`^\d{4}-\d{2}-\d{2}$`).MatchString
-	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9-]+$`).MatchString
 	isallSpaces := regexp.MustCompile(`^[ ]+$`).MatchString
 	if x.initFrom != "" {
 		if isDatevalid(x.initFrom) != true || !isDate(x.initFrom) {

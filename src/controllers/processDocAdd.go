@@ -75,6 +75,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 				AuthTS:       "",
 				ApproveTS:    "",
 				DocumentBody: []string{"Empty Body"},
+				QA:           "firefox",
 			}
 			// Insert the new document
 			resp, err := doc.AddInactiveDoc(newDoc)
@@ -102,6 +103,6 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
 
-	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: model.InactiveDoc{}})
+	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: true, Document: model.InactiveDoc{}})
 
 }

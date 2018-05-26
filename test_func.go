@@ -9,6 +9,8 @@ import (
 
 func main() {
 
+	// Schema Update
+	// test.AddUsers()
 	r := router.GetRouter()
 	http.ListenAndServe(constant.ApplicationPort, r)
 }

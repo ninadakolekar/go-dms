@@ -18,10 +18,10 @@ type docAddMsg struct {
 	Datab         bool
 	Errb          bool
 	Datamsg       string
-	Approvers     []string
-	Reviewers     []string
-	Authorisers   []string
-	Creators      []string
+	Approvers     []Strings2
+	Reviewers     []Strings2
+	Authorisers   []Strings2
+	Creators      []Strings2
 	DocumentExist bool
 	Redirect      bool
 	Document      models.InactiveDoc

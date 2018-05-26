@@ -43,6 +43,7 @@ func AddInactiveDoc(doc model.InactiveDoc) (*solr.UpdateResponse, error) {
 				"authTime":      doc.AuthTS,
 				"effDate":       doc.DocEffDate,
 				"expDate":       doc.DocExpDate,
+				"qa":            doc.QA,
 			},
 		},
 	}

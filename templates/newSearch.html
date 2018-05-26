@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" href="../static/css/materialize.min.css">
     <link rel="stylesheet" href="../static/css/dashboard.css">
+    <link rel="stylesheet" href="../static/css/newSearch.css">
 
 
 </head>
@@ -196,7 +197,7 @@
                                     <option value="docNumber">Document Number</option>
                                     <option value="docTitle">Title</option>
                                     <option value="docContent">Content</option>
-                                    <option value="docUser">User</option>
+                                    <option value="docUser">Username</option>
                                 </select>  
                                 <label>Search Criterion 1</label>
                             </div>
@@ -207,7 +208,7 @@
                                     <option value="docNumber">Document Number</option>
                                     <option value="docTitle">Title</option>
                                     <option value="docContent">Content</option>
-                                    <option value="docUser">User</option>
+                                    <option value="docUser">Username</option>
                                 </select>  
                                 <label>Search Criterion 2</label>
                             </div>
@@ -218,7 +219,7 @@
                                     <option value="docNumber">Document Number</option>
                                     <option value="docTitle">Title</option>
                                     <option value="docContent">Content</option>
-                                    <option value="docUser">User</option>
+                                    <option value="docUser">Username</option>
                                 </select>  
                                 <label>Search Criterion 3</label>
                             </div>
@@ -318,5 +319,23 @@
 
         });
 </script>
+
+<script>
+        var formatDate = function() {
+           $('.fmtdate').each(function(){
+           var date = $(this).html();
+           var formattedDate = date.split("T")[0];
+           var fDate = formattedDate.split("-");
+           $(this).html(fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+           })
+       }
+       formatDate();
+       $('body').on('change','#resultsCollection',function(){
+           formatDate();
+       });
+       $('#results-container').change(function(){
+           formatDate();
+       });
+   </script>
 
 </html>
