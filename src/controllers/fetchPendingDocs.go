@@ -19,16 +19,75 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	}
 	usr = "self"
 	str1 := fetchInits(usr)
-	fmt.Println(str1)
-	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons'>filter_drama</i>PendingIntiations</div><div class='collapsible-body'><ul>"
-	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons'>place</i>PendingCreations</div><div class='collapsible-body'><ul>"
-	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons'>whatshot</i>PendingQA</div><div class='collapsible-body'><ul>"
-	html3 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
-	fmt.Fprintf(w, html+str1+html1+html2+html3)
+	str2 := fetchQA(usr)
+	str3 := fetchCreator(usr)
+	str4 := "not written" //fetchReviews(usr)
+	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons red'>place</i>Pending Intiations</div><div class='collapsible-body'><ul class='collection'>"
+	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons blue'>place</i>Pending QA</div><div class='collapsible-body'><ul  class='collection'>"
+	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons green'>place</i>Pending Create</div><div class='collapsible-body'><ul  class='collection'>"
+	html3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons indigo'>place</i>Pending Reviews</div><div class='collapsible-body'><ul  class='collection'>"
+
+	html4 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons cyan'>place</i>Pending Approves</div><div class='collapsible-body'><ul  class='collection'>"
+	html5 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons yellow'>place</i>Pending Authorises</div><div class='collapsible-body'><ul  class='collection'>"
+
+	html6 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
+	fmt.Fprintf(w, html+str1+html1+str2+html2+str3+html3+str4+html4+html5+html6)
 }
 
-func fetchInits(usr string) string {
-	query := "initiator:" + usr //only InActive Documents.
+// func fetchReviews(usr string) string {
+// 	query := "reviewer:" + usr
+// 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
+// 	if err != nil {
+// 		return "<h5>solr connection error</h5>"
+// 	}
+// 	q := solr.Query{
+// 		Params: solr.URLParamMap{
+// 			"q": []string{query},
+// 		},
+// 		Rows: 100,
+// 	}
+
+// 	res, err := s.Select(&q)
+// 	if err != nil {
+// 		return "<h5>solr connection error</h5>"
+// 	}
+
+// 	results := res.Results
+// 	if results.Len() == 0 {
+// 		return "<h5>No Pending Documents</h5>"
+// 	}
+// 	links := []lINK{}
+// 	status := 0.0000
+// 	for i := 0; i < results.Len(); i++ {
+
+// 		if results.Get(i).Field("flowStatus").(float64) == status && results.Get(i).Field("docStatus").(bool) == false {
+// 			links = append(links, convertTolINK(results.Get(i)))
+// 		}
+// 	}
+// 	links = sortby(links, "expDate")
+
+// 	r := ""
+// 	now := time.Now()
+
+// 	day := now.String()[0:10] + "T99:17:11.382Z"
+// 	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T99:17:11.382Z"
+// 	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T99:17:11.382Z"
+
+// 	for _, e := range links {
+// 		if e.ExpDate < day {
+// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+// 		} else if e.ExpDate < day3 {
+// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+// 		} else if e.ExpDate < day10 {
+// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+// 		} else {
+// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+// 		}
+// 	}
+// 	return r
+// }
+func fetchCreator(usr string) string {
+	query := "creator:" + usr
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -51,29 +110,129 @@ func fetchInits(usr string) string {
 	}
 	links := []lINK{}
 	for i := 0; i < results.Len(); i++ {
-		if results.Get(i).Field("flowStatus") == 0 {
+		if results.Get(i).Field("flowStatus").(float64) == 2 && results.Get(i).Field("docStatus").(bool) == false {
 			links = append(links, convertTolINK(results.Get(i)))
 		}
 	}
-	fmt.Println("links at final", links)
 	links = sortby(links, "expDate")
 
 	r := ""
 	now := time.Now()
 
-	day := now.String()[0:10] + "T90.00.00Z" //CheckthisFormat
-	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T90.00.00Z"
-	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T90.00.00Z"
+	day := now.String()[0:10] + "T99:17:11.382Z"
+	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T99:17:11.382Z"
+	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T99:17:11.382Z"
 
 	for _, e := range links {
 		if e.ExpDate < day {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day3 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day10 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 white'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		}
+	}
+	return r
+}
+
+func fetchQA(usr string) string {
+	query := "qa:" + usr
+	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
+	if err != nil {
+		return "<h5>solr connection error</h5>"
+	}
+	q := solr.Query{
+		Params: solr.URLParamMap{
+			"q": []string{query},
+		},
+		Rows: 100,
+	}
+
+	res, err := s.Select(&q)
+	if err != nil {
+		return "<h5>solr connection error</h5>"
+	}
+
+	results := res.Results
+	if results.Len() == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
+	links := []lINK{}
+	for i := 0; i < results.Len(); i++ {
+		if results.Get(i).Field("flowStatus").(float64) == 1 && results.Get(i).Field("docStatus").(bool) == false {
+			links = append(links, convertTolINK(results.Get(i)))
+		}
+	}
+	links = sortby(links, "expDate")
+
+	r := ""
+	now := time.Now()
+
+	day := now.String()[0:10] + "T99:17:11.382Z"
+	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T99:17:11.382Z"
+	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T99:17:11.382Z"
+
+	for _, e := range links {
+		if e.ExpDate < day {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else if e.ExpDate < day3 {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else if e.ExpDate < day10 {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		}
+	}
+	return r
+}
+func fetchInits(usr string) string {
+	query := "initiator:" + usr
+	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
+	if err != nil {
+		return "<h5>solr connection error</h5>"
+	}
+	q := solr.Query{
+		Params: solr.URLParamMap{
+			"q": []string{query},
+		},
+		Rows: 100,
+	}
+
+	res, err := s.Select(&q)
+	if err != nil {
+		return "<h5>solr connection error</h5>"
+	}
+
+	results := res.Results
+	if results.Len() == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
+	links := []lINK{}
+	for i := 0; i < results.Len(); i++ {
+		if results.Get(i).Field("flowStatus").(float64) == 0 && results.Get(i).Field("docStatus").(bool) == false {
+			links = append(links, convertTolINK(results.Get(i)))
+		}
+	}
+	links = sortby(links, "expDate")
+
+	r := ""
+	now := time.Now()
+
+	day := now.String()[0:10] + "T99:17:11.382Z"
+	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T99:17:11.382Z"
+	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T99:17:11.382Z"
+
+	for _, e := range links {
+		if e.ExpDate < day {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else if e.ExpDate < day3 {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else if e.ExpDate < day10 {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
 	return r

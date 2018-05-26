@@ -168,7 +168,15 @@
     }
     jQuery(document).ready(function($){
         submitHandler()
-        
+        var formatDate = function() {
+           $('.fmtdate').each(function(){
+           var date = $(this).html();
+           var formattedDate = date.split("T")[0];
+           var fDate = formattedDate.split("-");
+           $(this).html(fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+           })
+       }
+       formatDate();
         $(".dropdown-trigger").dropdown({
             inDuration: 300,
             outDuration: 225,
