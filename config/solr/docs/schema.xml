@@ -448,6 +448,7 @@
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="initTime" type="pdate" indexed="true" required="true" stored="true"/>
   <field name="initiator" type="string" indexed="true" required="true" stored="true"/>
+  <field name="qa" type="string" indexed="true" required="true" stored="true"/>
   <field name="reviewTime" type="pdate" indexed="true" stored="true"/>
   <field name="reviewer" type="strings" indexed="true" required="true" stored="true"/>
   <field name="title" type="string" indexed="true" required="true" stored="true"/>
