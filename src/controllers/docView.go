@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/ninadakolekar/aizant-dms/src/auth"
+
 	"github.com/gorilla/mux"
 	"github.com/ninadakolekar/aizant-dms/src/docs"
 )
@@ -12,6 +14,26 @@ import (
 // DocView ... View mode handler
 func DocView(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
+
+		// User Auth Verification
+
+		username, err := auth.GetCurrentUser(r)
+
+		if err != nil { // Auth unsucessful
+			fmt.Println("ERROR docView Line 24: ", err) // Debug
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+
+		// user, err := user.FetchUserByUsername(username)
+
+		if err != nil { // User fetch unsucessful
+			fmt.Println("ERROR docView Line 29: ", err) // Debug
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+
+		// Document View
 
 		vars := mux.Vars(r)
 		id := vars["id"]
@@ -23,6 +45,11 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println("Failed to fetch document: ", err)
 				return
+			}
+
+			EditBtn := false
+			if document.Creator == username {
+				EditBtn = true
 			}
 
 			if document.DocumentBody == nil {
@@ -40,7 +67,8 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 					DocType    string
 					DocEffDate string
 					DocExpDate string
-				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate})
+					Edit       bool
+				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate, EditBtn})
 			}
 
 		} else {
