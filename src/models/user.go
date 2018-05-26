@@ -7,7 +7,7 @@ type User struct {
 	AvailableCr   bool
 	AvailableInit bool
 	AvailableQA   bool
-	AvailableRvw  bool
+	AvailableRw   bool
 	Username      string
 	Name          string
 }
