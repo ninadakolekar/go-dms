@@ -6,22 +6,25 @@ import (
 	"net/http"
 
 	"github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/models"
+	user "github.com/ninadakolekar/aizant-dms/src/user"
 )
 
 //Dashboard ... dashboard
 func Dashboard(w http.ResponseWriter, r *http.Request) {
 
-	user, err := auth.GetCurrentUser(r)
+	usr, err := auth.GetCurrentUser(r)
 
-	fmt.Println(user) //Debug
+	fmt.Println(usr) //Debug
 
 	if err != nil { // Login unsucessful
 		http.Redirect(w, r, "/", 302)
 		return
 	}
-
-	UserDetails := models.User{Username: user, Name: "Loremipsum", AvailableApp: true, AvailableAuth: false, AvailableCr: true, AvailableInit: false, AvailableQA: false, AvailableRvw: true}
+	UserDetails, err := user.FetchUserByUsername(usr)
+	if err != nil { // Login unsucessful
+		http.Redirect(w, r, "/", 302)
+		return
+	}
 
 	tmpl := template.Must(template.ParseFiles("templates/dashboard.html"))
 	tmpl.Execute(w, UserDetails)
