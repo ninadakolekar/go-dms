@@ -34,10 +34,8 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, html+str1+html1+str2+html2+str3+html3+str4+html4+html5+html6)
 }
 
-func giveReviwerFlowStatus(results *solr.Document, usr string) bool{
+func giveReviwerFlowStatus(results *solr.Document, usr string) bool {
 
-	var x int64
-	x = 3
 	temp, ok := results.Field("reviewer").([]interface{})
 	position := -1
 	iter := 0
@@ -57,7 +55,8 @@ func giveReviwerFlowStatus(results *solr.Document, usr string) bool{
 		}
 	}
 	doctype := results.Field("docProcess").(string)
-	flowstatus := results.Get(i).Field("flowStatus").(float64))
+	flowstatus := results.Field("flowStatus").(float64)
+	fmt.Println(flowstatus, position)
 	if doctype == "Anyone" {
 		return true
 	} else if doctype == "Everyone" {
@@ -88,10 +87,10 @@ func fetchReviews(usr string) string {
 		return "<h5>No Pending Documents</h5>"
 	}
 	links := []lINK{}
-	
+
 	for i := 0; i < results.Len(); i++ {
 
-		if  giveReviwerFlowStatus(results.Get(i), usr) && results.Get(i).Field("docStatus").(bool) == false {
+		if giveReviwerFlowStatus(results.Get(i), usr) && results.Get(i).Field("docStatus").(bool) == false {
 			links = append(links, convertTolINK(results.Get(i)))
 		}
 	}
