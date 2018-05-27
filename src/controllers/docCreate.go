@@ -32,8 +32,8 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 
 			documentCreator, documentTitle, documentFLow, documentBody, _, err := fetchCreateDocDetails(id)
 
-			// Allow creation only if flow status is 1
-			if documentFLow != 1 {
+			// Allow creation only if flow status is 2
+			if documentFLow != 2 {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
 			}
