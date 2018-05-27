@@ -92,7 +92,7 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 				Approver:     docApprovers,
 				Authorizer:   docAuth,
 				DocDept:      docDept,
-				FlowStatus:   0,
+				FlowStatus:   1,
 				DocTemplate:  0,
 				InitTS:       initTime,
 				CreateTS:     "",
