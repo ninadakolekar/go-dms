@@ -8,6 +8,7 @@ import (
 
 	auth "github.com/ninadakolekar/aizant-dms/src/auth"
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
+	"github.com/ninadakolekar/aizant-dms/src/docs"
 	solr "github.com/rtt/Go-Solr"
 )
 
@@ -18,7 +19,7 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, "server error")
 	}
-	fmt.Println(makeConstraints(r))
+	//fmt.Println(makeConstraints(r))
 	str1 := fetchInits(r)
 	str2 := fetchQA(r)
 	str3 := fetchCreator(r)
@@ -150,125 +151,13 @@ func makeConstraints(r *http.Request) string {
 	return query
 }
 func giveFlowStatus(results *solr.Document, usr string, value int) bool {
-	fmt.Println("entered give flow status") // Debug
-	temp, ok := results.Field("reviewer").([]interface{})
-	position := -1
-	iter := 0
-	reviewer := []string{}
-	if ok {
-		for _, v := range temp {
-			item, okk := v.(string)
-			if okk {
-
-				if item == usr {
-					position = iter
-				}
-				iter++
-				reviewer = append(reviewer, item)
-			} else {
-				break
-			}
-		}
-	}
-	doctype := results.Field("docProcess").(string)
-	flowstatus := int(results.Field("flowStatus").(float64))
-	offset := 3
+	doc := docs.ConvertSolrDoc2InactiveModel(results)
 	if value == 0 {
-		fmt.Println("offset flowstatus position", offset, flowstatus, position)
-		if doctype == "Anyone" {
-			if flowstatus == offset && position != -1 {
-				return true
-			}
-			return false
-		} else if doctype == "Everyone" {
-			if flowstatus > offset && flowstatus < (position+offset) && position != -1 {
-				return true
-			}
-			return false
-		}
-		if flowstatus == offset+position && position != -1 {
-			return true
-		}
-		return false
-	} else {
-		offset += len(reviewer)
-		temp, ok := results.Field("approver").([]interface{})
-		position = -1
-		iter = 0
-		approver := []string{}
-		if ok {
-			for _, v := range temp {
-				item, okk := v.(string)
-				if okk {
-
-					if item == usr {
-						position = iter
-					}
-					iter++
-					approver = append(approver, item)
-				} else {
-					break
-				}
-			}
-		}
-		if value == 1 {
-			fmt.Println("offset flowstatus position", offset, flowstatus, position)
-			if doctype == "Anyone" {
-				if flowstatus == offset && position != -1 {
-					return true
-				}
-				return false
-			} else if doctype == "Everyone" {
-				if flowstatus > offset && flowstatus < (position+offset) && position != -1 {
-					return true
-				}
-				return false
-			}
-			if flowstatus == offset+position && position != -1 {
-				return true
-			}
-			return false
-		} else {
-			offset += len(approver)
-			temp, ok := results.Field("authorizer").([]interface{})
-			position = -1
-			iter = 0
-			authorizer := []string{}
-			if ok {
-				for _, v := range temp {
-					item, okk := v.(string)
-					if okk {
-
-						if item == usr {
-							position = iter
-						}
-						iter++
-						authorizer = append(authorizer, item)
-					} else {
-						break
-					}
-				}
-			}
-			if value == 3 {
-				fmt.Println("offset flowstatus position", offset, flowstatus, position)
-				if doctype == "Anyone" {
-					if flowstatus == offset && position != -1 {
-						return true
-					}
-					return false
-				} else if doctype == "Everyone" {
-					if flowstatus > offset && flowstatus < (position+offset) && position != -1 {
-						return true
-					}
-					return false
-				}
-				if flowstatus == offset+position && position != -1 {
-					return true
-				}
-				return false
-			}
-
-		}
+		return docs.CheckCurrentReviewer(doc, usr)
+	} else if value == 1 {
+		return docs.CheckCurrentApprover(doc, usr)
+	} else if value == 2 {
+		return docs.CheckCurrentAuthorizer(doc, usr)
 	}
 	return false
 }
@@ -280,7 +169,7 @@ func fetchApproves(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
-	fmt.Println("QUERY:#", query, "#")
+	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -341,7 +230,7 @@ func fetchAuthorises(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
-	fmt.Println("QUERY:#", query, "#")
+	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -403,7 +292,7 @@ func fetchReviews(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
-	fmt.Println("QUERY:#", query, "#")
+	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -465,7 +354,7 @@ func fetchCreator(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
-	fmt.Println("QUERY:#", query, "#")
+	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -525,7 +414,7 @@ func fetchQA(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
-	fmt.Println("QUERY:#", query, "#")
+	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -584,7 +473,7 @@ func fetchInits(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
-	fmt.Println("QUERY:#", query, "#")
+	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
