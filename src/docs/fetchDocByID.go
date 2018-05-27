@@ -104,12 +104,31 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 		doc.AuthTS = s1.Field("authTime").(string)
 	}
 
+	currentFlowUser := s1.Field("currentFlowUser")
+	if currentFlowUser == nil {
+		doc.CurrentFlowUser = -1
+	} else {
+		doc.CurrentFlowUser = s1.Field("currentFlowUser").(float64)
+	}
+
 	temp, ok := s1.Field("reviewer").([]interface{})
 	if ok {
 		for _, v := range temp {
 			item, okk := v.(string)
 			if okk {
 				doc.Reviewer = append(doc.Reviewer, item)
+			} else {
+				break
+			}
+		}
+	}
+
+	temp, ok = s1.Field("flowList").([]interface{})
+	if ok {
+		for _, v := range temp {
+			item, okk := v.(string)
+			if okk {
+				doc.FlowList = append(doc.FlowList, item)
 			} else {
 				break
 			}

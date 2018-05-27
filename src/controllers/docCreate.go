@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 	docs "github.com/ninadakolekar/aizant-dms/src/docs"
 )
 
@@ -33,7 +34,7 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 			documentCreator, documentTitle, documentFLow, documentBody, _, err := fetchCreateDocDetails(id)
 
 			// Allow creation only if flow status is 2
-			if documentFLow != 2 {
+			if documentFLow != constants.CreateFlow {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
 			}

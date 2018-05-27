@@ -37,7 +37,7 @@ func ProcessQaApproval(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if username != Document.QA || Document.FlowStatus != 1 {
+			if username != Document.QA || Document.FlowStatus != constants.QaFlow {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			}
 
