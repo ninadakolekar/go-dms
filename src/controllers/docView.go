@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/ninadakolekar/aizant-dms/src/models"
+
 	"github.com/ninadakolekar/aizant-dms/src/auth"
 
 	"github.com/gorilla/mux"
@@ -70,4 +72,8 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 		}
 
 	}
+}
+
+func rwBtn(document models.InactiveDoc, username string) {
+
 }

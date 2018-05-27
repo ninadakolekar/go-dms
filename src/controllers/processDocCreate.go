@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 	"github.com/ninadakolekar/aizant-dms/src/docs"
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
 )
@@ -69,7 +70,7 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 			document.DocumentBody = documentBody
 			document.CreateTS = createTime
-			document.FlowStatus = 3
+			document.FlowStatus = constants.ReviewFlow
 
 			resp, err := docs.AddInactiveDoc(document)
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	constants "github.com/ninadakolekar/aizant-dms/src/constants"
 	"github.com/ninadakolekar/aizant-dms/src/docs"
 )
 
@@ -43,11 +44,11 @@ func ProcessQaApproval(w http.ResponseWriter, r *http.Request) {
 			qaResponse := r.FormValue("qa-answer")
 
 			if qaResponse == "approve" {
-				Document.FlowStatus = 2
+				Document.FlowStatus = constants.CreateFlow
 				docs.AddInactiveDoc(Document)
 				fmt.Fprintf(w, "Approval Recorded.")
 			} else if qaResponse == "reject" {
-				Document.FlowStatus = 0
+				Document.FlowStatus = constants.InitFlow
 				docs.AddInactiveDoc(Document)
 				fmt.Fprintf(w, "Rejection Recorded.")
 			} else {

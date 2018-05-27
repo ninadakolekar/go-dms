@@ -24,6 +24,20 @@ const (
 
 	//MinDocNumLen ... Min document number length
 	MinDocNumLen = 3
+
+	InitFlow = 0
+
+	QaFlow = 1
+
+	CreateFlow = 2
+
+	ReviewFlow = 3
+
+	ApproveFlow = 4
+
+	AuthFlow = 5
+
+	ActiveFlow = 6
 )
 
 // CookieHandler ... Random key generator for securecookie

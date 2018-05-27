@@ -36,6 +36,7 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	html6 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
 	fmt.Fprintf(w, html+str1+html1+str2+html2+str3+html3+str4+html4+str5+html5+str6+html6)
 }
+
 func makeConstraints(r *http.Request) string {
 	sop := html.EscapeString(r.FormValue("SOP"))
 	hr := html.EscapeString(r.FormValue("HR"))
@@ -149,7 +150,7 @@ func makeConstraints(r *http.Request) string {
 	return query
 }
 func giveFlowStatus(results *solr.Document, usr string, value int) bool {
-	fmt.Println("entered give flow status")
+	fmt.Println("entered give flow status") // Debug
 	temp, ok := results.Field("reviewer").([]interface{})
 	position := -1
 	iter := 0

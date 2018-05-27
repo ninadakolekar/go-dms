@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/mux"
 	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
@@ -92,7 +93,7 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 				Approver:     docApprovers,
 				Authorizer:   docAuth,
 				DocDept:      docDept,
-				FlowStatus:   1,
+				FlowStatus:   constants.QaFlow,
 				DocTemplate:  0,
 				InitTS:       initTime,
 				CreateTS:     "",
