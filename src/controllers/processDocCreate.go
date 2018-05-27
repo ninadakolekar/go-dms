@@ -50,6 +50,12 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 			document, err := docs.FetchDocByID(docNumber)
 
+			// Allow creation only if flow status is 1
+			if document.FlowStatus != 1 {
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
+
 			if document.Creator != username { // Not a creator for this document
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return

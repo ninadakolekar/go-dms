@@ -30,7 +30,13 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 
 		if docs.ValidateDocNo(id) {
 
-			documentCreator, documentTitle, documentBody, _, err := fetchCreateDocDetails(id)
+			documentCreator, documentTitle, documentFLow, documentBody, _, err := fetchCreateDocDetails(id)
+
+			// Allow creation only if flow status is 1
+			if documentFLow != 1 {
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
 
 			if err != nil {
 				fmt.Println("Failed to fetch document: ", err)
@@ -59,16 +65,16 @@ func DocCreate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fetchCreateDocDetails(id string) (string, string, []string, string, error) {
+func fetchCreateDocDetails(id string) (string, string, float64, []string, string, error) {
 
 	document, err := docs.FetchDocByID(id)
 
 	if err != nil {
-		return "", "", nil, "", err
+		return "", "", -1, nil, "", err
 	}
 
 	date := strings.Split(strings.Split(document.InitTS, "T")[0], "-")
 	initDate := date[2] + "/" + date[1] + "/" + date[0]
 
-	return document.Creator, document.Title, document.DocumentBody, initDate, nil
+	return document.Creator, document.Title, document.FlowStatus, document.DocumentBody, initDate, nil
 }
