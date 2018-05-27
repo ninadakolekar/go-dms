@@ -117,9 +117,7 @@ func ProcessDocASearch(w http.ResponseWriter, r *http.Request) {
 				alertmsg = "No Results Found!"
 			} else {
 				for i := 0; i < results.Len(); i++ {
-					//		fmt.Println("line number 102") //Debug
 					links = append(links, convertTolINK(results.Get(i)))
-					//		fmt.Println("line Number 104") //Debug
 				}
 				data = true
 
@@ -190,8 +188,6 @@ func makeSearchQuery(sC []string, sK []string) string {
 				} else {
 					querys = append(querys, validQueryPrifex[j]+sK[i])
 				}
-
-				// fmt.Println(querys[counter])
 				counter++
 			}
 		}
@@ -257,6 +253,7 @@ func isDatevalid(s string) bool {
 	}
 	return true
 }
+
 func validateSearchForm(sC []string, sK []string) bool {
 	validCriterion := []string{"docNumber", "docName", "docKeyword", "initiator", "creator", "reviewer", "approver", "auth", "dept", "from Init Date", "from Eff Date", "from Exp Date", "till Init Date", "till Eff Date", "till Exp Date"}
 	isKeyword := regexp.MustCompile(`^[A-Za-z0-9 ]+$`).MatchString
@@ -288,6 +285,7 @@ func validateSearchForm(sC []string, sK []string) bool {
 	}
 	return true
 }
+
 func removeIntialEndingspaces(str string) string {
 	s := 0
 	e := len(str) - 1
@@ -301,6 +299,7 @@ func removeIntialEndingspaces(str string) string {
 
 	return str[s : e+1]
 }
+
 func convertTolINK(s1 *solr.Document) lINK {
 	ctime := ""
 	atime := ""
