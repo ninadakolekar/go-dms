@@ -21,7 +21,7 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	str1 := fetchInits(usr)
 	str2 := fetchQA(usr)
 	str3 := fetchCreator(usr)
-	str4 := "not written" //fetchReviews(usr)
+	str4 := fetchReviews(usr)
 	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons red'>place</i>Pending Intiations</div><div class='collapsible-body'><ul class='collection'>"
 	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons blue'>place</i>Pending QA</div><div class='collapsible-body'><ul  class='collection'>"
 	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons green'>place</i>Pending Create</div><div class='collapsible-body'><ul  class='collection'>"
@@ -34,58 +34,89 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, html+str1+html1+str2+html2+str3+html3+str4+html4+html5+html6)
 }
 
-// func fetchReviews(usr string) string {
-// 	query := "reviewer:" + usr
-// 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
-// 	if err != nil {
-// 		return "<h5>solr connection error</h5>"
-// 	}
-// 	q := solr.Query{
-// 		Params: solr.URLParamMap{
-// 			"q": []string{query},
-// 		},
-// 		Rows: 100,
-// 	}
+func giveReviwerFlowStatus(results *solr.Document, usr string) int {
 
-// 	res, err := s.Select(&q)
-// 	if err != nil {
-// 		return "<h5>solr connection error</h5>"
-// 	}
+	var x int64
+	x = 3
+	temp, ok := results.Field("reviewer").([]interface{})
+	position := -1
+	iter := 0
+	reviewer := []string{}
+	if ok {
+		for _, v := range temp {
+			item, okk := v.(string)
+			if okk {
+				iter++
+				if item == usr {
+					position = iter
+				}
+				reviewer = append(reviewer, item)
+			} else {
+				break
+			}
+		}
+	}
+	doctype := results.Field("docProcess").(string)
 
-// 	results := res.Results
-// 	if results.Len() == 0 {
-// 		return "<h5>No Pending Documents</h5>"
-// 	}
-// 	links := []lINK{}
-// 	status := 0.0000
-// 	for i := 0; i < results.Len(); i++ {
+	if doctype == "Anyone" {
+		return 3
+	} else if doctype == "Everyone" {
 
-// 		if results.Get(i).Field("flowStatus").(float64) == status && results.Get(i).Field("docStatus").(bool) == false {
-// 			links = append(links, convertTolINK(results.Get(i)))
-// 		}
-// 	}
-// 	links = sortby(links, "expDate")
+	}
+	return 3
+}
+func fetchReviews(usr string) string {
+	query := "reviewer:" + usr
+	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
+	if err != nil {
+		return "<h5>solr connection error</h5>"
+	}
+	q := solr.Query{
+		Params: solr.URLParamMap{
+			"q": []string{query},
+		},
+		Rows: 100,
+	}
 
-// 	r := ""
-// 	now := time.Now()
+	res, err := s.Select(&q)
+	if err != nil {
+		return "<h5>solr connection error</h5>"
+	}
 
-// 	day := now.String()[0:10] + "T99:17:11.382Z"
-// 	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T99:17:11.382Z"
-// 	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T99:17:11.382Z"
+	results := res.Results
+	if results.Len() == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
+	links := []lINK{}
+	status := 0.0000
+	for i := 0; i < results.Len(); i++ {
 
-// 	for _, e := range links {
-// 		if e.ExpDate < day {
-// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
-// 		} else if e.ExpDate < day3 {
-// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
-// 		} else if e.ExpDate < day10 {
-// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
-// 		} else {
-// 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
-// 		}
-// 	}
-// 	return r
-// }
+		if int(results.Get(i).Field("flowStatus").(float64)) == giveReviwerFlowStatus(results.Get(i), usr) && results.Get(i).Field("docStatus").(bool) == false {
+			links = append(links, convertTolINK(results.Get(i)))
+		}
+	}
+	links = sortby(links, "expDate")
+
+	r := ""
+	now := time.Now()
+
+	day := now.String()[0:10] + "T99:17:11.382Z"
+	day3 := now.AddDate(0, 0, 3).String()[0:10] + "T99:17:11.382Z"
+	day10 := now.AddDate(0, 0, 10).String()[0:10] + "T99:17:11.382Z"
+
+	for _, e := range links {
+		if e.ExpDate < day {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else if e.ExpDate < day3 {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else if e.ExpDate < day10 {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		} else {
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+		}
+	}
+	return r
+}
 func fetchCreator(usr string) string {
 	query := "creator:" + usr
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
