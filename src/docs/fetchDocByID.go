@@ -163,6 +163,8 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 				}
 			}
 		}
+	} else {
+		doc.Authorizer = nil
 	}
 
 	return doc, nil

@@ -2,16 +2,15 @@ package docs
 
 import (
 	"github.com/ninadakolekar/aizant-dms/src/constants"
-	models "github.com/ninadakolekar/aizant-dms/src/models"
+	"github.com/ninadakolekar/aizant-dms/src/models"
 	"github.com/ninadakolekar/aizant-dms/src/utility"
 )
 
-// CheckCurrentReviewer ... Checks if current user is a reviewer for a given document
-func CheckCurrentReviewer(document models.InactiveDoc, username string) bool {
-
+// CheckCurrentApprover ... Checks if current user is a approver for a given document
+func CheckCurrentApprover(document models.InactiveDoc, username string) bool {
 	// If document is not to be reviewed
 
-	if document.FlowStatus != constants.ReviewFlow {
+	if document.FlowStatus != constants.ApproveFlow {
 		return false
 	}
 
@@ -19,7 +18,7 @@ func CheckCurrentReviewer(document models.InactiveDoc, username string) bool {
 
 	// Check if current user is a reviewer
 
-	if !utility.StringInSlice(username, document.Reviewer) {
+	if !utility.StringInSlice(username, document.Approver) {
 		return false
 	}
 
@@ -27,11 +26,11 @@ func CheckCurrentReviewer(document models.InactiveDoc, username string) bool {
 
 	if document.DocProcess == "Everyone" || document.DocProcess == "Anyone" {
 
-		hasReviewed := utility.StringInSlice(username, document.FlowList)
-		return !hasReviewed // Return true if has not reviewed already
+		hasApproved := utility.StringInSlice(username, document.FlowList)
+		return !hasApproved // Return true if has not reviewed already
 
 	} else if document.DocProcess == "OneByOne" {
-		if username == document.Reviewer[int(document.CurrentFlowUser)] {
+		if username == document.Approver[int(document.CurrentFlowUser)] {
 			return true // Return true if current reviewer is current user
 		}
 		return false

@@ -51,5 +51,8 @@ func GetRouter() *mux.Router {
 	// For Review Aprooval
 	r.HandleFunc("/doc/review/{id}", controller.ProcessReviewApproval).Methods("POST")
 
+	// For Approver's Aprooval
+	r.HandleFunc("/doc/approve/{id}", controller.ProcessApproveApproval).Methods("POST")
+
 	return r
 }
