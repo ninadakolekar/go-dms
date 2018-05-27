@@ -161,7 +161,7 @@
     function submitHandler() {
         //name value
         console.log("came to submit");
-        $.post('/doc/fetch', $('form').serialize(),function(data){
+        $.post('/doc/fetchDocs', $('form').serialize(),function(data){
             $("#results").html(data);
             console.log("results printed");//Debug
         });
