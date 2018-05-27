@@ -104,4 +104,8 @@
         </script>
     {{ end }}
 
+    {{ if .Rw }}
+        <script>console.log("Hello Current Reviewer!");alert("Current Reviewer Detected!");</script>
+    {{ end }}
+
 </html>
