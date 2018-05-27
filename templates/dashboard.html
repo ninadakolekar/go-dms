@@ -168,6 +168,9 @@
     }
     jQuery(document).ready(function($){
         submitHandler()
+        $('[type="checkbox"]').click(function(){
+            submitHandler();
+        });
         var formatDate = function() {
            $('.fmtdate').each(function(){
            var date = $(this).html();
