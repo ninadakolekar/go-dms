@@ -14,12 +14,6 @@ func DocAvailable(w http.ResponseWriter, r *http.Request) {
 
 	DocNo := html.EscapeString(r.FormValue("docNumber"))
 
-	// if !validateDocNo(DocNo) {
-	// 	fmt.Fprintf(w, "<span> INVALID </span>")
-	// 	fmt.Println("ERROR DocAvailable Line 17 : Invalid Document number. ") // Debug
-	// 	return
-	// }
-
 	// Initialize a solr connection
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 

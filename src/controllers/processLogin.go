@@ -12,22 +12,25 @@ import (
 // ProcessLogin ... Processes Login form
 func ProcessLogin(w http.ResponseWriter, r *http.Request) {
 
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-	redirectTarget := "/"
+	if r.Method == "POST" {
 
-	if auth.ValidateLoginCredentials(username, password) {
+		username := r.FormValue("username")
+		password := r.FormValue("password")
+		redirectTarget := "/"
 
-		_, err := auth.AuthCredentials(username, password)
-		if err == nil {
-			setSession(username, w)
-			redirectTarget = "/dashboard"
-		} else {
-			log.Println("incorrect username or password")
+		if auth.ValidateLoginCredentials(username, password) {
+
+			_, err := auth.AuthCredentials(username, password)
+			if err == nil {
+				setSession(username, w)
+				redirectTarget = "/dashboard"
+			} else {
+				log.Println("incorrect username or password")
+			}
 		}
-	}
 
-	http.Redirect(w, r, redirectTarget, 302)
+		http.Redirect(w, r, redirectTarget, 302)
+	}
 }
 
 func setSession(username string, response http.ResponseWriter) {

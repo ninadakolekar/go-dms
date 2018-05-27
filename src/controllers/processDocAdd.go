@@ -7,8 +7,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ninadakolekar/aizant-dms/src/auth"
+
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
+	user "github.com/ninadakolekar/aizant-dms/src/user"
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
 )
 
@@ -18,6 +21,29 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 	datamsg := "hi"
 	errb := false
 	if r.Method == "POST" {
+
+		// User Auth Verification
+
+		username, err := auth.GetCurrentUser(r)
+
+		if err != nil { // Auth unsucessful
+			fmt.Println("ERROR ProcessDocAdd Line 23: ", err) // Debug
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+
+		user, err := user.FetchUserByUsername(username)
+
+		if err != nil { // User fetch unsucessful
+			fmt.Println("ERROR ProcessDocAdd Line 31: ", err) // Debug
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+
+		if user.AvailableInit == false {
+			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
+		}
 
 		initTime := utility.XMLTimeNow()
 
@@ -51,6 +77,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 		// Server-side validation
 
 		if !doc.ValidateDocNo(docNumber) && doc.ValidateDocName(docName) {
+
 			// Make a new inactiveDoc struct using received form data
 
 			newDoc := model.InactiveDoc{
@@ -61,7 +88,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 				DocEffDate:   utility.XMLDate(docEffDate),
 				DocExpDate:   utility.XMLDate(docExpDate),
 				DocStatus:    false,
-				Initiator:    "self", // Initiator is "self" currently
+				Initiator:    username,
 				Creator:      docCreator,
 				Reviewer:     docReviewers,
 				Approver:     docApprovers,

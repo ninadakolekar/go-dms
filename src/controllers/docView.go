@@ -25,14 +25,6 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// user, err := user.FetchUserByUsername(username)
-
-		if err != nil { // User fetch unsucessful
-			fmt.Println("ERROR docView Line 29: ", err) // Debug
-			http.Redirect(w, r, "/", 302)
-			return
-		}
-
 		// Document View
 
 		vars := mux.Vars(r)

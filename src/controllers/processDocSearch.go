@@ -7,12 +7,23 @@ import (
 	"regexp"
 	"strings"
 
+	auth "github.com/ninadakolekar/aizant-dms/src/auth"
 	constant "github.com/ninadakolekar/aizant-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
 )
 
 //ProcessDocSearch ... process new search
 func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
+
+	// User Auth Verification
+
+	_, err := auth.GetCurrentUser(r)
+
+	if err != nil { // Auth unsucessful
+		fmt.Println("ERROR ProcessDocSearch Line 23: ", err) // Debug
+		http.Redirect(w, r, "/", 302)
+		return
+	}
 
 	links := []lINK{}
 	query := buildQuery(r)
