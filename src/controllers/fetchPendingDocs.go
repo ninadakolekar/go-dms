@@ -158,10 +158,11 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 		for _, v := range temp {
 			item, okk := v.(string)
 			if okk {
-				iter++
+
 				if item == usr {
 					position = iter
 				}
+				iter++
 				reviewer = append(reviewer, item)
 			} else {
 				break
@@ -198,10 +199,11 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 			for _, v := range temp {
 				item, okk := v.(string)
 				if okk {
-					iter++
+
 					if item == usr {
 						position = iter
 					}
+					iter++
 					approver = append(approver, item)
 				} else {
 					break
@@ -235,10 +237,11 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 				for _, v := range temp {
 					item, okk := v.(string)
 					if okk {
-						iter++
+
 						if item == usr {
 							position = iter
 						}
+						iter++
 						authorizer = append(authorizer, item)
 					} else {
 						break
@@ -306,7 +309,9 @@ func fetchApproves(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
-
+	if len(links) == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
 	r := ""
 	now := time.Now()
 
@@ -365,7 +370,9 @@ func fetchAuthorises(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
-
+	if len(links) == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
 	r := ""
 	now := time.Now()
 
@@ -425,7 +432,9 @@ func fetchReviews(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
-
+	if len(links) == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
 	r := ""
 	now := time.Now()
 
