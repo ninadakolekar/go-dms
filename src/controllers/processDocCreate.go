@@ -69,6 +69,7 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 
 			document.DocumentBody = documentBody
 			document.CreateTS = createTime
+			document.FlowStatus = 3
 
 			resp, err := docs.AddInactiveDoc(document)
 

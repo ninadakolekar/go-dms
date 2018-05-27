@@ -86,7 +86,7 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 				DocEffDate:   utility.XMLDate(docEffDate),
 				DocExpDate:   utility.XMLDate(docExpDate),
 				DocStatus:    false,
-				Initiator:    "self", // Initiator is "self" currently
+				Initiator:    username,
 				Creator:      docCreator,
 				Reviewer:     docReviewers,
 				Approver:     docApprovers,
@@ -125,7 +125,7 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 
 	// Render a new form
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
-	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: model.InactiveDoc{}})
+	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: true, Document: model.InactiveDoc{}})
 }
 
 func isDocInitiator(docNumber string, username string) (bool, error) {
