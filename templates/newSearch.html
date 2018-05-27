@@ -281,7 +281,6 @@
 
     function submitHandler() {
         //name value
-        console.log("came to submit");
         $.post('/doc/search', $('form').serialize(),function(data){
             $("#resultsCollection").html(data);
             console.log("results printed");//Debug
