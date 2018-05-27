@@ -437,6 +437,7 @@
   <field name="body" type="strings" indexed="true" stored="true"/>
   <field name="createTime" type="pdate" indexed="true" required="false" stored="true"/>
   <field name="creator" type="string" indexed="true" required="true" stored="true"/>
+  <field name="currentFlowUser" type="pint" docValues="false" indexed="true" stored="true"/>
   <field name="docDepartment" type="string" indexed="true" required="true" stored="true"/>
   <field name="docProcess" type="string" indexed="true" required="true" stored="true"/>
   <field name="docStatus" type="boolean" indexed="false" required="true" stored="true"/>
@@ -444,6 +445,7 @@
   <field name="docType" type="string" indexed="true" required="true" stored="true"/>
   <field name="effDate" type="pdate" indexed="true" required="true" stored="true"/>
   <field name="expDate" type="pdate" indexed="true" required="true" stored="true"/>
+  <field name="flowList" type="strings" indexed="true" stored="true"/>
   <field name="flowStatus" type="pint" indexed="true" required="true" stored="true"/>
   <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
   <field name="initTime" type="pdate" indexed="true" required="true" stored="true"/>
