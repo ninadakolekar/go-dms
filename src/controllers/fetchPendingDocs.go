@@ -149,7 +149,7 @@ func makeConstraints(r *http.Request) string {
 	return query
 }
 func giveFlowStatus(results *solr.Document, usr string, value int) bool {
-
+	fmt.Println("entered give flow status")
 	temp, ok := results.Field("reviewer").([]interface{})
 	position := -1
 	iter := 0
@@ -158,10 +158,11 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 		for _, v := range temp {
 			item, okk := v.(string)
 			if okk {
-				iter++
+
 				if item == usr {
 					position = iter
 				}
+				iter++
 				reviewer = append(reviewer, item)
 			} else {
 				break
@@ -172,7 +173,7 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 	flowstatus := int(results.Field("flowStatus").(float64))
 	offset := 3
 	if value == 0 {
-		fmt.Println(flowstatus, position)
+		fmt.Println("offset flowstatus position", offset, flowstatus, position)
 		if doctype == "Anyone" {
 			if flowstatus == offset && position != -1 {
 				return true
@@ -198,10 +199,11 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 			for _, v := range temp {
 				item, okk := v.(string)
 				if okk {
-					iter++
+
 					if item == usr {
 						position = iter
 					}
+					iter++
 					approver = append(approver, item)
 				} else {
 					break
@@ -209,7 +211,7 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 			}
 		}
 		if value == 1 {
-			fmt.Println(flowstatus, position)
+			fmt.Println("offset flowstatus position", offset, flowstatus, position)
 			if doctype == "Anyone" {
 				if flowstatus == offset && position != -1 {
 					return true
@@ -235,10 +237,11 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 				for _, v := range temp {
 					item, okk := v.(string)
 					if okk {
-						iter++
+
 						if item == usr {
 							position = iter
 						}
+						iter++
 						authorizer = append(authorizer, item)
 					} else {
 						break
@@ -246,7 +249,7 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 				}
 			}
 			if value == 3 {
-				fmt.Println(flowstatus, position)
+				fmt.Println("offset flowstatus position", offset, flowstatus, position)
 				if doctype == "Anyone" {
 					if flowstatus == offset && position != -1 {
 						return true
@@ -276,6 +279,7 @@ func fetchApproves(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
+	fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -305,7 +309,9 @@ func fetchApproves(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
-
+	if len(links) == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
 	r := ""
 	now := time.Now()
 
@@ -334,6 +340,7 @@ func fetchAuthorises(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
+	fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -363,7 +370,9 @@ func fetchAuthorises(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
-
+	if len(links) == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
 	r := ""
 	now := time.Now()
 
@@ -393,6 +402,7 @@ func fetchReviews(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
+	fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -422,7 +432,9 @@ func fetchReviews(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
-
+	if len(links) == 0 {
+		return "<h5>No Pending Documents</h5>"
+	}
 	r := ""
 	now := time.Now()
 
@@ -452,6 +464,7 @@ func fetchCreator(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
+	fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -491,13 +504,13 @@ func fetchCreator(rr *http.Request) string {
 
 	for _, e := range links {
 		if e.ExpDate < day {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/create/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day3 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/create/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day10 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/create/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/create/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
 	return r
@@ -551,13 +564,13 @@ func fetchQA(rr *http.Request) string {
 
 	for _, e := range links {
 		if e.ExpDate < day {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/viewDetails/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day3 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/viewDetails/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day10 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/viewDetails/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/viewDetails/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
 	return r
@@ -570,6 +583,7 @@ func fetchInits(rr *http.Request) string {
 	if mk != "" {
 		query += (" AND " + mk)
 	}
+	fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
 		return "<h5>solr connection error</h5>"
@@ -609,13 +623,13 @@ func fetchInits(rr *http.Request) string {
 
 	for _, e := range links {
 		if e.ExpDate < day {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 black'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/add/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day3 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 red'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/add/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else if e.ExpDate < day10 {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 pink'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/add/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		} else {
-			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
+			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/add/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
 	return r
