@@ -123,16 +123,20 @@ func FetchDocByID(uid string) (models.InactiveDoc, error) {
 		}
 	}
 
-	temp, ok = s1.Field("flowList").([]interface{})
-	if ok {
-		for _, v := range temp {
-			item, okk := v.(string)
-			if okk {
-				doc.FlowList = append(doc.FlowList, item)
-			} else {
-				break
+	if s1.Field("flowList") != nil {
+		temp, ok = s1.Field("flowList").([]interface{})
+		if ok {
+			for _, v := range temp {
+				item, okk := v.(string)
+				if okk {
+					doc.FlowList = append(doc.FlowList, item)
+				} else {
+					break
+				}
 			}
 		}
+	} else {
+		doc.FlowList = nil
 	}
 
 	temp, ok = s1.Field("approver").([]interface{})

@@ -5,7 +5,9 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/ninadakolekar/aizant-dms/src/constants"
 	"github.com/ninadakolekar/aizant-dms/src/models"
+	"github.com/ninadakolekar/aizant-dms/src/utility"
 
 	"github.com/ninadakolekar/aizant-dms/src/auth"
 
@@ -62,7 +64,8 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 					DocEffDate string
 					DocExpDate string
 					Edit       bool
-				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate, EditBtn})
+					Rw         bool
+				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate, EditBtn, rwBtn(document, username)})
 			}
 
 		} else {
@@ -74,6 +77,35 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func rwBtn(document models.InactiveDoc, username string) {
+func rwBtn(document models.InactiveDoc, username string) bool {
 
+	// If document is not to be reviewed
+
+	if document.FlowStatus != constants.ReviewFlow {
+		return false
+	}
+
+	// If document has to be reviewed
+
+	// Check if current user is a reviewer
+
+	if !utility.StringInSlice(username, document.Reviewer) {
+		return false
+	}
+
+	// Decide according to document type
+
+	if document.DocProcess == "Everyone" || document.DocProcess == "Anyone" {
+
+		hasReviewed := utility.StringInSlice(username, document.FlowList)
+		return !hasReviewed // Return true if has not reviewed already
+
+	} else if document.DocProcess == "OneByOne" {
+		if username == document.Reviewer[int(document.CurrentFlowUser)] {
+			return true // Return true if current reviewer is current user
+		}
+		return false
+	}
+
+	return false
 }
