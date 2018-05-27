@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	auth "github.com/ninadakolekar/aizant-dms/src/auth"
 	doc "github.com/ninadakolekar/aizant-dms/src/docs"
 	model "github.com/ninadakolekar/aizant-dms/src/models"
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
@@ -15,6 +16,16 @@ import (
 
 // ProcessDocAddEdit ... Process the form-values and add the document
 func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
+
+	// User Auth Verification
+
+	username, err := auth.GetCurrentUser(r)
+
+	if err != nil { // Auth unsucessful
+		fmt.Println("ERROR DocAddEdit Line 23: ", err) // Debug
+		http.Redirect(w, r, "/", 302)
+		return
+	}
 
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -59,6 +70,13 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 
 		if doc.ValidateDocNo(docNumber) && doc.ValidateDocName(docName) && docNumber == id {
 			// Make a new inactiveDoc struct using received form data
+
+			validUser, err := isDocInitiator(docNumber, username)
+
+			if err != nil || !validUser {
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
 
 			newDoc := model.InactiveDoc{
 				DocNo:        docNumber,
@@ -108,4 +126,20 @@ func ProcessDocAddEdit(w http.ResponseWriter, r *http.Request) {
 	// Render a new form
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
 	tmpl.Execute(w, docAddMsg{Datab: datab, Errb: errb, Datamsg: datamsg, Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: model.InactiveDoc{}})
+}
+
+func isDocInitiator(docNumber string, username string) (bool, error) {
+
+	document, err := doc.FetchDocByID(docNumber)
+
+	if err != nil {
+		return false, err
+	}
+
+	if document.Initiator != username {
+		return false, nil
+	}
+
+	return true, nil
+
 }

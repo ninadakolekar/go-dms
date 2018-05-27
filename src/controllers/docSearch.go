@@ -21,14 +21,6 @@ func DocSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// user, err := user.FetchUserByUsername(username)
-
-	if err != nil { // User fetch unsucessful
-		fmt.Println("ERROR docView Line 29: ", err) // Debug
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
 	tmpl := template.Must(template.ParseFiles("templates/newSearch.html"))
 	tmpl.Execute(w, struct {
 		Getb     bool

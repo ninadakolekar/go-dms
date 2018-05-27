@@ -6,12 +6,23 @@ import (
 	"net/http"
 	"strconv"
 
+	auth "github.com/ninadakolekar/aizant-dms/src/auth"
 	"github.com/ninadakolekar/aizant-dms/src/docs"
 	utility "github.com/ninadakolekar/aizant-dms/src/utility"
 )
 
 // ProcessDocCreate ... Processes Document Create Form Input
 func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
+
+	// User Auth Verification
+
+	username, err := auth.GetCurrentUser(r)
+
+	if err != nil { // Auth unsucessful
+		fmt.Println("ERROR ProcessDocCreate Line 22: ", err) // Debug
+		http.Redirect(w, r, "/", 302)
+		return
+	}
 
 	if r.Method == "POST" {
 
@@ -38,7 +49,12 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 			}
 
 			document, err := docs.FetchDocByID(docNumber)
-			fmt.Println("Mozilla ", document.QA)
+
+			if document.Creator != username { // Not a creator for this document
+				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+				return
+			}
+
 			if err != nil {
 				fmt.Println("ERROR Fetching document ProcessDocCreate Line 40") // Debug
 				fmt.Println(err)
@@ -53,10 +69,12 @@ func ProcessDocCreate(w http.ResponseWriter, r *http.Request) {
 			// Respond
 			if err != nil {
 				fmt.Println("ERROR ProcessDocAdd() Line 57: " + err.Error()) // Debug
-				fmt.Fprintf(w, "<script>alert('Failed to create document.');</script>")
+				fmt.Fprintf(w, "<script>alert('Failed to create document.');window.location.replace('/dashboard');</script>")
+				http.Redirect(w, r, "/dashboard", 301)
 			} else {
 				fmt.Println(resp) // Debug
-				fmt.Fprintf(w, "<script>alert('Document successfully created.');</script>")
+				fmt.Fprintf(w, "<script>alert('Document successfully created.');window.location.replace('/dashboard');</script>")
+				http.Redirect(w, r, "/dashboard", 301)
 			}
 		} else {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)

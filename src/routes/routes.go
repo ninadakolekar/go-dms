@@ -18,8 +18,6 @@ func GetRouter() *mux.Router {
 	r.PathPrefix("/static/images").Handler(http.StripPrefix("/static/images/", http.FileServer(http.Dir("static/images/"))))
 
 	// Define routes here
-	r.HandleFunc("/hello", controller.Index).Methods("GET")
-
 	r.HandleFunc("/", controller.Login).Methods("GET")
 
 	r.HandleFunc("/login", controller.ProcessLogin).Methods("POST")
