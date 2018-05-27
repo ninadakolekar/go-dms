@@ -117,8 +117,8 @@
                 $("#qa-answer").val("approve")
                 $.post('/doc/viewDetails/{{ .Doc.DocNo }}',$("#qa-form").serialize(),function(data){
                     $('.ans-btn').remove();
-                    M.toast({html: data, classes: "green", displayLength: 2500})
-                    window.setTimeout(redirectFunction,3000)
+                    M.toast({html: data, classes: "green", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
                 });
                 
             }
@@ -127,8 +127,8 @@
                 $("#qa-answer").val("reject")
                 $.post('/doc/viewDetails/{{ .Doc.DocNo }}',$("#qa-form").serialize(),function(data){
                     $('.ans-btn').remove();
-                    M.toast({html: data, classes: "red", displayLength: 2500})
-                    window.setTimeout(redirectFunction,3000)
+                    M.toast({html: data, classes: "red", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
                 });
 
             }

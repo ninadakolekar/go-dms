@@ -15,3 +15,7 @@ h1,h2,h3,h4,h5,h6,p,span,input,option{
 #more-details, #hide-details{
     cursor: pointer;
 }
+
+.no-border{
+    border: none!important;
+}

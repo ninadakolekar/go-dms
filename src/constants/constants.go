@@ -38,6 +38,12 @@ const (
 	AuthFlow = 5
 
 	ActiveFlow = 6
+
+	OneByOne = "OneByOne"
+
+	Everyone = "Everyone"
+
+	Anyone = "Anyone"
 )
 
 // CookieHandler ... Random key generator for securecookie

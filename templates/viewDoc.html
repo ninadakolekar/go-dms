@@ -67,6 +67,31 @@
                 
         {{ end }}
 
+        <!-- Review Buttons -->
+        {{ if .Rw }}
+            <br>
+            <br>
+            <br>
+            <div class="container no-border">
+                <div class="row">
+                    <form id="rw-form">
+                        <input name="rw-answer" type="text" id="rw-answer" hidden>
+                    </form>
+                    <div class="col s2 offset-s4">
+                        <button id="approve" class="btn waves-effect waves-light green ans-btn" name="action">Approve
+                            <i class="material-icons right">check_circle_outline</i>
+                        </button>
+                    </div>
+                    <div class="col s2">
+                            <button id="reject" class="btn waves-effect waves-light red ans-btn" name="action">Reject
+                                <i class="material-icons right">highlight_off</i>
+                            </button>
+                    </div>
+                </div>
+            </div>
+    {{ end }}
+
+
     </body>
     <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
     <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
@@ -105,7 +130,42 @@
     {{ end }}
 
     {{ if .Rw }}
-        <script>console.log("Hello Current Reviewer!");alert("Current Reviewer Detected!");</script>
+        <script>
+
+            var redirectFunction = function(){
+                window.location.replace("/dashboard");
+            }
+
+            var approveDocument = function(){
+                $("#rw-answer").val("approve")
+                $.post('/doc/review/{{ .DocNumber }}',$("#rw-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "green", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+                
+            }
+
+            var rejectDocument = function(){
+                $("#rw-answer").val("reject")
+                $.post('/doc/review/{{ .DocNumber }}',$("#rw-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "red", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+
+            }
+
+            $("body").on('click', "#approve", function(){
+                approveDocument();
+            });
+
+            $("body").on('click', "#reject", function(){
+                rejectDocument();
+            });
+
+
+        </script>
     {{ end }}
 
 </html>
