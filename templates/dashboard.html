@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dashboard | DMS</title>
+
+        <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+        
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="../static/css/materialize.min.css">
+    <!-- <link rel="stylesheet" href="../static/css/m.css"> -->
+    <link rel="stylesheet" href="../static/css/dashboard.css">
+
+</head>
+<body>
+
+<!-- Navbar Dropdown Structure -->
+<ul id="dropdown1" class="dropdown-content">
+
+    <li id="dropdown-username" disabled>Signed in as <br><b>{{.Username}}</b></li>
+    <li class="divider"></li>
+
+    <li><a href="/doc/search"><i class="material-icons">search</i>Search</a></li>
+
+    <!-- PROFILE SPECIFIC -->
+    {{if eq .AvailableInit true}}
+    <li><a href="/doc/add"><i class="material-icons">note_add</i>New Document</a></li>
+    {{end}}
+    
+    <li class="divider"></li>
+    <li><a href="/logout"><i class="material-icons">exit_to_app</i>Logout</a></li>
+
+</ul>
+
+  <!-- NAVBAR -->
+
+  <nav class="cyan">
+    <div class="nav-wrapper container">
+      <a href="#!" class="brand-logo">Dashboard</a>
+      <ul class="right hide-on-med-and-down">
+      
+        <!-- Dropdown Trigger -->
+        <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><i class="material-icons center">perm_identity</i><i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+      
+            <h4 class="col s12 m2" id = "welcome">Welcome, {{.Name}}!</h4>
+          
+      
+      <div class="row">
+          
+        <!-- FILTER PANEL -->
+          <form action="">
+            <div class="col m3 s12"><br>
+                <h5>Filters</h5>
+                <ul class="collapsible">
+                    <li class="active">
+                        <div class="collapsible-header">Document Type</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="SOP" type="checkbox" />
+                                        <span>SOP</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="HR" type="checkbox" />
+                                        <span>HR</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="STP" type="checkbox" />
+                                        <span>STP</span>
+                                    </label>
+                                </div>
+                        </div>
+                        </div>
+                    </li>
+                    <li class="active">
+                        <div class="collapsible-header">Document Process</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="Everyone" type="checkbox" />
+                                        <span>Everyone</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="OneByOne" type="checkbox" />
+                                        <span>One by one</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="Anyone" type="checkbox" />
+                                        <span>Anyone</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="active">
+                        <div class="collapsible-header">Department</div>
+                        <div class="collapsible-body">
+                            <div class="row">
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="option1" type="checkbox" />
+                                        <span>D1</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="option2" type="checkbox" />
+                                        <span>D2</span>
+                                    </label>
+                                </div>
+                                <div class="input-field col l12 m12">
+                                    <label>
+                                        <input name="option3" type="checkbox" />
+                                        <span>D3</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </form>
+        <!-- DOCS PANEL -->
+        <br><br><br>
+    <div class="col m8" id = "results">
+            
+    </div>
+      <!-- END DOCS PANEL -->
+
+      </div>
+  </div>
+          
+</body>
+
+<script src="../static/js/jQuery.min.js"></script>
+<script src="../static/js/materialize.min.js"></script>
+
+<script>
+    function submitHandler() {
+        //name value
+        console.log("came to submit");
+        $.post('/doc/fetchDocs', $('form').serialize(),function(data){
+            $("#results").html(data);
+            console.log("results printed");//Debug
+        });
+    }
+    jQuery(document).ready(function($){
+        submitHandler()
+        $('[type="checkbox"]').click(function(){
+            submitHandler();
+        });
+        var formatDate = function() {
+           $('.fmtdate').each(function(){
+           var date = $(this).html();
+           var formattedDate = date.split("T")[0];
+           var fDate = formattedDate.split("-");
+           $(this).html(fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+           })
+       }
+       formatDate();
+        $(".dropdown-trigger").dropdown({
+            inDuration: 300,
+            outDuration: 225,
+            hover: true, // Activate on hover
+            coverTrigger: false, // Displays dropdown below the button
+            alignment: 'right' // Displays dropdown with edge aligned to the left of button
+        });
+
+        $('.collapsible').collapsible({
+            accordion: false,
+        });
+        
+    });
+</script>
+</html>

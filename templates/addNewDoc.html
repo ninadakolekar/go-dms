@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+
+    <title>New Document</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+  
+    <!-- Materialize Stylesheet -->
+    <link rel="stylesheet" href="../static/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="../static/css/addNewDoc.css">
+
+    <script type="text/javascript" src="../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../static/js/materialize.min.js"> </script>
+
+    {{ if .DocumentExist}}
+
+    <title>Edit Document Details</title>
+  
+    <!-- Materialize Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/materialize.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/addNewDoc.css">
+
+    <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+
+    {{ end }}
+
+    {{ if .Redirect}}
+
+    <title>New Document</title>
+  
+    <!-- Materialize Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/materialize.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="../../static/css/addNewDoc.css">
+
+    <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+
+    {{ end }}
+
+  </head>
+  <body>
+
+    <div class="container">
+
+      
+      {{ if .DocumentExist }}
+        <h4 class="center" id="title">Edit Document Details </h4>
+      {{ else }}
+        <h4 class="center" id="title">New Document</h4>
+      {{ end }}
+      <br>
+
+
+    <div class="row">
+      <form id="add-doc-form" class="col s12" action="/doc/add" method="post">
+        <div class="row">
+          <div class="input-field col s12 m4">
+            <input id ="doc_number"  type="text" class="validate" name="docNumber" required>
+            <label for="doc_number">Document Number</label>
+            <span id="status"></span>
+          </div>
+          <div class="input-field col s12 m8">
+            <input id="doc_name"  type="text" class="validate" name="docName">
+            <label for="doc_name">Document Name</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="input-field col s12 m4">
+           <select name="docProcess" id="select_process">
+             <option class="dropdown_default_option" value="" disabled selected></option>
+             <option value="Everyone">Everyone</option>
+             <option value="OneByOne">One by One</option>
+             <option value="Anyone">Anyone</option>
+           </select>
+           <label for="select_process">Process</label>
+         </div>
+         <div class="input-field col s12 m8">
+          <select name="docType" id="select_document_type">
+            <option class="dropdown_default_option" value="" disabled selected></option>
+            <option value="SOP">SOP</option>
+            <option value="HR">HR</option>
+            <option value="STP">STP</option>
+          </select>
+          <label for="select_document_type">Document Type</label>
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="input-field col s12 m4">
+       <select name="docDept" id = "doc_dept">
+         <option class="dropdown_default_option" value="" disabled selected></option>
+         <option value="D1">D1</option>
+         <option value="D2">D2</option>
+         <option value="D3">D3</option>
+       </select>
+       <label for="doc_dept">Document Department</label>
+     </div>
+     <div class = "col s12 m4">
+        <label for="effDate">Effective Date</label>
+        <input id="effDate" type="date" class="datepicker" name="docEffDate" />
+     </div>
+     <div class = "col s12 m4">
+        <label for="exprDate">Expiry Date</label>              
+        <input id="exprDate" type = "date" class = "datepicker" name="docExpDate" />    
+     </div>
+    </div>
+
+    <div class="row">
+      <div class="input-field col s12 m6">
+       <select name="docCreator" id = "create_doc">
+         <option class="dropdown_default_option" value="0" disabled selected></option>
+         {{range $idx, $e := .Creators}}
+         <option value="{{$e.Id}}">{{$e.Name}}<span style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  color: rgb(0, 255, 179)!important;"> @{{$e.Id}}</span></option>
+         {{end}}
+       </select>
+       <label for="create_doc">Creator</label>
+     </div>
+     <div class="input-field col s12 m6">
+      <select name="docAuth" id = "auth_doc">
+        <option class="dropdown_default_option" value="0" disabled selected></option>
+        {{range $idx, $e := .Authorisers}}
+        <option value="{{$e.Id}}">{{$e.Name}}<span style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif ; color: rgb(0, 255, 179)!important;"> @{{$e.Id}}</span></option>
+        {{end}}
+      </select>
+      <label for="auth_doc">Authorizer</label>
+    </div>
+    </div>
+    <div class="row">
+    <div class="input-field col s12 m6">
+    <select multiple id="docReviewers" name="docReviewers">
+      <option value="" disabled></option>
+      {{range $idx, $e := .Reviewers}}
+      <option value="{{$e.Id}}">{{$e.Name}} &nbsp; @{{$e.Id}}</option>
+      {{end}}
+    </select>
+    <label>Reviewers</label>
+    </div>
+    <div class="input-field col s12 m6">
+    <select multiple name="docApprovers" id="docApprovers">
+      <option value="" disabled></option>
+      {{range $idx, $e := .Approvers}}
+      <option value="{{$e.Id}}">{{$e.Name}}<span style="font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;  color: rgb(0, 255, 179)!important;"> @{{$e.Id}}</span></option>
+      {{end}}
+    </select>
+    <label>Approvers</label>
+    </div>
+  </div>
+
+    <div class="center">
+          <button type="submit" class="btn tooltipped" data-position="left" data-delay="50" data-tooltip="Click here to submit your form">Submit</button>
+          <a id="reset-btn" class="btn tooltipped" data-position="right" data-delay="50" data-tooltip="Click here to reset your form">Reset</a>
+    </div>
+
+    </form>
+    </div>
+  </div>
+
+  {{if .Errb}}
+  <a class="btn wrong" id="error" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
+  <script>
+     $("#error").trigger('click')
+     $(".toast").css('background-color','red')
+     $(".toast").css('font-weight','bold')
+  </script>
+  {{end}}
+
+  {{if eq .Datab true}}
+  <a class="btn right" id="success" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
+  <script>
+     console.log("Hey I was triggered!!!")// Debug
+     $("#success").trigger('click')
+     $(".toast").css('background-color','green')
+     $(".toast").css('font-weight','bold')
+  </script>
+  {{end}}
+</body>
+
+{{ if .DocumentExist}}
+  <script src="../../static/js/jquery.validate.min.js"></script>
+{{ end }}
+{{ if .Redirect}}
+  <script src="../../static/js/jquery.validate.min.js"></script>
+{{ end }}
+
+  
+  <!-- Form Functionality -->
+  <script>
+  jQuery(function($){
+      $('select').formSelect();
+       window.$('#reset-btn').click(function(){
+         window.$('#add-doc-form').find("input").val("");
+//         window.$('.error').remove();
+       });
+       window.$('li.disabled').click(function(){
+          $(this).parent('ul').sibling('input').val("");
+       });
+      //  $('.datepicker').datepicker();
+    });
+  </script>
+
+    <!-- Form Validation -->
+    <script src="../static/js/jquery.validate.min.js"></script>
+    <script>
+        jQuery(document).ready(function($){
+          $("#add-doc-form").validate({
+            rules: {
+              docNumber: {
+                required: true,
+                minlength: 3
+              },
+              docName: {
+                required: true,
+                minlength: 3
+              },
+              docProcess: "required",
+              docType: "required",
+              docDept: "required",
+              docEffDate: "required",
+              docExpDate: "required",
+              docCreator: "required",
+              docReviewers: "required",
+              docApprovers: "required",
+            },
+            messages: {
+              docNumber: {
+                required: "Please specify a document number",
+                minlength: "Document number must be atleast 3 characters long."
+              },
+              docName: {
+                required: "Please specify a document name",
+                minlength: "Document name must be atleast 3 characters long."
+              },
+              docProcess: "Please specify document process",
+              docType: "Please specify document type",
+              docDept: "Please specify a document department",
+              docEffDate: "Please specify a document effective date",
+              docExpDate: "Please specify a document expiry date",
+              docCreator: "Please specify a document creator",
+              docReviewers: "Please specify a document reviewer",
+              docApprovers: "Please specify a document approver",
+            },
+            errorElement : 'div',
+            errorPlacement: function(error, element) {
+              var placement = $(element).data('error');
+              if (placement) {
+                $(placement).append(error)
+              } else {
+                error.insertAfter(element);
+              }
+            },
+            submitHandler: function(form) {
+              form.submit();
+            }
+          });
+        });
+    </script>
+    
+    <!-- If existing document -->
+    {{ if .DocumentExist }}
+
+      <script>
+
+          $("label[for='doc_number']").addClass('active')
+          $("#doc_number").attr( "value", {{ .Document.DocNo }} );
+
+          $("#doc_number").prop("readonly", true);
+
+          $("label[for='doc_name']").addClass('active')
+          $("#doc_name").attr( "value", {{ .Document.Title }} );
+
+          $("#select_process").val( {{ .Document.DocProcess }} );
+
+          $("#select_document_type").val( {{ .Document.DocType }} );
+
+          $("#doc_dept").val( {{ .Document.DocDept }} );
+
+          var effDate = {{ .Document.DocEffDate }};
+          var res = effDate.split("T")[0].split("-");
+          document.getElementById('effDate').valueAsDate = new Date(res[0],res[1],res[2]);
+
+          var effDate = {{ .Document.DocExpDate }};
+          var res = effDate.split("T")[0].split("-");
+          document.getElementById('exprDate').valueAsDate = new Date(res[0],res[1],res[2]);
+
+          $("#create_doc").val( {{ .Document.Creator }} );
+
+          $("#auth_doc").val( {{ .Document.Authorizer }} );
+
+          $("#docReviewers").val(  {{ .Document.Reviewer }} );
+          $("#docReviewers").trigger("change");
+
+          $("#docApprovers").val(  {{ .Document.Approver }} );
+          $("#docApprovers").trigger("change");
+        
+          $("#add-doc-form").attr("action",window.location.pathname);
+
+      </script>
+
+    {{ else }}
+
+     <!-- Document Number Availabiity Checker -->
+      <script>
+        jQuery(document).ready(function($){
+          $("#doc_number").keyup(function(){
+            var docno = $("#doc_number").val();
+            if(docno.indexOf(" ")!=-1){
+              $('#status').html("Invalid Document Number")
+            } 
+          
+            if(docno.length >= 3)   
+            {
+              $("#status").html('Checking availability...');
+      
+              $.post("/doc/avail", {docNumber:docno}, function(data, status){
+                  $("#status").html(data);    
+              });
+            }
+            else if(docno.length == 0){
+              $("#status").html("");
+            }    
+        });
+      });  
+      </script>
+
+    {{ end }}
+
+</html>

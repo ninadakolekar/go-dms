@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+
+        <title>{{ .DocTitle }}</title>
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+    
+        <!-- Materialize Stylesheet -->
+        <link rel="stylesheet" href="../../static/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="../../static/css/viewDoc.css">
+
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <h4 class="col s12 center" id="docTitle">{{ .DocTitle }}</h4>
+            </div>
+            <div class="row">
+                <div class="col s12 m6 left flow-text" id="docNumber">Document Number: {{ .DocNumber }}</div>
+                <div class="col s12 m3 right flow-text" id="initDate">Initiated <span class="date">{{ .DocInitDate }}</span></div>
+            </div>
+            <div class="row more">
+                <div class="col s12 m6 left flow-text" id="docType">Document Type: {{ .DocType }}</div>
+                <div class="col s12 m3 right flow-text" id="docDept">Department: {{ .DocDept }}</div>
+            </div>
+            <div class="row more">
+                <div class="col s12 m6 left flow-text" id="docEffDate">Effective Date:  <span class="date">{{ .DocEffDate }}</span></div>
+                <div class="col s12 m3 right flow-text" id="docExpDate">Expires <span class="date">{{ .DocExpDate }}</span></div>
+            </div>
+            <div class="row">
+                <a class="col s12 m4" id="more-details">Show more details</a>
+            </div>
+            <hr>       
+            {{ range $index, $body := .DocBody}}
+                <div class="row">
+                    <div class="col s12">
+                            <p class="bodyText flow-text" id="bodyText{{$index}}">
+                                <script>
+                                    var str = {{$body}}
+                                    var id = "bodyText" + {{ $index }}
+                                    str = str.replace(/(?:\r\n|\r|\n)/g, '<br>');
+                                    document.getElementById(id).innerHTML = str
+                                </script>
+                            </p>
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+
+        <!-- EDIT BUTTON -->
+
+        {{ if .Edit}}
+
+            <div class="fixed-action-btn edit-btn">
+            <a class="btn-floating btn-large red" href="/doc/create/{{ .DocNumber }}">
+                <i class="large material-icons">mode_edit</i>
+            </a>
+            </div>
+                
+        {{ end }}
+
+        <!-- Review Buttons -->
+        {{ if .Rw }}
+            <br>
+            <br>
+            <br>
+            <div class="container no-border">
+                <div class="row">
+                    <form id="rw-form">
+                        <input name="rw-answer" type="text" id="rw-answer" hidden>
+                    </form>
+                    <div class="col s2 offset-s4">
+                        <button id="approve" class="btn waves-effect waves-light green ans-btn" name="action">Approve
+                            <i class="material-icons right">check_circle_outline</i>
+                        </button>
+                    </div>
+                    <div class="col s2">
+                            <button id="reject" class="btn waves-effect waves-light red ans-btn" name="action">Reject
+                                <i class="material-icons right">highlight_off</i>
+                            </button>
+                    </div>
+                </div>
+            </div>
+    {{ end }}
+
+    <!-- Approve Buttons -->
+        {{ if .App }}
+            <br>
+            <br>
+            <br>
+            <div class="container no-border">
+                <div class="row">
+                    <form id="ap-form">
+                        <input name="ap-answer" type="text" id="ap-answer" hidden>
+                    </form>
+                    <div class="col s2 offset-s4">
+                        <button id="approve" class="btn waves-effect waves-light green ans-btn" name="action">Approve
+                            <i class="material-icons right">check_circle_outline</i>
+                        </button>
+                    </div>
+                    <div class="col s2">
+                            <button id="reject" class="btn waves-effect waves-light red ans-btn" name="action">Reject
+                                <i class="material-icons right">highlight_off</i>
+                            </button>
+                    </div>
+                </div>
+            </div>
+    {{ end }}
+
+     <!-- Approve Buttons -->
+     {{ if .Auth }}
+     <br>
+     <br>
+     <br>
+     <div class="container no-border">
+         <div class="row">
+             <form id="auth-form">
+                 <input name="auth-answer" type="text" id="auth-answer" hidden>
+             </form>
+             <div class="col s2 offset-s4">
+                 <button id="approve" class="btn waves-effect waves-light green ans-btn" name="action">Approve
+                     <i class="material-icons right">check_circle_outline</i>
+                 </button>
+             </div>
+             <div class="col s2">
+                     <button id="reject" class="btn waves-effect waves-light red ans-btn" name="action">Reject
+                         <i class="material-icons right">highlight_off</i>
+                     </button>
+             </div>
+         </div>
+     </div>
+{{ end }}
+
+
+    </body>
+    <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+    <script>
+         var formatDate = function() {
+            $('.date').each(function(){
+            var date = $(this).html();
+            var formattedDate = date.split("T")[0];
+            var fDate = formattedDate.split("-");
+            $(this).html(fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+            })
+        }
+        formatDate();
+    </script>
+    <script>
+        $("body").on('click','#more-details',function(){
+            $(".more").css("display","block")
+            var lessDetails = '<a class="col s12 m4" id="hide-details">Hide details</a>'
+            $("#more-details").before(lessDetails);
+            $("#more-details").remove();
+        });
+        $("body").on('click','#hide-details',function(){
+            $(".more").css("display","none")
+            var moreDetails = '<a class="col s12 m4" id="more-details">Show more details</a>'
+            $("#hide-details").before(moreDetails);
+            $("#hide-details").remove();
+        });
+    </script>
+
+    {{ if .Edit }}
+        <script>
+            $(document).ready(function(){
+                $('.fixed-action-btn').floatingActionButton();
+            });
+        </script>
+    {{ end }}
+
+    {{ if .Rw }}
+        <script>
+
+            var redirectFunction = function(){
+                window.location.replace("/dashboard");
+            }
+
+            var approveDocument = function(){
+                $("#rw-answer").val("approve")
+                $.post('/doc/review/{{ .DocNumber }}',$("#rw-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "green", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+                
+            }
+
+            var rejectDocument = function(){
+                $("#rw-answer").val("reject")
+                $.post('/doc/review/{{ .DocNumber }}',$("#rw-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "red", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+
+            }
+
+            $("body").on('click', "#approve", function(){
+                approveDocument();
+            });
+
+            $("body").on('click', "#reject", function(){
+                rejectDocument();
+            });
+
+
+        </script>
+    {{ end }}
+
+    {{ if .App }}
+        <script>
+
+            var redirectFunction = function(){
+                window.location.replace("/dashboard");
+            }
+
+            var approveDocument = function(){
+                $("#ap-answer").val("approve")
+                $.post('/doc/approve/{{ .DocNumber }}',$("#ap-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "green", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+                
+            }
+
+            var rejectDocument = function(){
+                $("#ap-answer").val("reject")
+                $.post('/doc/approve/{{ .DocNumber }}',$("#ap-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "red", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+
+            }
+
+            $("body").on('click', "#approve", function(){
+                approveDocument();
+            });
+
+            $("body").on('click', "#reject", function(){
+                rejectDocument();
+            });
+
+
+        </script>
+    {{ end }}
+
+    {{ if .Auth }}
+        <script>
+
+            var redirectFunction = function(){
+                window.location.replace("/dashboard");
+            }
+
+            var approveDocument = function(){
+                $("#auth-answer").val("approve")
+                $.post('/doc/auth/{{ .DocNumber }}',$("#auth-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "green", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+                
+            }
+
+            var rejectDocument = function(){
+                $("#auth-answer").val("reject")
+                $.post('/doc/auth/{{ .DocNumber }}',$("#auth-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "red", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+
+            }
+
+            $("body").on('click', "#approve", function(){
+                approveDocument();
+            });
+
+            $("body").on('click', "#reject", function(){
+                rejectDocument();
+            });
+
+
+        </script>
+    {{ end }}
+
+</html>

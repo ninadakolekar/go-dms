@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+
+        <title>{{ .Doc.Title }}</title>
+
+        <!-- Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i" rel="stylesheet">
+    
+        <!-- Materialize Stylesheet -->
+        <link rel="stylesheet" href="../../static/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="../../static/css/viewDocDetails.css">
+
+    </head>
+
+    <body>
+        <div class="details-container container">
+            <div class="row">
+                <h4 class="col s12 center" id="docTitle">{{ .Doc.Title }}</h4>
+            </div><br>
+            <div class="row">
+                <div class="col s12 m6 left flow-text" id="docNumber">Document Number: {{ .Doc.DocNo }}</div>
+                <div class="col s12 m3 right flow-text" id="initDate">Initiated <span class="date">{{ .Doc.InitTS }}</span></div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6 left flow-text" id="docType">Document Type: {{ .Doc.DocType }}</div>
+                <div class="col s12 m3 right flow-text" id="docDept">Department: {{ .Doc.DocDept }}</div>
+            </div>
+            <div class="row">
+                <div class="col s12 m6 left flow-text" id="docEffDate">Effective Date:  <span class="date">{{ .Doc.DocEffDate }}</span></div>
+                <div class="col s12 m3 right flow-text" id="docExpDate">Expires <span class="date">{{ .Doc.DocExpDate }}</span></div>
+            </div>
+            <div class="row">
+                    <div class="col s12 m6 left flow-text" id="docProcess">Process:  {{ .Doc.DocProcess }} </div>
+                    <div class="col s12 m3 right flow-text" id="docInit">Initiator: {{ .Doc.Initiator }}</div>
+            </div>
+            <div class="row">
+                    <div class="col s12 m6 left flow-text" id="docCreator">Creator:  {{ .Doc.Creator }} </div>
+                    {{ if .Doc.Authorizer }}
+                        <div class="col s12 m3 right flow-text" id="docAuthorizer"> Authorizer: 
+                            {{ range $idx, $auth := .Doc.Authorizer }}
+                                <span>{{ $auth }}</span>
+                            {{ end }}
+                        </div>
+                    {{ else }}
+                        <div class="col s12 m3 right flow-text" id="docAuthorizer">Authorizer: None</div>
+                    {{ end }}
+            </div>
+            <div class="row">
+                    <div class="col s12 left flow-text" id="docRw">Reviewer(s):
+                          {{ range $idx, $r := .Doc.Reviewer }} 
+                          <span>{{ $r }},</span>
+                          {{ end }}
+                    </div>
+            </div>
+            <div class="row">
+                    <div class="col s12 left flow-text" id="docRw">Approver(s):
+                          {{ range $idx, $app := .Doc.Approver }} 
+                          <span>{{ $app }},</span>
+                          {{ end }}
+                    </div>
+            </div>
+        </div>
+        {{ if .QA }}
+            <br>
+            <br>
+            <br>
+            <div class="container">
+                <div class="row">
+                    <form id="qa-form">
+                        <input name="qa-answer" type="text" id="qa-answer" hidden>
+                    </form>
+                    <div class="col s2 offset-s4">
+                        <button id="approve" class="btn waves-effect waves-light green ans-btn" name="action">Approve
+                            <i class="material-icons right">check_circle_outline</i>
+                        </button>
+                    </div>
+                    <div class="col s2">
+                            <button id="reject" class="btn waves-effect waves-light red ans-btn" name="action">Reject
+                                <i class="material-icons right">highlight_off</i>
+                            </button>
+                    </div>
+                </div>
+            </div>
+        {{ end }}
+
+    </body>
+    <script type="text/javascript" src="../../static/js/jQuery.min.js"> </script>
+    <script type="text/javascript" src="../../static/js/materialize.min.js"> </script>
+
+    <script>
+         var formatDate = function() {
+            $('.date').each(function(){
+            var date = $(this).html();
+            var formattedDate = date.split("T")[0];
+            var fDate = formattedDate.split("-");
+            $(this).html(fDate[2]+"-"+fDate[1]+"-"+fDate[0]);
+            })
+        }
+        formatDate();
+    </script>
+
+    {{ if .QA }}
+    
+        <script>
+
+            var redirectFunction = function(){
+                window.location.replace("/dashboard");
+            }
+
+            var approveDocument = function(){
+                $("#qa-answer").val("approve")
+                $.post('/doc/viewDetails/{{ .Doc.DocNo }}',$("#qa-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "green", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+                
+            }
+
+            var rejectDocument = function(){
+                $("#qa-answer").val("reject")
+                $.post('/doc/viewDetails/{{ .Doc.DocNo }}',$("#qa-form").serialize(),function(data){
+                    $('.ans-btn').remove();
+                    M.toast({html: data, classes: "red", displayLength: 1000})
+                    window.setTimeout(redirectFunction,1200)
+                });
+
+            }
+
+            $("body").on('click', "#approve", function(){
+                approveDocument();
+            });
+
+            $("body").on('click', "#reject", function(){
+                rejectDocument();
+            });
+
+
+        </script>
+    {{ end }}
+
+</html>
