@@ -1,0 +1,30 @@
+language: go
+sudo: false
+
+go:
+  - "1.10.x"
+  - tip
+
+env:
+  global:
+    - PORT=8080
+
+install:
+  - go get github.com/gorilla/csrf
+  - go get github.com/gorilla/mux
+  - go get github.com/gorilla/securecookie
+  - go get github.com/rtt/Go-Solr
+  - go get github.com/ninadakolekar/go-dms/src/auth
+  - go get github.com/ninadakolekar/go-dms/src/constants
+  - go get github.com/ninadakolekar/go-dms/src/controllers
+  - go get github.com/ninadakolekar/go-dms/src/models
+  - go get github.com/ninadakolekar/go-dms/src/routes
+  - go get github.com/ninadakolekar/go-dms/src/docs
+  - go get github.com/ninadakolekar/go-dms/src/user
+  - go get github.com/ninadakolekar/go-dms/src/utility
+  - go get github.com/ninadakolekar/go-dms/src/auth
+
+
+
+script:
+  - go build app.go
