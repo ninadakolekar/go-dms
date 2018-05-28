@@ -62,7 +62,8 @@ func DocView(w http.ResponseWriter, r *http.Request) {
 					Edit       bool
 					Rw         bool
 					App        bool
-				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate, EditBtn, docs.CheckCurrentReviewer(document, username), docs.CheckCurrentApprover(document, username)})
+					Auth       bool
+				}{id, document.Title, document.DocumentBody, document.InitTS, document.DocDept, document.DocType, document.DocEffDate, document.DocExpDate, EditBtn, docs.CheckCurrentReviewer(document, username), docs.CheckCurrentApprover(document, username), docs.CheckCurrentAuthorizer(document, username)})
 			}
 
 		} else {

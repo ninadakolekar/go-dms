@@ -26,13 +26,13 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 	str4 := fetchReviews(r)
 	str5 := fetchApproves(r)
 	str6 := fetchAuthorises(r)
-	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons red'>place</i>Pending Intiations</div><div class='collapsible-body'><ul class='collection'>"
-	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons blue'>place</i>Pending QA</div><div class='collapsible-body'><ul  class='collection'>"
-	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons green'>place</i>Pending Create</div><div class='collapsible-body'><ul  class='collection'>"
-	html3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons indigo'>place</i>Pending Reviews</div><div class='collapsible-body'><ul  class='collection'>"
+	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons red'>layers</i>Pending Intiations</div><div class='collapsible-body'><ul class='collection'>"
+	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons blue'>layers</i>Pending QA</div><div class='collapsible-body'><ul  class='collection'>"
+	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons green'>layers</i>Pending Creations</div><div class='collapsible-body'><ul  class='collection'>"
+	html3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons indigo'>layers</i>Pending Reviews</div><div class='collapsible-body'><ul  class='collection'>"
 
-	html4 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons cyan'>place</i>Pending Approves</div><div class='collapsible-body'><ul  class='collection'>"
-	html5 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons yellow'>place</i>Pending Authorises</div><div class='collapsible-body'><ul  class='collection'>"
+	html4 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons cyan'>layers</i>Pending Approvals</div><div class='collapsible-body'><ul  class='collection'>"
+	html5 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons yellow'>layers</i>Pending Authorizations</div><div class='collapsible-body'><ul  class='collection'>"
 
 	html6 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
 	fmt.Fprintf(w, html+str1+html1+str2+html2+str3+html3+str4+html4+str5+html5+str6+html6)
@@ -220,6 +220,7 @@ func fetchApproves(rr *http.Request) string {
 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
+	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
 	return r
 }
 func fetchAuthorises(rr *http.Request) string {
@@ -281,6 +282,7 @@ func fetchAuthorises(rr *http.Request) string {
 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
+	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
 	return r
 }
 
@@ -343,6 +345,7 @@ func fetchReviews(rr *http.Request) string {
 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
+	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
 	return r
 }
 
@@ -403,6 +406,7 @@ func fetchCreator(rr *http.Request) string {
 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/create/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
+	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
 	return r
 }
 
@@ -463,6 +467,7 @@ func fetchQA(rr *http.Request) string {
 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/viewDetails/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
+	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
 	return r
 }
 func fetchInits(rr *http.Request) string {
@@ -522,5 +527,6 @@ func fetchInits(rr *http.Request) string {
 			r += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 grey'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/add/" + e.DocId + "' class = 'secondary-content'><i class='material-icons'>send</i></a></li>")
 		}
 	}
+	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
 	return r
 }

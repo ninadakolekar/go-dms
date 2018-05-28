@@ -2,7 +2,7 @@
     background-color: #FFFFFF;
     margin: 0;
     display: block;
-    min-width: 150px;
+    min-width: 180px;
     max-height: auto;
     margin-left: -1px; /* Add this to keep dropdown in line with edge of navbar */
     overflow: hidden; /* Changed this from overflow-y:auto; to overflow:hidden; */

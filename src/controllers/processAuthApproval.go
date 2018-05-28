@@ -10,8 +10,8 @@ import (
 	"github.com/ninadakolekar/aizant-dms/src/docs"
 )
 
-// ProcessApproveApproval ... Handles Approver's Approval/Rejection
-func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
+// ProcessAuthApproval ... Handles Authoriser's consent
+func ProcessAuthApproval(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 
@@ -20,7 +20,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 		username, err := auth.GetCurrentUser(r)
 
 		if err != nil { // Auth unsucessful
-			fmt.Println("ERROR ProcessApproveApproval Line 23: ", err) // Debug
+			fmt.Println("ERROR ProcessAuthApproval Line 23: ", err) // Debug
 			http.Redirect(w, r, "/", 302)
 		}
 
@@ -37,34 +37,30 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if !docs.CheckCurrentApprover(Document, username) || Document.FlowStatus != constants.ApproveFlow {
+			if !docs.CheckCurrentAuthorizer(Document, username) || Document.FlowStatus != constants.AuthFlow {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
 			}
 
-			apResponse := r.FormValue("ap-answer")
+			authResponse := r.FormValue("auth-answer")
 
-			if apResponse == "approve" {
+			if authResponse == "approve" {
 
 				if Document.DocProcess == constants.Everyone {
 
 					Document.FlowList = append(Document.FlowList, username)
 
-					if len(Document.FlowList) == len(Document.Approver) {
-						if Document.Authorizer == nil {
-							Document.FlowStatus = constants.ActiveFlow
-							Document.DocStatus = true
-						} else {
-							Document.FlowStatus = constants.AuthFlow
-						}
+					if len(Document.FlowList) == len(Document.Authorizer) {
 						Document.FlowList = nil
 						Document.CurrentFlowUser = 0
+						Document.FlowStatus = constants.ActiveFlow
+						Document.DocStatus = true
 					}
 
 					_, err := docs.AddInactiveDoc(Document)
 
 					if err != nil {
-						fmt.Println("Error: Document Update Failed ProcessApproveApproval Line 67 ", err) // Debug
+						fmt.Println("Error: Document Update Failed ProcessAuthApproval Line 63 ", err) // Debug
 						return
 					}
 
@@ -72,19 +68,15 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 
 				} else if Document.DocProcess == constants.Anyone {
 
-					if Document.Authorizer == nil {
-						Document.FlowStatus = constants.ActiveFlow
-						Document.DocStatus = true
-					} else {
-						Document.FlowStatus = constants.AuthFlow
-					}
+					Document.FlowStatus = constants.ActiveFlow
+					Document.DocStatus = true
 					Document.FlowList = nil
 					Document.CurrentFlowUser = 0
 
 					_, err := docs.AddInactiveDoc(Document)
 
 					if err != nil {
-						fmt.Println("Error: Document Update Failed ProcessApproveApproval Line 87 ", err) // Debug
+						fmt.Println("Error: Document Update Failed ProcessAuthApproval Line 79 ", err) // Debug
 						return
 					}
 
@@ -95,12 +87,9 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 					Document.CurrentFlowUser++
 
 					if int(Document.CurrentFlowUser) == len(Document.Approver) {
-						if Document.Authorizer == nil {
-							Document.FlowStatus = constants.ActiveFlow
-							Document.DocStatus = true
-						} else {
-							Document.FlowStatus = constants.AuthFlow
-						}
+
+						Document.FlowStatus = constants.ActiveFlow
+						Document.DocStatus = true
 						Document.FlowList = nil
 						Document.CurrentFlowUser = 0
 					}
@@ -108,7 +97,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 					_, err := docs.AddInactiveDoc(Document)
 
 					if err != nil {
-						fmt.Println("Error: Document Update Failed ProcessApproveApproval Line 111 ", err) // Debug
+						fmt.Println("Error: Document Update Failed ProcessAuthApproval Line 100 ", err) // Debug
 						return
 					}
 
@@ -116,7 +105,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			} else if apResponse == "reject" {
+			} else if authResponse == "reject" {
 
 				if Document.DocProcess == constants.Everyone {
 
@@ -127,7 +116,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 					_, err := docs.AddInactiveDoc(Document)
 
 					if err != nil {
-						fmt.Println("Error: Document Update Failed ProcessApproveApproval Line 130 ", err) // Debug
+						fmt.Println("Error: Document Update Failed ProcessAuthApproval Line 130 ", err) // Debug
 						return
 					}
 
@@ -137,7 +126,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 
 					Document.FlowList = append(Document.FlowList, username)
 
-					if len(Document.FlowList) == len(Document.Approver) {
+					if len(Document.FlowList) == len(Document.Authorizer) {
 						Document.FlowStatus = constants.CreateFlow
 						Document.FlowList = nil
 						Document.CurrentFlowUser = 0
@@ -146,7 +135,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 					_, err := docs.AddInactiveDoc(Document)
 
 					if err != nil {
-						fmt.Println("Error: Document Update Failed ProcessApproveApproval Line 149 ", err) // Debug
+						fmt.Println("Error: Document Update Failed ProcessAuthApproval Line 149 ", err) // Debug
 						return
 					}
 
@@ -161,7 +150,7 @@ func ProcessApproveApproval(w http.ResponseWriter, r *http.Request) {
 					_, err := docs.AddInactiveDoc(Document)
 
 					if err != nil {
-						fmt.Println("Error: Document Update Failed ProcessApproveApproval Line 164 ", err) // Debug
+						fmt.Println("Error: Document Update Failed ProcessAuthApproval Line 164 ", err) // Debug
 						return
 					}
 

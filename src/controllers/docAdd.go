@@ -37,10 +37,11 @@ func DocAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
-	tmpl.Execute(w, docAddMsg{Datab: false, Errb: false, Datamsg: "hi", Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: models.InactiveDoc{}})
+	tmpl.Execute(w, docAddMsg{Username: username, Datab: false, Errb: false, Datamsg: "hi", Approvers: SendApprovers(), Reviewers: SendReviewers(), Authorisers: SendAuthoriser(), Creators: SendCreators(), DocumentExist: false, Redirect: false, Document: models.InactiveDoc{}})
 }
 
 type docAddMsg struct {
+	Username      string
 	Datab         bool
 	Errb          bool
 	Datamsg       string

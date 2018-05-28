@@ -27,15 +27,15 @@
     <li id="dropdown-username" disabled>Signed in as <br><b>{{.Username}}</b></li>
     <li class="divider"></li>
 
-    <li><a href="/doc/search">Search</a></li>
+    <li><a href="/doc/search"><i class="material-icons">search</i>Search</a></li>
 
     <!-- PROFILE SPECIFIC -->
     {{if eq .AvailableInit true}}
-    <li><a href="/doc/add">New Document</a></li>
+    <li><a href="/doc/add"><i class="material-icons">note_add</i>New Document</a></li>
     {{end}}
     
     <li class="divider"></li>
-    <li><a href="/logout">Logout</a></li>
+    <li><a href="/logout"><i class="material-icons">exit_to_app</i>Logout</a></li>
 
 </ul>
 
