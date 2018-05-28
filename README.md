@@ -1,5 +1,7 @@
 # Go-DMS
 
+[![Build Status](https://travis-ci.org/ninadakolekar/go-dms.svg?branch=master)](https://travis-ci.org/ninadakolekar/go-dms)
+
 Go-DMS is a  document management system with document workflow and lifecycle. It is based on Apache Solr, and written in Go.
 
 The objective of the software is to simulate a real-life document management system and to allow the user to be able to approve/reject document(s) in a predefined way.
