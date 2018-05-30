@@ -20,12 +20,18 @@ func DBLPResponse() {
 		if err != nil {
 			log.Fatal(err, " Line 21")
 		}
-
-		// fmt.Println(string(resp))
-
+		fmt.Println(conf)
+		counter := 0
 		jsonparser.ArrayEach(resp, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 
-			fmt.Println(jsonparser.Get(value, "url"))
+			a, _, _, err := jsonparser.Get(value, "info", "ee")
+			if err != nil {
+				// log.Println(err)
+				fmt.Println(err)
+			} else {
+				counter++
+				fmt.Println(string(a), "    serial number :", counter)
+			}
 
 		}, "result", "hits", "hit")
 
