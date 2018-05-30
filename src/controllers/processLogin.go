@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/constants"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
 )
 
 // ProcessLogin ... Processes Login form

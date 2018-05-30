@@ -3,7 +3,7 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/ninadakolekar/aizant-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
 )
 

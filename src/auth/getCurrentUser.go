@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ninadakolekar/aizant-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/constants"
 )
 
 func GetCurrentUser(r *http.Request) (string, error) {

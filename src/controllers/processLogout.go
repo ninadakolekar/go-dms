@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
 )
 
 // ProcessLogout ... Handles logout request

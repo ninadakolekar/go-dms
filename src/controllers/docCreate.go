@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	docs "github.com/ninadakolekar/aizant-dms/src/docs"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	docs "github.com/ninadakolekar/go-dms/src/docs"
 )
 
 // DocCreate ... Handles request to create document

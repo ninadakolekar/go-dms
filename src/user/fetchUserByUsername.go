@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	models "github.com/ninadakolekar/aizant-dms/src/models"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	models "github.com/ninadakolekar/go-dms/src/models"
 	solr "github.com/rtt/Go-Solr"
 )
 

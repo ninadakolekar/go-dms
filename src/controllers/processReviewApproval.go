@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	"github.com/ninadakolekar/aizant-dms/src/docs"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/docs"
 )
 
 // ProcessReviewApproval ... Handles Review Approval

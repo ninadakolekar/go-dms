@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/ninadakolekar/aizant-dms/src/auth"
-	user "github.com/ninadakolekar/aizant-dms/src/user"
+	"github.com/ninadakolekar/go-dms/src/auth"
+	user "github.com/ninadakolekar/go-dms/src/user"
 )
 
 //Dashboard ... User's Dashboard

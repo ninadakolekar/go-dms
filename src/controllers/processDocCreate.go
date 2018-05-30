@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"strconv"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	"github.com/ninadakolekar/aizant-dms/src/docs"
-	utility "github.com/ninadakolekar/aizant-dms/src/utility"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/docs"
+	utility "github.com/ninadakolekar/go-dms/src/utility"
 )
 
 // ProcessDocCreate ... Processes Document Create Form Input

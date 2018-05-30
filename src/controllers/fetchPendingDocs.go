@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	constant "github.com/ninadakolekar/aizant-dms/src/constants"
-	"github.com/ninadakolekar/aizant-dms/src/docs"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	constant "github.com/ninadakolekar/go-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/docs"
 	solr "github.com/rtt/Go-Solr"
 )
 

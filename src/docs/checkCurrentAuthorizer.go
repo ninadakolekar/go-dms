@@ -1,9 +1,9 @@
 package docs
 
 import (
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	"github.com/ninadakolekar/aizant-dms/src/models"
-	"github.com/ninadakolekar/aizant-dms/src/utility"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/models"
+	"github.com/ninadakolekar/go-dms/src/utility"
 )
 
 // CheckCurrentAuthorizer ... Checks if current user is a approver for a given document

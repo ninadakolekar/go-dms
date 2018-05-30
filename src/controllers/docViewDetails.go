@@ -5,12 +5,12 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/ninadakolekar/aizant-dms/src/models"
+	"github.com/ninadakolekar/go-dms/src/models"
 
-	"github.com/ninadakolekar/aizant-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/auth"
 
 	"github.com/gorilla/mux"
-	"github.com/ninadakolekar/aizant-dms/src/docs"
+	"github.com/ninadakolekar/go-dms/src/docs"
 )
 
 // DocViewDetails ... View document header details

@@ -3,8 +3,8 @@ package user
 import (
 	"fmt"
 
-	constants "github.com/ninadakolekar/aizant-dms/src/constants"
-	"github.com/ninadakolekar/aizant-dms/src/models"
+	constants "github.com/ninadakolekar/go-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/models"
 	"github.com/rtt/Go-Solr"
 )
 

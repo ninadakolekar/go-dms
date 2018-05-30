@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	controller "github.com/ninadakolekar/aizant-dms/src/controllers"
+	controller "github.com/ninadakolekar/go-dms/src/controllers"
 )
 
 // GetRouter ... Returns a new router

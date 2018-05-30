@@ -3,8 +3,8 @@ package docs
 import (
 	"fmt" // Debug
 
-	constant "github.com/ninadakolekar/aizant-dms/src/constants"
-	model "github.com/ninadakolekar/aizant-dms/src/models"
+	constant "github.com/ninadakolekar/go-dms/src/constants"
+	model "github.com/ninadakolekar/go-dms/src/models"
 	solr "github.com/rtt/Go-Solr"
 )
 

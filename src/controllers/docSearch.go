@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
 )
 
 // DocSearch ... Searches for a particulart document

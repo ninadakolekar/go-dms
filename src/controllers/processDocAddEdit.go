@@ -8,11 +8,11 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	doc "github.com/ninadakolekar/aizant-dms/src/docs"
-	model "github.com/ninadakolekar/aizant-dms/src/models"
-	utility "github.com/ninadakolekar/aizant-dms/src/utility"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	doc "github.com/ninadakolekar/go-dms/src/docs"
+	model "github.com/ninadakolekar/go-dms/src/models"
+	utility "github.com/ninadakolekar/go-dms/src/utility"
 )
 
 // ProcessDocAddEdit ... Process the form-values and add the document

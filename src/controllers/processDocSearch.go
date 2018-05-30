@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	constant "github.com/ninadakolekar/aizant-dms/src/constants"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	constant "github.com/ninadakolekar/go-dms/src/constants"
 	solr "github.com/rtt/Go-Solr"
 )
 

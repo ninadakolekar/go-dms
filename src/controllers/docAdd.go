@@ -5,9 +5,9 @@ import (
 	"html/template"
 	"net/http"
 
-	auth "github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/models"
-	user "github.com/ninadakolekar/aizant-dms/src/user"
+	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/models"
+	user "github.com/ninadakolekar/go-dms/src/user"
 )
 
 //DocAdd ...

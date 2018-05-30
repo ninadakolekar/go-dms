@@ -1,9 +1,9 @@
 package docs
 
 import (
-	"github.com/ninadakolekar/aizant-dms/src/constants"
-	models "github.com/ninadakolekar/aizant-dms/src/models"
-	"github.com/ninadakolekar/aizant-dms/src/utility"
+	"github.com/ninadakolekar/go-dms/src/constants"
+	models "github.com/ninadakolekar/go-dms/src/models"
+	"github.com/ninadakolekar/go-dms/src/utility"
 )
 
 // CheckCurrentReviewer ... Checks if current user is a reviewer for a given document

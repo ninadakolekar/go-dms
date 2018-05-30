@@ -7,13 +7,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ninadakolekar/aizant-dms/src/auth"
-	"github.com/ninadakolekar/aizant-dms/src/constants"
+	"github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
 
-	doc "github.com/ninadakolekar/aizant-dms/src/docs"
-	model "github.com/ninadakolekar/aizant-dms/src/models"
-	user "github.com/ninadakolekar/aizant-dms/src/user"
-	utility "github.com/ninadakolekar/aizant-dms/src/utility"
+	doc "github.com/ninadakolekar/go-dms/src/docs"
+	model "github.com/ninadakolekar/go-dms/src/models"
+	user "github.com/ninadakolekar/go-dms/src/user"
+	utility "github.com/ninadakolekar/go-dms/src/utility"
 )
 
 // ProcessDocAdd ... Process the form-values and add the document
