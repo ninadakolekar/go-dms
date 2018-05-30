@@ -1,6 +1,6 @@
 package test
 
-import "github.com/ninadakolekar/aizant-dms/src/user"
+import "github.com/ninadakolekar/go-dms/src/user"
 
 // DeleteAllUsers ... Delete multiple users at once
 func DeleteAllUsers(usernames []string) {

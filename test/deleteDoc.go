@@ -1,7 +1,7 @@
 package test
 
 import (
-	doc "github.com/ninadakolekar/aizant-dms/src/docs"
+	doc "github.com/ninadakolekar/go-dms/src/docs"
 )
 
 // Deletes multiple documents at once

@@ -3,7 +3,7 @@ package test
 import (
 	"fmt"
 
-	constants "github.com/ninadakolekar/aizant-dms/src/constants"
+	constants "github.com/ninadakolekar/go-dms/src/constants"
 	"github.com/rtt/Go-Solr"
 )
 
