@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/buger/jsonparser"
-	"github.com/ninadakolekar/go-dms/src/models"
 )
 
 func DBLPResponse() {
@@ -33,9 +32,18 @@ func DBLPResponse() {
 
 	fmt.Println("TOTAL: ", len(papers))
 
-	authors := getAuthors(papers)
+	// authors := getAuthors(papers)
 
-	fmt.Println("TOTAL AUTHORS: ", len(authors))
+	// fmt.Println("TOTAL AUTHORS: ", len(authors))
+
+	// uniqueURL := getUniqueURL(papers)
+	// for i, u := range uniqueURL {
+	// 	fmt.Println(i, u)
+	// }
+
+	for i, p := range papers {
+		fmt.Println(i, p.url, p.venue)
+	}
 }
 
 // Paper model & related functions
@@ -213,32 +221,52 @@ func getAuthors(papers []paper) []string {
 
 // Convert paper to document
 
-func convert(papers []paper) []models.InactiveDoc {
+// func convert(papers []paper) []models.InactiveDoc {
 
-	docs := []models.InactiveDoc{}
+// 	docs := []models.InactiveDoc{}
+
+// 	for _, p := range papers {
+
+// 		ch := make(chan models.InactiveDoc)
+
+// 		go func(p paper, ch chan models.InactiveDoc) {
+// 			ch <- convertToDoc(p)
+// 		}(p, ch)
+
+// 		document := <-ch
+// 		docs = append(docs, document)
+
+// 	}
+
+// 	return docs
+// }
+
+// func convertToDoc(p paper) models.InactiveDoc {
+
+// }
+
+func getUniqueURL(papers []paper) []string {
+
+	unique := []string{}
 
 	for _, p := range papers {
-
-		ch := make(chan models.InactiveDoc)
-
-		go func(p paper, ch chan models.InactiveDoc) {
-			ch <- convertToDoc(p)
-		}(p, ch)
-
-		document := <-ch
-		docs = append(docs, document)
-
+		if !contains(unique, findDomain(p.url)) {
+			unique = append(unique, findDomain(p.url))
+		}
 	}
 
-	return docs
-}
-
-func convertToDoc(p paper) models.InactiveDoc {
-
+	return unique
 }
 
 // Utility Functions
+func findDomain(url string) string {
 
+	url = strings.Split(url, "//")[1]
+	//	url = strings.Split(url, "/")[0]
+
+	return url
+
+}
 func findPos(s []author, a string) int {
 	for i, e := range s {
 		if e.name == a {
