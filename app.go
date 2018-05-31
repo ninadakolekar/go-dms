@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	test.DBLPResponse()
+	test.DBLPDataset()
 	r := router.GetRouter()
 	http.ListenAndServe(constants.ApplicationPort, r)
 }

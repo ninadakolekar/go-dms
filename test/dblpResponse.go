@@ -10,55 +10,24 @@ import (
 	"github.com/buger/jsonparser"
 )
 
-type author struct {
-	name  string
-	count int
-}
-type paper struct {
-	id       string
-	title    string
-	authors  []string
-	publDate string
-	url      string
-	venue    string
-}
-
-const (
-	minAuthors = 3
-)
-
-func findPos(s []author, a string) int {
-	for i, e := range s {
-		if e.name == a {
-			return i
-		}
-	}
-	return -1
-}
-func printPaperDetails(a paper) {
-	fmt.Println("id :", a.id)
-	fmt.Println("title :", a.title)
-	fmt.Println("authors :", a.authors)
-	fmt.Println("url :", a.url)
-	fmt.Println("conference :", a.venue)
-}
-func DBLPResponse() {
+func DBLPDataset() {
 
 	dbconf := []string{"VLDB", "SIGMOD", "PODS", "ICDE", "ICDT", "EDBT", "SIGKDD", "ICDM", "IJCAI", "AAAI", "ICML", "UAI", "UMAP", "NIPS", "AAMAS", "ACL", "AIED", "ITS", "SIGIR", "WWW", "ICIS", "PPoPP", "PACT", "IPDPS", "ICPP", "Euro-Par", "SIGGRAPH", "CVPR", "ICCV", "I3DG", "ACM-MM", "SIGCOMM", "PERFORMANCE", "SIGMETRICS", "INFOCOM", "MOBICOM", "IEEE", "CCS", "SOSP", "OSDI", "FOCS", "STOC", "ICALP", "SODA", "ISMB"}
 
 	papers := []paper{}
 
 	for _, conf := range dbconf {
+
 		ch := make(chan []paper)
+
 		go func(conf string) {
-			ch <- getPapersG2(conf)
+
+			ch <- getPapersDataset(conf)
+
 		}(conf)
+
 		listPaperG2 := <-ch
 		papers = append(papers, listPaperG2...)
-		// for i, e := range listPaperG2 {
-		// 	fmt.Println("------------------------\n", i)
-		// 	printPaperDetails(e)
-		// }
 	}
 
 	fmt.Println("TOTAL: ", len(papers))
@@ -68,41 +37,26 @@ func DBLPResponse() {
 	fmt.Println("TOTAL AUTHORS: ", len(authors))
 }
 
-func getJSONResponse(conf string) ([]byte, error) {
+// Paper Model and related functions
 
-	url := getVenueURL(conf)
-
-	req, err := http.NewRequest(http.MethodGet, url, nil)
-
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := http.DefaultClient.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return body, nil
+type paper struct {
+	id       string
+	title    string
+	authors  []string
+	publDate string
+	url      string
+	venue    string
 }
 
-func getVenueURL(conf string) string {
-	return "http://dblp.org/search/publ/api?q=venue%3A" + conf + "%3A&format=json&h%3A1000&h=150"
+type author struct {
+	name  string
+	count int
 }
 
-func toString(value []byte, dataType jsonparser.ValueType, offset int, err error) (string, error) {
-	if err != nil {
-		return "", err
-	}
-	return string(value), err
-}
+const (
+	minAuthors = 3
+	minRepeats = 1
+)
 
 func getConfPapers(conf string) []paper {
 
@@ -165,12 +119,12 @@ func getConfPapers(conf string) []paper {
 	return papers
 }
 
-func getPapersG2(conf string) []paper {
+func getPapersDataset(conf string) []paper {
 
 	listPaperG2 := []paper{}
 
 	listPapers := getConfPapers(conf)
-	listAuthorsG2 := getAuthorG2(getConfAuthors(conf))
+	listAuthorsG2 := getAuthorsDataset(getConfAuthors(conf))
 
 	for _, p := range listPapers {
 
@@ -178,7 +132,7 @@ func getPapersG2(conf string) []paper {
 
 			for _, a := range p.authors {
 
-				if findPos(listAuthorsG2, a) != -1 {
+				if !contains(listAuthorsG2, a) {
 
 					listPaperG2 = append(listPaperG2, p)
 					break
@@ -187,7 +141,6 @@ func getPapersG2(conf string) []paper {
 		}
 
 	}
-
 	return listPaperG2
 }
 
@@ -235,13 +188,13 @@ func getConfAuthors(conf string) []author {
 	return listAuthor
 }
 
-func getAuthorG2(authors []author) []author {
+func getAuthorsDataset(authors []author) []string {
 
-	listAuthorG2 := []author{}
+	listAuthorG2 := []string{}
 
 	for _, e := range authors {
-		if e.count >= 1 {
-			listAuthorG2 = append(listAuthorG2, e)
+		if e.count >= minRepeats {
+			listAuthorG2 = append(listAuthorG2, e.name)
 		}
 	}
 	return listAuthorG2
@@ -263,6 +216,8 @@ func getAuthors(papers []paper) []string {
 
 }
 
+// Utility functions
+
 func contains(list []string, x string) bool {
 
 	for _, item := range list {
@@ -272,4 +227,57 @@ func contains(list []string, x string) bool {
 	}
 
 	return false
+}
+
+func findPos(s []author, a string) int {
+	for i, e := range s {
+		if e.name == a {
+			return i
+		}
+	}
+	return -1
+}
+
+func printPaperDetails(a paper) {
+	fmt.Println("id :", a.id)
+	fmt.Println("title :", a.title)
+	fmt.Println("authors :", a.authors)
+	fmt.Println("url :", a.url)
+	fmt.Println("conference :", a.venue)
+}
+
+func getVenueURL(conf string) string {
+	return "http://dblp.org/search/publ/api?q=venue%3A" + conf + "%3A&format=json&h%3A1000&h=150"
+}
+
+func toString(value []byte, dataType jsonparser.ValueType, offset int, err error) (string, error) {
+	if err != nil {
+		return "", err
+	}
+	return string(value), err
+}
+
+func getJSONResponse(conf string) ([]byte, error) {
+
+	url := getVenueURL(conf)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }
