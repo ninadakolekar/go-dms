@@ -23,6 +23,10 @@ type paper struct {
 	venue    string
 }
 
+const (
+	minAuthors = 3
+)
+
 func findPos(s []author, a string) int {
 	for i, e := range s {
 		if e.name == a {
@@ -40,17 +44,28 @@ func printPaperDetails(a paper) {
 }
 func DBLPResponse() {
 
-	dbconf := []string{"VLDB", "SIGMOD", "PODS", "ICDE", "ICDT", "EDBT"}
-	dbconf = []string{"SIGKDD", "ICDM"}
-	dbconf = []string{"IJCAI", "AAAI", "ICML", "UAI", "UMAP"}
-	dbconf = []string{"IJCAI"}
+	dbconf := []string{"VLDB", "SIGMOD", "PODS", "ICDE", "ICDT", "EDBT", "SIGKDD", "ICDM", "IJCAI", "AAAI", "ICML", "UAI", "UMAP", "NIPS", "AAMAS", "ACL", "AIED", "ITS", "SIGIR", "WWW", "ICIS", "PPoPP", "PACT", "IPDPS", "ICPP", "Euro-Par", "SIGGRAPH", "CVPR", "ICCV", "I3DG", "ACM-MM", "SIGCOMM", "PERFORMANCE", "SIGMETRICS", "INFOCOM", "MOBICOM", "IEEE", "CCS", "SOSP", "OSDI", "FOCS", "STOC", "ICALP", "SODA", "ISMB"}
+
+	papers := []paper{}
+
 	for _, conf := range dbconf {
-		listPaperG2 := getPapersG2(conf)
-		for i, e := range listPaperG2 {
-			fmt.Println("------------------------\n", i)
-			printPaperDetails(e)
-		}
+		ch := make(chan []paper)
+		go func(conf string) {
+			ch <- getPapersG2(conf)
+		}(conf)
+		listPaperG2 := <-ch
+		papers = append(papers, listPaperG2...)
+		// for i, e := range listPaperG2 {
+		// 	fmt.Println("------------------------\n", i)
+		// 	printPaperDetails(e)
+		// }
 	}
+
+	fmt.Println("TOTAL: ", len(papers))
+
+	authors := getAuthors(papers)
+
+	fmt.Println("TOTAL AUTHORS: ", len(authors))
 }
 
 func getJSONResponse(conf string) ([]byte, error) {
@@ -151,28 +166,32 @@ func getConfPapers(conf string) []paper {
 }
 
 func getPapersG2(conf string) []paper {
+
 	listPaperG2 := []paper{}
+
 	listPapers := getConfPapers(conf)
-	listAuthorsG2 := getAuthorG2(getAuthors(conf))
+	listAuthorsG2 := getAuthorG2(getConfAuthors(conf))
 
-	for _, papeR := range listPapers {
+	for _, p := range listPapers {
 
-		flag := 0
-		for _, authoR := range papeR.authors {
-			if findPos(listAuthorsG2, authoR) != -1 {
-				flag = 1
-				break
+		if len(p.authors) >= minAuthors {
+
+			for _, a := range p.authors {
+
+				if findPos(listAuthorsG2, a) != -1 {
+
+					listPaperG2 = append(listPaperG2, p)
+					break
+				}
 			}
 		}
 
-		if flag != 0 {
-			listPaperG2 = append(listPaperG2, papeR)
-		}
 	}
 
 	return listPaperG2
 }
-func getAuthors(conf string) []author {
+
+func getConfAuthors(conf string) []author {
 
 	listAuthor := []author{}
 
@@ -219,10 +238,38 @@ func getAuthors(conf string) []author {
 func getAuthorG2(authors []author) []author {
 
 	listAuthorG2 := []author{}
+
 	for _, e := range authors {
-		if e.count >= 2 {
+		if e.count >= 1 {
 			listAuthorG2 = append(listAuthorG2, e)
 		}
 	}
 	return listAuthorG2
+}
+
+func getAuthors(papers []paper) []string {
+
+	author := []string{}
+
+	for _, p := range papers {
+		for _, a := range p.authors {
+			if !contains(author, a) {
+				author = append(author, a)
+			}
+		}
+	}
+
+	return author
+
+}
+
+func contains(list []string, x string) bool {
+
+	for _, item := range list {
+		if item == x {
+			return true
+		}
+	}
+
+	return false
 }
