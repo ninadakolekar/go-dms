@@ -9,7 +9,8 @@ import (
 )
 
 func main() {
-	test.DBLPResponse()
+	test.ConvertPDF2StringSlice("test")
+	//test.DBLPResponse()
 	r := router.GetRouter()
 	http.ListenAndServe(constants.ApplicationPort, r)
 }
