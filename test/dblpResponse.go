@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/buger/jsonparser"
+	"github.com/ninadakolekar/go-dms/src/models"
 )
 
 func DBLPResponse() {
@@ -207,6 +208,32 @@ func getAuthors(papers []paper) []string {
 	}
 
 	return author
+
+}
+
+// Convert paper to document
+
+func convert(papers []paper) []models.InactiveDoc {
+
+	docs := []models.InactiveDoc{}
+
+	for _, p := range papers {
+
+		ch := make(chan models.InactiveDoc)
+
+		go func(p paper, ch chan models.InactiveDoc) {
+			ch <- convertToDoc(p)
+		}(p, ch)
+
+		document := <-ch
+		docs = append(docs, document)
+
+	}
+
+	return docs
+}
+
+func convertToDoc(p paper) models.InactiveDoc {
 
 }
 
