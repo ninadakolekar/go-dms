@@ -11,27 +11,21 @@ import (
 )
 
 //ConvertPDF2StringSlice ... converts pdf to string
-func ConvertPDF2StringSlice(url string) {
-	fmt.Println(url)
+func ConvertPDF2StringSlice(inputPath string) []string {
 
-	inputPath := "test/sample.pdf"
+	fmt.Println(inputPath)
+
 	pages, err := outputPdfText(inputPath)
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
-	//i := len(pages)
-	for i, p := range pages {
-		fmt.Println("\n\n\n", "pagenumber:", i)
-		fmt.Println(p)
-	}
-	// fmt.Println(i)
+	return pages
 }
 func standardizeSpaces(s string) string {
 	return strings.Join(strings.Fields(s), " ")
 }
 
-// outputPdfText prints out contents of PDF file to stdout.
 func outputPdfText(inputPath string) ([]string, error) {
 	re_leadclose_whtsp := regexp.MustCompile(`^[\s\p{Zs}]+|[\s\p{Zs}]+$`)
 	re_inside_whtsp := regexp.MustCompile(`[\s\p{Zs}]{2,}`)
@@ -53,10 +47,6 @@ func outputPdfText(inputPath string) ([]string, error) {
 	if err != nil {
 		return pages, err
 	}
-
-	// fmt.Printf("--------------------\n")
-	// fmt.Printf("PDF to text extraction:\n")
-	// fmt.Printf("--------------------\n")
 	for i := 0; i < numPages; i++ {
 		pageNum := i + 1
 
