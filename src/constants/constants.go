@@ -11,7 +11,7 @@ const (
 	ApplicationPort = ":8080"
 
 	// ApplicationHost ... Application Host
-	ApplicationHost = "127.0.0.1"
+	ApplicationHost = "192.168.136.120"
 
 	// DocsCore ... Docs Core name in solr
 	DocsCore = "testdocs"
@@ -20,7 +20,7 @@ const (
 	UserCore = "testuser"
 
 	// SolrHost .... Solr Host
-	SolrHost = "127.0.0.1"
+	SolrHost = "192.168.136.120"
 
 	//MinDocNumLen ... Min document number length
 	MinDocNumLen = 3
