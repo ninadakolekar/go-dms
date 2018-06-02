@@ -30,9 +30,6 @@ func ConvertURL2Strings(url string, tempFile string) ([]string, error) {
 
 	paras := ConvertPDF2StringSlice(tempFile + ".pdf")
 
-	for _, e := range paras {
-		fmt.Println(e, "this is end of mylife")
-	}
 	err = os.Remove(tempFile + ".pdf")
 	if err != nil {
 		fmt.Println(err)

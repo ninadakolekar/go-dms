@@ -10,10 +10,10 @@ import (
 	"github.com/buger/jsonparser"
 )
 
-func DBLPResponse() {
+func DBLPResponse() []paper {
 
 	dbconf := []string{"VLDB", "SIGMOD", "PODS", "ICDE", "ICDT", "EDBT", "SIGKDD", "ICDM", "IJCAI", "AAAI", "ICML", "UAI", "UMAP", "NIPS", "AAMAS", "ACL", "AIED", "ITS", "SIGIR", "WWW", "ICIS", "PPoPP", "PACT", "IPDPS", "ICPP", "Euro-Par", "SIGGRAPH", "CVPR", "ICCV", "I3DG", "ACM-MM", "SIGCOMM", "PERFORMANCE", "SIGMETRICS", "INFOCOM", "MOBICOM", "IEEE", "CCS", "SOSP", "OSDI", "FOCS", "STOC", "ICALP", "SODA", "ISMB"}
-
+	dbconf = []string{"VLDB", "EDBT", "UAI", "ACL"}
 	papers := []paper{}
 
 	for _, conf := range dbconf {
@@ -32,18 +32,11 @@ func DBLPResponse() {
 
 	fmt.Println("TOTAL: ", len(papers))
 
-	// authors := getAuthors(papers)
+	authors := getAuthors(papers)
 
-	// fmt.Println("TOTAL AUTHORS: ", len(authors))
+	fmt.Println("TOTAL AUTHORS: ", len(authors))
 
-	// uniqueURL := getUniqueURL(papers)
-	// for i, u := range uniqueURL {
-	// 	fmt.Println(i, u)
-	// }
-
-	for i, p := range papers {
-		fmt.Println(i, p.url, p.venue)
-	}
+	return papers
 }
 
 // Paper model & related functions

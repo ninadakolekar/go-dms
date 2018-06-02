@@ -14,10 +14,10 @@ const (
 	ApplicationHost = "127.0.0.1"
 
 	// DocsCore ... Docs Core name in solr
-	DocsCore = "docs"
+	DocsCore = "testdocs"
 
 	// UserCore ... Users Core name in solr
-	UserCore = "user"
+	UserCore = "testuser"
 
 	// SolrHost .... Solr Host
 	SolrHost = "127.0.0.1"

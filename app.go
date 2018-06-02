@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	//test.ConvertPDF2StringSlice("test")
-	//test.DBLPResponse()
-	test.ConvertURL2Strings("http://www.vldb.org/conf/2007/papers/research/p411-abadi.pdf", "1")
-	//test.ConvertURLtotext("http://www.vldb.org/conf/2007/papers/research/p411-abadi.pdf")
+
+	papers := test.DBLPResponse()
+	test.InsertUsers(papers)
+	test.InsertPDF(papers)
 	r := router.GetRouter()
 	http.ListenAndServe(constants.ApplicationPort, r)
 }
