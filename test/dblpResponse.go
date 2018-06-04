@@ -14,6 +14,7 @@ func DBLPResponse() []paper {
 
 	dbconf := []string{"VLDB", "SIGMOD", "PODS", "ICDE", "ICDT", "EDBT", "SIGKDD", "ICDM", "IJCAI", "AAAI", "ICML", "UAI", "UMAP", "NIPS", "AAMAS", "ACL", "AIED", "ITS", "SIGIR", "WWW", "ICIS", "PPoPP", "PACT", "IPDPS", "ICPP", "Euro-Par", "SIGGRAPH", "CVPR", "ICCV", "I3DG", "ACM-MM", "SIGCOMM", "PERFORMANCE", "SIGMETRICS", "INFOCOM", "MOBICOM", "IEEE", "CCS", "SOSP", "OSDI", "FOCS", "STOC", "ICALP", "SODA", "ISMB"}
 	dbconf = []string{"VLDB", "EDBT", "UAI", "ACL"}
+	dbconf = []string{"ICDE", "ICDM", "ICIS", "PACT", "IPDPS", "ICPP", "CVPR", "ICCV", "INFOCOM", "FOCS"}
 	papers := []paper{}
 
 	for _, conf := range dbconf {
@@ -35,6 +36,13 @@ func DBLPResponse() []paper {
 	authors := getAuthors(papers)
 
 	fmt.Println("TOTAL AUTHORS: ", len(authors))
+
+	arr := []string{}
+	for _, p := range papers {
+		arr = append(arr, "\""+p.url+"\",")
+	}
+
+	fmt.Println(arr)
 
 	return papers
 }
