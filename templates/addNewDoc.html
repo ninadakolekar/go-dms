@@ -179,7 +179,6 @@
   {{if eq .Datab true}}
   <a class="btn right" id="success" onclick="M.toast({html: '{{.Datamsg}}'})" style="display: none"></a>
   <script>
-     console.log("Hey I was triggered!!!")// Debug
      $("#success").trigger('click')
      $(".toast").css('background-color','green')
      $(".toast").css('font-weight','bold')
@@ -287,12 +286,10 @@
           $("#doc_dept").val( {{ .Document.DocDept }} );
 
           var effDate = {{ .Document.DocEffDate }};
-          var res = effDate.split("T")[0].split("-");
-          document.getElementById('effDate').valueAsDate = new Date(res[0],res[1],res[2]);
+          document.getElementById('effDate').valueAsDate = new Date(effDate);
 
-          var effDate = {{ .Document.DocExpDate }};
-          var res = effDate.split("T")[0].split("-");
-          document.getElementById('exprDate').valueAsDate = new Date(res[0],res[1],res[2]);
+          var expDate = {{ .Document.DocExpDate }};
+          document.getElementById('exprDate').valueAsDate = new Date(expDate);
 
           $("#create_doc").val( {{ .Document.Creator }} );
 
@@ -334,6 +331,15 @@
       });  
       </script>
 
+    {{ end }}
+
+    {{ if .Redirect}}
+      <script>
+        function redirect(){
+          window.location.replace("/dashboard");
+        }
+        setTimeout(redirect, 2000);
+      </script>
     {{ end }}
 
 </html>

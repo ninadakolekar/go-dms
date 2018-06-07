@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	auth "github.com/ninadakolekar/go-dms/src/auth"
+	"github.com/ninadakolekar/go-dms/src/constants"
 	"github.com/ninadakolekar/go-dms/src/docs"
 	user "github.com/ninadakolekar/go-dms/src/user"
 )
@@ -45,7 +46,7 @@ func DocAddEdit(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if user.AvailableInit == false || username != document.Initiator {
+			if user.AvailableInit == false || username != document.Initiator || document.FlowStatus != constants.InitFlow {
 				http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 				return
 			}
