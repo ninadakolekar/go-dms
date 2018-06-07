@@ -70,7 +70,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 
 			links = sortby(links, sortOrder)
 			if sortOrder == "typeSort" {
-				s0 := "<ul class = 'resultCount'> Found " + resultsCountString + " results</ul>"
+				s0 := "<div class = 'resultCount'> Found " + resultsCountString + " results</div>"
 				s1 := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons circle #76ff03 red'>layers</i><span class='results-dept'>HR</span></div><div class='collapsible-body'><ul>"
 				v1 := ""
 				v2 := ""
@@ -91,7 +91,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 				fmt.Fprintf(w, s0+s1+v1+s2+v2+s3+v3+s4)
 			} else {
 				color := "green"
-				s0 := "<li class = 'resultCount'> Found " + resultsCountString + " results</li>"
+				s0 := "<div class = 'resultCount'> Found " + resultsCountString + " results</div>"
 				ret := ""
 				for _, e := range links {
 					if e.DocType == "SOP" {
