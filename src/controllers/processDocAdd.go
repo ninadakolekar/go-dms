@@ -129,7 +129,7 @@ func ProcessDocAdd(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render a new form
-	http.Redirect(w, r, "/doc/add", http.StatusSeeOther)
+	// http.Redirect(w, r, "/doc/add", http.StatusSeeOther)
 
 	tmpl := template.Must(template.ParseFiles("templates/addNewDoc.html"))
 
