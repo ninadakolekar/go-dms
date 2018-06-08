@@ -163,7 +163,6 @@
        
         $.post('/doc/fetchDocs', $('form').serialize(),function(data){
             $("#results").html(data);
-            console.log("results printed");//Debug
         });
     }
     jQuery(document).ready(function($){
