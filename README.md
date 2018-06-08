@@ -1,6 +1,6 @@
 # Go-DMS
 
-[![Build Status](https://travis-ci.org/ninadakolekar/go-dms.svg?branch=master)](https://travis-ci.org/ninadakolekar/go-dms)
+[![Build Status](https://travis-ci.org/ninadakolekar/go-dms.svg?branch=master)](https://travis-ci.org/ninadakolekar/go-dms) [![Go Report Card](https://goreportcard.com/badge/github.com/ninadakolekar/go-dms)](https://goreportcard.com/report/github.com/ninadakolekar/go-dms)
 
 Go-DMS is a  document management system with document workflow and lifecycle. It is based on Apache Solr, and written in Go.
 
