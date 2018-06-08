@@ -14,9 +14,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 
-    <link rel="stylesheet" href="../static/css/materialize.min.css">
-    <!-- <link rel="stylesheet" href="../static/css/m.css"> -->
-    <link rel="stylesheet" href="../static/css/dashboard.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/materialize.min.css" />
+    
+    <link rel="stylesheet" type="text/css" href="../static/css/dashboard.css" />
 
 </head>
 <body>
@@ -160,10 +160,9 @@
 <script>
     function submitHandler() {
         //name value
-        console.log("came to submit");
+       
         $.post('/doc/fetchDocs', $('form').serialize(),function(data){
             $("#results").html(data);
-            console.log("results printed");//Debug
         });
     }
     jQuery(document).ready(function($){
@@ -194,4 +193,20 @@
         
     });
 </script>
+<style>
+    .docsCount{
+    color:grey;
+    position: absolute;
+    right: 30em;
+    font-size:1em;
+    font-style: italic;
+    vertical-align: middle;
+}
+
+.docsCount::after{
+    content: ' documents';
+    font-size: 1em;
+    font-style: italic;
+}
+</style>
 </html>
