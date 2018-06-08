@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"net/http"
+	"strconv"
 	"time"
 
 	auth "github.com/ninadakolekar/go-dms/src/auth"
@@ -20,19 +21,20 @@ func FetchPendingDocuments(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "server error")
 	}
 	//fmt.Println(makeConstraints(r))
-	str1 := fetchInits(r)
-	str2 := fetchQA(r)
-	str3 := fetchCreator(r)
-	str4 := fetchReviews(r)
-	str5 := fetchApproves(r)
-	str6 := fetchAuthorises(r)
-	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons red'>layers</i>Pending Intiations</div><div class='collapsible-body'><ul class='collection'>"
-	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons blue'>layers</i>Pending QA</div><div class='collapsible-body'><ul  class='collection'>"
-	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons green'>layers</i>Pending Creations</div><div class='collapsible-body'><ul  class='collection'>"
-	html3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons indigo'>layers</i>Pending Reviews</div><div class='collapsible-body'><ul  class='collection'>"
+	str1, i1 := fetchInits(r)
+	str2, i2 := fetchQA(r)
+	str3, i3 := fetchCreator(r)
+	str4, i4 := fetchReviews(r)
+	str5, i5 := fetchApproves(r)
+	str6, i6 := fetchAuthorises(r)
 
-	html4 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons cyan'>layers</i>Pending Approvals</div><div class='collapsible-body'><ul  class='collection'>"
-	html5 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons yellow'>layers</i>Pending Authorizations</div><div class='collapsible-body'><ul  class='collection'>"
+	html := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons red'>layers</i>Pending Intiations <span class = 'docsCount'>" + strconv.Itoa(i1) + "</span></div><div class='collapsible-body'><ul class='collection'>"
+	html1 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons blue'>layers</i>Pending QA <span class = 'docsCount'>" + strconv.Itoa(i2) + "</span></div><div class='collapsible-body'><ul  class='collection'>"
+	html2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons green'>layers</i>Pending Creations <span class = 'docsCount'>" + strconv.Itoa(i3) + "</span></div><div class='collapsible-body'><ul  class='collection'>"
+	html3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons indigo'>layers</i>Pending Reviews <span class = 'docsCount'>" + strconv.Itoa(i4) + "</span></div><div class='collapsible-body'><ul  class='collection'>"
+
+	html4 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons cyan'>layers</i>Pending Approvals <span class = 'docsCount'>" + strconv.Itoa(i5) + "</span></div><div class='collapsible-body'><ul  class='collection'>"
+	html5 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons yellow'>layers</i>Pending Authorizations <span class = 'docsCount'>" + strconv.Itoa(i6) + "</span></div><div class='collapsible-body'><ul  class='collection'>"
 
 	html6 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible();});</script>"
 	fmt.Fprintf(w, html+str1+html1+str2+html2+str3+html3+str4+html4+str5+html5+str6+html6)
@@ -161,7 +163,7 @@ func giveFlowStatus(results *solr.Document, usr string, value int) bool {
 	}
 	return false
 }
-func fetchApproves(rr *http.Request) string {
+func fetchApproves(rr *http.Request) (string, int) {
 	usr, _ := auth.GetCurrentUser(rr)
 
 	mk := makeConstraints(rr)
@@ -172,7 +174,7 @@ func fetchApproves(rr *http.Request) string {
 	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 	q := solr.Query{
 		Params: solr.URLParamMap{
@@ -183,12 +185,12 @@ func fetchApproves(rr *http.Request) string {
 
 	res, err := s.Select(&q)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 
 	results := res.Results
 	if results.Len() == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	links := []lINK{}
 
@@ -200,9 +202,10 @@ func fetchApproves(rr *http.Request) string {
 	}
 	links = sortby(links, "expDate")
 	if len(links) == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	r := ""
+	lenn := len(links)
 	now := time.Now()
 
 	day := now.String()[0:10] + "T99:17:11.382Z"
@@ -221,9 +224,9 @@ func fetchApproves(rr *http.Request) string {
 		}
 	}
 	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
-	return r
+	return r, lenn
 }
-func fetchAuthorises(rr *http.Request) string {
+func fetchAuthorises(rr *http.Request) (string, int) {
 	usr, _ := auth.GetCurrentUser(rr)
 
 	mk := makeConstraints(rr)
@@ -234,7 +237,7 @@ func fetchAuthorises(rr *http.Request) string {
 	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 	q := solr.Query{
 		Params: solr.URLParamMap{
@@ -245,12 +248,12 @@ func fetchAuthorises(rr *http.Request) string {
 
 	res, err := s.Select(&q)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 
 	results := res.Results
 	if results.Len() == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	links := []lINK{}
 
@@ -262,9 +265,10 @@ func fetchAuthorises(rr *http.Request) string {
 	}
 	links = sortby(links, "expDate")
 	if len(links) == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	r := ""
+	lenn := len(links)
 	now := time.Now()
 
 	day := now.String()[0:10] + "T99:17:11.382Z"
@@ -283,10 +287,10 @@ func fetchAuthorises(rr *http.Request) string {
 		}
 	}
 	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
-	return r
+	return r, lenn
 }
 
-func fetchReviews(rr *http.Request) string {
+func fetchReviews(rr *http.Request) (string, int) {
 	usr, _ := auth.GetCurrentUser(rr)
 
 	mk := makeConstraints(rr)
@@ -297,7 +301,7 @@ func fetchReviews(rr *http.Request) string {
 	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 	q := solr.Query{
 		Params: solr.URLParamMap{
@@ -308,12 +312,12 @@ func fetchReviews(rr *http.Request) string {
 
 	res, err := s.Select(&q)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 
 	results := res.Results
 	if results.Len() == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	links := []lINK{}
 
@@ -325,9 +329,10 @@ func fetchReviews(rr *http.Request) string {
 	}
 	links = sortby(links, "expDate")
 	if len(links) == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	r := ""
+	lenn := len(links)
 	now := time.Now()
 
 	day := now.String()[0:10] + "T99:17:11.382Z"
@@ -346,10 +351,10 @@ func fetchReviews(rr *http.Request) string {
 		}
 	}
 	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
-	return r
+	return r, lenn
 }
 
-func fetchCreator(rr *http.Request) string {
+func fetchCreator(rr *http.Request) (string, int) {
 	usr, _ := auth.GetCurrentUser(rr)
 
 	mk := makeConstraints(rr)
@@ -360,7 +365,7 @@ func fetchCreator(rr *http.Request) string {
 	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 	q := solr.Query{
 		Params: solr.URLParamMap{
@@ -371,12 +376,12 @@ func fetchCreator(rr *http.Request) string {
 
 	res, err := s.Select(&q)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 
 	results := res.Results
 	if results.Len() == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	links := []lINK{}
 	for i := 0; i < results.Len(); i++ {
@@ -386,9 +391,10 @@ func fetchCreator(rr *http.Request) string {
 	}
 	links = sortby(links, "expDate")
 	if len(links) == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	r := ""
+	lenn := len(links)
 	now := time.Now()
 
 	day := now.String()[0:10] + "T99:17:11.382Z"
@@ -407,10 +413,10 @@ func fetchCreator(rr *http.Request) string {
 		}
 	}
 	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
-	return r
+	return r, lenn
 }
 
-func fetchQA(rr *http.Request) string {
+func fetchQA(rr *http.Request) (string, int) {
 	usr, _ := auth.GetCurrentUser(rr)
 
 	mk := makeConstraints(rr)
@@ -421,7 +427,7 @@ func fetchQA(rr *http.Request) string {
 	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 	q := solr.Query{
 		Params: solr.URLParamMap{
@@ -432,12 +438,12 @@ func fetchQA(rr *http.Request) string {
 
 	res, err := s.Select(&q)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 
 	results := res.Results
 	if results.Len() == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	links := []lINK{}
 	for i := 0; i < results.Len(); i++ {
@@ -446,8 +452,10 @@ func fetchQA(rr *http.Request) string {
 		}
 	}
 	links = sortby(links, "expDate")
+	lenn := len(links)
+
 	if len(links) == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	r := ""
 	now := time.Now()
@@ -468,9 +476,9 @@ func fetchQA(rr *http.Request) string {
 		}
 	}
 	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
-	return r
+	return r, lenn
 }
-func fetchInits(rr *http.Request) string {
+func fetchInits(rr *http.Request) (string, int) {
 	usr, _ := auth.GetCurrentUser(rr)
 
 	mk := makeConstraints(rr)
@@ -481,7 +489,7 @@ func fetchInits(rr *http.Request) string {
 	//fmt.Println("QUERY:#", query, "#")
 	s, err := solr.Init(constant.SolrHost, constant.SolrPort, constant.DocsCore)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 	q := solr.Query{
 		Params: solr.URLParamMap{
@@ -492,12 +500,12 @@ func fetchInits(rr *http.Request) string {
 
 	res, err := s.Select(&q)
 	if err != nil {
-		return "<h5>solr connection error</h5>"
+		return "<h5>solr connection error</h5>", 0
 	}
 
 	results := res.Results
 	if results.Len() == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", 0
 	}
 	links := []lINK{}
 	for i := 0; i < results.Len(); i++ {
@@ -505,9 +513,11 @@ func fetchInits(rr *http.Request) string {
 			links = append(links, convertTolINK(results.Get(i)))
 		}
 	}
+
+	lenn := len(links)
 	links = sortby(links, "expDate")
 	if len(links) == 0 {
-		return "<h5>No Pending Documents</h5>"
+		return "<h5>No Pending Documents</h5>", lenn
 	}
 	r := ""
 	now := time.Now()
@@ -528,5 +538,5 @@ func fetchInits(rr *http.Request) string {
 		}
 	}
 	r += "<script>$('.fmtdate').each(function(){var date = $(this).html();var formattedDate = date.split('T')[0];var fDate = formattedDate.split('-');$(this).html(fDate[2]+'-'+fDate[1]+'-'+fDate[0]);})</script>"
-	return r
+	return r, lenn
 }
