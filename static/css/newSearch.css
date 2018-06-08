@@ -15,3 +15,9 @@
     padding: 15px;
     margin-top:2.3rem;
 }
+
+.resultCount{
+    font-size: 1em;
+    padding-bottom: 0.2em;
+    background-color: #e8e6e3;
+}
