@@ -5,6 +5,7 @@ import (
 	"html"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 
 	auth "github.com/ninadakolekar/go-dms/src/auth"
@@ -55,16 +56,21 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 		}
 
 		results := res.Results
-		if results.Len() == 0 {
+		resultsCount := results.Len()
+
+		if resultsCount == 0 {
 			fmt.Fprintf(w, "<div class='card-panel'><span class='blue-text text-darken-2'><h5>No results found.</h5></span></div>")
 		} else {
+
+			resultsCountString := strconv.Itoa(resultsCount)
+
 			for i := 0; i < results.Len(); i++ {
 				links = append(links, convertTolINK(results.Get(i)))
 			}
 
 			links = sortby(links, sortOrder)
 			if sortOrder == "typeSort" {
-
+				s0 := "<div class = 'resultCount'> Found " + resultsCountString + " results</div>"
 				s1 := "<ul class='collapsible'><li><div class='collapsible-header'><i class='material-icons circle #76ff03 red'>layers</i><span class='results-dept'>HR</span></div><div class='collapsible-body'><ul>"
 				v1 := ""
 				v2 := ""
@@ -82,9 +88,10 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 				s2 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 blue'>layers</i><span class='results-dept'>SOP</span></div><div class='collapsible-body'><ul>"
 				s3 := "</ul></div></li><li><div class='collapsible-header'><i class='material-icons circle #76ff03 green'>layers</i><span class='results-dept'>STP</span></div><div class='collapsible-body'><ul>"
 				s4 := "</ul></div></li></ul><script>$(document).ready(function(){$('.collapsible').collapsible({accordion: false,});formatDate();});</script>"
-				fmt.Fprintf(w, s1+v1+s2+v2+s3+v3+s4)
+				fmt.Fprintf(w, s0+s1+v1+s2+v2+s3+v3+s4)
 			} else {
 				color := "green"
+				s0 := "<div class = 'resultCount'> Found " + resultsCountString + " results</div>"
 				ret := ""
 				for _, e := range links {
 					if e.DocType == "SOP" {
@@ -97,7 +104,7 @@ func ProcessDocSearch(w http.ResponseWriter, r *http.Request) {
 					ret += ("<li class='collection-item avatar'><i class='material-icons circle #76ff03 " + color + "'>insert_drive_file</i><span class='title'>" + e.DocName + "</span><p>" + "Intiated &nbsp;<span class='fmtdate'>" + e.Idate + "</span></p><a href='" + "/doc/view/" + e.DocId + "' class = 'secondary-content'><br><i class='material-icons'>send</i></a></li>")
 				}
 
-				fmt.Fprintf(w, ret+"<script>$(document).ready(function(){formatDate();});</script>")
+				fmt.Fprintf(w, s0+ret+"<script>$(document).ready(function(){formatDate();});</script>")
 			}
 
 		}
